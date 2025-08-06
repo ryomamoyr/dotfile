@@ -95,14 +95,24 @@ if [ -d "$HOME/.config/nvim" ]; then
     backup_message+="Backup created for .config/nvim as .config/nvim.bk.$timestamp\n"
 fi
 
-ln -sf "$(pwd)/.alias" "$HOME/.alias"
-ln -sf "$(pwd)/.function" "$HOME/.function"
-ln -sf "$(pwd)/.zshrc" "$HOME/.zshrc"
-ln -sf "$(pwd)/.tmux.conf" "$HOME/.tmux.conf"
+ln -sf "$(pwd)/config/.alias" "$HOME/.alias"
+ln -sf "$(pwd)/config/.function" "$HOME/.function"
+ln -sf "$(pwd)/config/.zshrc" "$HOME/.zshrc"
+ln -sf "$(pwd)/config/.tmux.conf" "$HOME/.tmux.conf"
 mkdir -p "$HOME/.config"
 ln -sf "$(pwd)/nvim" "$HOME/.config/nvim"
 ln -sf "$(pwd)/snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
 
+# ----------------------------------------
+# Brewfile を使用したパッケージインストール
+# ----------------------------------------
+if [[ -f "scripts/Brewfile" ]]; then
+    echo -e "${YELLOW}Brewfile を使用してパッケージをインストールします...${NO_COLOR}"
+    brew bundle --file=scripts/Brewfile
+    echo -e "${GREEN}Brewfile からのインストールが完了しました。${NO_COLOR}"
+else
+    echo -e "${YELLOW}Brewfile が見つかりません。スキップします。${NO_COLOR}"
+fi
 
 echo -e "${GREEN}Installation is complete and symbolic links have been created.${NO_COLOR}"
 

@@ -2,6 +2,27 @@
 
 MacOSで環境構築するためのリポジトリ
 
+## ディレクトリ構成
+
+```
+.
+├── README.md                   # このファイル
+├── CLAUDE.md                   # Claude Code用の設定
+├── init.sh                     # 初期セットアップスクリプト
+├── minimal.sh                  # 最小限のbashrc設定
+├── config/                     # dotfiles設定ファイル
+│   ├── .zshrc                  # ZSHシェル設定
+│   ├── .alias                  # エイリアス定義
+│   ├── .function               # カスタム関数定義
+│   ├── .bashrc                 # Bash設定
+│   └── .tmux.conf              # tmux設定
+├── scripts/                    # 各種設定・管理ファイル
+│   └── Brewfile               # brew bundle用パッケージ定義
+├── nvim/                       # Neovim設定
+└── snippets/                   # コードスニペット
+    └── python.json
+```
+
 ## 実行内容
 
 `init.sh` に権限を付与
@@ -27,22 +48,21 @@ chmod +x init.sh
 
 2. 各dotfileにシンボリックリンクを作成する
 
-   * `.zshrc`のシンボリックリンクを `$HOME/.zshrc`に作成
+   * `config/.zshrc`のシンボリックリンクを `$HOME/.zshrc`に作成
      * zshの基本的な設定を記述
-     * `.alias`と `.function`を読み込む
-   * `.alias`のシンボリックリンクを `$HOME/.alias`に作成
+     * `config/.alias`と `config/.function`を読み込む
+   * `config/.alias`のシンボリックリンクを `$HOME/.alias`に作成
      * aliasはここにすべてここに記述
-   * `.function`のシンボリックリンクを `$HOME/.function`に作成
+   * `config/.function`のシンボリックリンクを `$HOME/.function`に作成
      * 自作定義した関数はすべてここに記述
-   * `.tmux.conf`のシンボリックリンクを `$HOME/.tmux.conf`に作成
+   * `config/.tmux.conf`のシンボリックリンクを `$HOME/.tmux.conf`に作成
      * tmuxの基本的な設定
    * シンボリックリンクを設定することで各dotfileがここで編集できる
 
 3. Homebrew で各 GUI ソフトをインストールする
-   `brew_packages.sh` が Homebrew のセットアップとアプリ導入を一括で行います。
+   `scripts/Brewfile` を使用して GUI アプリケーションを一括インストールします。
 
-
-   **インストール対象（cask_apps 配列）**
+   **インストール対象**
 
    | App | 用途／特徴 |
    |-----|-----------|
@@ -60,9 +80,19 @@ chmod +x init.sh
    | microsoft-teams | 企業向けチャット／ビデオ会議（Office365 連携） |
    | zoom | 汎用ビデオ会議アプリ |
 
-   ```sh
-    chmod +x brew_packages.sh
-   ```
+## 使用方法
 
-   ```sh
-   ./brew_packages.sh
+### 自動セットアップ
+
+```sh
+chmod +x init.sh
+./init.sh
+```
+
+### 個別セットアップ
+
+Brewfileのみ実行する場合:
+
+```sh
+brew bundle --file=scripts/Brewfile
+```
