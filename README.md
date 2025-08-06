@@ -8,8 +8,8 @@ MacOSで環境構築するためのリポジトリ
 .
 ├── README.md                   # このファイル
 ├── CLAUDE.md                   # Claude Code用の設定
-├── init.sh                     # 初期セットアップスクリプト
-├── minimal.sh                  # 最小限のbashrc設定
+├── setup.sh                    # 初期セットアップスクリプト（フル）
+├── setup-minimal.sh            # 最小限のセットアップスクリプト
 ├── config/                     # dotfiles設定ファイル
 │   ├── .zshrc                  # ZSHシェル設定
 │   ├── .alias                  # エイリアス定義
@@ -25,16 +25,16 @@ MacOSで環境構築するためのリポジトリ
 
 ## 実行内容
 
-`init.sh` に権限を付与
+`setup.sh` に権限を付与
 
 ```sh
-chmod +x init.sh
+chmod +x setup.sh
 ```
 
-`init.sh` を実行
+`setup.sh` を実行
 
 ```sh
-./init.sh
+./setup.sh
 ```
 
 1. 各ソフトをインストールする
@@ -82,11 +82,18 @@ chmod +x init.sh
 
 ## 使用方法
 
-### 自動セットアップ
+### フルセットアップ
 
 ```sh
-chmod +x init.sh
-./init.sh
+chmod +x setup.sh
+./setup.sh
+```
+
+### 最小限セットアップ
+
+```sh
+chmod +x setup-minimal.sh
+./setup-minimal.sh
 ```
 
 ### 個別セットアップ
