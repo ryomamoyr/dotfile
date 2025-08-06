@@ -68,7 +68,7 @@ fi
 
 # Backup existing files and create symbolic links
 backup_message=""
-timestamp=$(date +%Y%m%d%H%M%S)
+timestamp=$(date +%Y%m%d%H%M)
 
 if [ -f "$HOME/.alias" ]; then
     mv "$HOME/.alias" "$HOME/.alias.bk.$timestamp"
