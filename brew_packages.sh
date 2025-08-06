@@ -29,30 +29,12 @@ else
 fi
 
 # ----------------------------------------
-# GUI (Cask) アプリ
+# Brewfile を使用したパッケージインストール
 # ----------------------------------------
-cask_apps=(
-    slack
-    notion
-    microsoft-teams
-    zoom
-    google-japanese-ime
-    visual-studio-code
-    cursor
-    iterm2                # 高速レンダリングと分割タブが便利な高機能ターミナル
-    docker                # コンテナ実行・管理 GUI 付きの公式 Docker Desktop
-    brave-browser         # 広告ブロック標準搭載のプライバシー重視 Chromium 派生ブラウザ
-    raycast               # ランチャー
-    rectangle             # Win 的なスナップ操作が可能になるウインドウ整列ユーティリティ
-    karabiner-elements    # キーボードリマップツール
-)
-
-
-for app in "${cask_apps[@]}"; do
-  if ! brew list --cask "$app" &> /dev/null; then
-    msg "Installing ${app}..."
-    brew install --cask "$app"
-  else
-    ok "${app} is already installed."
-  fi
-done
+if [[ -f "Brewfile" ]]; then
+    msg "Brewfile を使用してパッケージをインストールします..."
+    brew bundle --file=Brewfile
+    ok "Brewfile からのインストールが完了しました。"
+else
+    msg "Brewfile が見つかりません。スキップします。"
+fi
