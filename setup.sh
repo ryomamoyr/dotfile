@@ -95,20 +95,27 @@ if [ -d "$HOME/.config/nvim" ]; then
     backup_message+="Backup created for .config/nvim as .config/nvim.bk.$timestamp\n"
 fi
 
-ln -sf "$(pwd)/config/.alias" "$HOME/.alias"
-ln -sf "$(pwd)/config/.function" "$HOME/.function"
-ln -sf "$(pwd)/config/.zshrc" "$HOME/.zshrc"
-ln -sf "$(pwd)/config/.tmux.conf" "$HOME/.tmux.conf"
+if [ -f "$HOME/.claude/settings.json" ]; then
+    mv "$HOME/.claude/settings.json" "$HOME/.claude/settings.json.bk.$timestamp"
+    backup_message+="Backup created for .claude/settings.json as .claude/settings.json.bk.$timestamp\n"
+fi
+
+ln -sf "$(pwd)/shell/.alias" "$HOME/.alias"
+ln -sf "$(pwd)/shell/.function" "$HOME/.function"
+ln -sf "$(pwd)/shell/.zshrc" "$HOME/.zshrc"
+ln -sf "$(pwd)/shell/.tmux.conf" "$HOME/.tmux.conf"
 mkdir -p "$HOME/.config"
-ln -sf "$(pwd)/nvim" "$HOME/.config/nvim"
-ln -sf "$(pwd)/snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
+ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
+ln -sf "$(pwd)/.snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
+mkdir -p "$HOME/.claude"
+ln -sf "$(pwd)/.claude/settings.json" "$HOME/.claude/settings.json"
 
 # ----------------------------------------
 # Brewfile を使用したパッケージインストール
 # ----------------------------------------
-if [[ -f "scripts/Brewfile" ]]; then
+if [[ -f ".Brewfile" ]]; then
     echo -e "${YELLOW}Brewfile を使用してパッケージをインストールします...${NO_COLOR}"
-    brew bundle --file=scripts/Brewfile
+    brew bundle --file=.Brewfile
     echo -e "${GREEN}Brewfile からのインストールが完了しました。${NO_COLOR}"
 else
     echo -e "${YELLOW}Brewfile が見つかりません。スキップします。${NO_COLOR}"

@@ -39,7 +39,7 @@ alias te='osascript -e '\''tell application "Microsoft Teams" to activate'\'''
 # VSCode, Command + Shift + P -> Shell Command: Install 'code' command in PATH
 alias v="code ."
 # Cursor, Command + Shift + P -> Shell Command: Install 'cursor' command in PATH
-alias c="cursor ."
+alias c="code ."
 
 # github copilot for cli
 alias sug='gh copilot suggest'

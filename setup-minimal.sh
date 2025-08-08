@@ -12,9 +12,9 @@ if [ -d "$HOME/.config/nvim" ]; then
     mv "$HOME/.config/nvim" "$HOME/.config/nvim.bk"
 fi
 
-ln -sf "$(pwd)/config/.bashrc" "$HOME/.bashrc"
-ln -sf "$(pwd)/config/.tmux.conf" "$HOME/.tmux.conf"
+ln -sf "$(pwd)/shell/.bashrc" "$HOME/.bashrc"
+ln -sf "$(pwd)/shell/.tmux.conf" "$HOME/.tmux.conf"
 mkdir -p "$HOME/.config"
 ln -sf "$(pwd)/nvim" "$HOME/.config/nvim"
 
-echo "# This is a symbolic link to the .bashrc file in the current directory" >> "$(pwd)/config/.bashrc"
+echo "# This is a symbolic link to the .bashrc file in the current directory" >> "$(pwd)/shell/.bashrc"

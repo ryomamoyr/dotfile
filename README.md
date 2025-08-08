@@ -10,17 +10,17 @@ MacOSで環境構築するためのリポジトリ
 ├── CLAUDE.md                   # Claude Code用の設定
 ├── setup.sh                    # 初期セットアップスクリプト（フル）
 ├── setup-minimal.sh            # 最小限のセットアップスクリプト
-├── config/                     # dotfiles設定ファイル
+├── .Brewfile                   # brew bundle用パッケージ定義
+├── shell/                      # シェル関連設定ファイル
 │   ├── .zshrc                  # ZSHシェル設定
 │   ├── .alias                  # エイリアス定義
 │   ├── .function               # カスタム関数定義
 │   ├── .bashrc                 # Bash設定
 │   └── .tmux.conf              # tmux設定
-├── scripts/                    # 各種設定・管理ファイル
-│   └── Brewfile               # brew bundle用パッケージ定義
-├── nvim/                       # Neovim設定
-└── snippets/                   # コードスニペット
-    └── python.json
+├── .config/                    # アプリケーション設定
+│   └── nvim/                   # Neovim設定（LazyVimベース）
+└── .snippets/                  # コードスニペット
+    └── python.json             # Pythonスニペット（VSCode形式）
 ```
 
 ## 実行内容
@@ -48,19 +48,19 @@ chmod +x setup.sh
 
 2. 各dotfileにシンボリックリンクを作成する
 
-   * `config/.zshrc`のシンボリックリンクを `$HOME/.zshrc`に作成
+   * `shell/.zshrc`のシンボリックリンクを `$HOME/.zshrc`に作成
      * zshの基本的な設定を記述
-     * `config/.alias`と `config/.function`を読み込む
-   * `config/.alias`のシンボリックリンクを `$HOME/.alias`に作成
+     * `shell/.alias`と `shell/.function`を読み込む
+   * `shell/.alias`のシンボリックリンクを `$HOME/.alias`に作成
      * aliasはここにすべてここに記述
-   * `config/.function`のシンボリックリンクを `$HOME/.function`に作成
+   * `shell/.function`のシンボリックリンクを `$HOME/.function`に作成
      * 自作定義した関数はすべてここに記述
-   * `config/.tmux.conf`のシンボリックリンクを `$HOME/.tmux.conf`に作成
+   * `shell/.tmux.conf`のシンボリックリンクを `$HOME/.tmux.conf`に作成
      * tmuxの基本的な設定
    * シンボリックリンクを設定することで各dotfileがここで編集できる
 
 3. Homebrew で各 GUI ソフトをインストールする
-   `scripts/Brewfile` を使用して GUI アプリケーションを一括インストールします。
+   `.Brewfile` を使用して GUI アプリケーションを一括インストールします。
 
    **インストール対象**
 
@@ -89,7 +89,7 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-### 最小限セットアップ
+### 最小限セットアップ(Linuxなど)
 
 ```sh
 chmod +x setup-minimal.sh
@@ -101,5 +101,5 @@ chmod +x setup-minimal.sh
 Brewfileのみ実行する場合:
 
 ```sh
-brew bundle --file=scripts/Brewfile
+brew bundle --file=.Brewfile
 ```

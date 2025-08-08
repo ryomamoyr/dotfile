@@ -102,3 +102,8 @@ export DISABLE_PROMPT_CACHING=1
 if [ -f '/Users/dts-da002n/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/dts-da002n/google-cloud-sdk/path.zsh.inc'; fi
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/dts-da002n/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/dts-da002n/google-cloud-sdk/completion.zsh.inc'; fi
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/dts-da002n/.lmstudio/bin"
+# End of LM Studio CLI section
+
