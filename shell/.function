@@ -1,0 +1,198 @@
+
+# cd したら自動で lsする(ファイルが多いときは先頭5つと末尾5つだけ表示)
+chpwd() {
+    ls_abbrev
+}
+ls_abbrev() {
+    # -a : Do not ignore entries starting with ..
+    # -C : Force multi-column output.
+    # -F : Append indicator (one of */=>@|) to entries.
+    local cmd_ls='ls'
+    local -a opt_ls
+    opt_ls=('-aCF' '--color=always')
+    case "${OSTYPE}" in
+        freebsd*|darwin*)
+            if type gls > /dev/null 2>&1; then
+                cmd_ls='gls'
+            else
+                # -G : Enable colorized output.
+                opt_ls=('-aCFG')
+            fi
+            ;;
+    esac
+
+    local ls_result
+    ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
+
+    local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
+
+    if [ $ls_lines -gt 10 ]; then
+        echo "$ls_result" | head -n 5
+        echo '...'
+        echo "$ls_result" | tail -n 5
+        echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
+    else
+        echo "$ls_result"
+    fi
+}
+
+# tarxzによる圧縮, tarxz $dirnameで.tar.xzが作成される
+tarxz() {
+    dirname=${1%/}
+    tar -cvJf $dirname.tar.xz $dirname
+}
+
+# cd to selected directory
+fd() {
+  DIR=$(find * -maxdepth 0 -type d -print 2> /dev/null | fzf-tmux) \
+    && cd "$DIR"
+}
+
+# fda - cd to selected all directory and ls
+fda() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}
+# fdr - cd to selected parent directory and ls
+fdr() {
+  local declare dirs=()
+  get_parent_dirs() {
+    if [[ -d "${1}" ]]; then dirs+=("$1"); else return; fi
+    if [[ "${1}" == '/' ]]; then
+      for _dir in "${dirs[@]}"; do echo $_dir; done
+    else
+      get_parent_dirs $(dirname "$1")
+    fi
+  }
+  local DIR=$(get_parent_dirs $(readlink -f "${1:-$PWD}") | fzf-tmux --tac)
+  cd "$DIR"
+}
+# tmuxセッションをfzfで選択して終了させる
+tmuxkillf () {
+    local sessions
+    sessions="$(tmux ls | fzf --exit-0 --multi)" || return $?
+    local i
+    for i in "${(f@)sessions}"
+    do
+        [[ $i =~ '([^:]*):.*' ]] && {
+            echo "Killing $match[1]"
+            tmux kill-session -t "$match[1]"
+        }
+    done
+}
+
+# tmuxのセッションを選択して、既存のセッションにアタッチまたは新しいセッションを作成
+tm() {
+  [[ -n "$TMUX" ]] && change="switch-client" || change="attach-session"
+  if [ $1 ]; then
+    tmux $change -t "$1" 2>/dev/null || (tmux new-session -d -s $1 && tmux $change -t "$1"); return
+  fi
+  session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --exit-0) &&  tmux $change -t "$session" || echo "No sessions found."
+}
+# tmuxのpaneをfzfで選択して切り替える
+ftpane() {
+  local panes current_window current_pane target target_window target_pane
+  panes=$(tmux list-panes -s -F '#I:#P - #{pane_current_path} #{pane_current_command}')
+  current_pane=$(tmux display-message -p '#I:#P')
+  current_window=$(tmux display-message -p '#I')
+
+  target=$(echo "$panes" | grep -v "$current_pane" | fzf +m --reverse) || return
+
+  target_window=$(echo $target | awk 'BEGIN{FS=":|-"} {print$1}')
+  target_pane=$(echo $target | awk 'BEGIN{FS=":|-"} {print$2}' | cut -c 1)
+
+  if [[ $current_window -eq $target_window ]]; then
+    tmux select-pane -t ${target_window}.${target_pane}
+  else
+    tmux select-pane -t ${target_window}.${target_pane} &&
+    tmux select-window -t $target_window
+  fi
+}
+# ifzでimgcatのプレビューが見れる
+function ifz() {
+  local selected_file=$(find . -type f -not -path '*/\.*' | fzf --preview 'imgcat {}' --preview-window=right:60%)
+  if [[ -n "$selected_file" ]]; then
+    imgcat "$selected_file"
+  fi
+}
+
+# vfz - Open files in vim using fzf for selection
+vfz() {
+  local file
+  file=$(fzf) && vim "$file"
+}
+# fzfで検索してcursorで開く
+cfz() {
+  local file
+  file=$(fzf) && cursor "$file"
+}
+# Select a docker container to start and attach to
+function da() {
+  local cid
+  cid=$(docker ps -a | sed 1d | fzf -1 -q "$1" | awk '{print $1}')
+
+  [ -n "$cid" ] && docker start "$cid" && docker attach "$cid"
+}
+
+# Select a running docker container to stop
+function ds() {
+  local cid
+  cid=$(docker ps | sed 1d | fzf -q "$1" | awk '{print $1}')
+
+  [ -n "$cid" ] && docker stop "$cid"
+}
+
+
+# windows向けにzipする
+function zipw ()
+{
+  if [ -z "$1" ] || [ "$1" = "." ]; then
+    # カレントディレクトリをZIPファイルに圧縮
+    local zip_name="$(basename $(pwd)).zip"
+    7z a -tzip "$zip_name" "$(pwd)"/*
+  else
+    # 指定したディレクトリをZIPファイルに圧縮
+    local target="$1"
+    local zip_name="$(basename "$target").zip"
+    7z a -tzip "$zip_name" "$target"/*
+  fi
+}
+
+# google検索
+gg() {
+  search_term="$*"
+  search_url="https://www.google.com/search?q=${search_term}"
+  open -a "Brave Browser" "$search_url"
+}
+
+# plamo-translate --input ''
+pt() {
+  plamo-translate --input "$*"
+}
+
+
+# obsidian用のpull, push
+opull() {
+  gh auth switch --user ryomac1
+  git fetch origin
+  git reset --hard origin/main
+  gh auth switch --user ryomamoyr
+}
+
+
+opush() {
+  gh auth switch --user ryomac1
+  git add .
+  git commit -m "$(date '+%Y-%m-%d %H:%M:%S') commit"
+  git push -u origin main
+  gh auth switch --user ryomamoyr
+}
+
+# ec2_ssmのホスト名を変更する
+chost() {
+  # Host ec2 ブロック内で HostName の行を、スペースを付けて正しく置換します
+  sed -i '' "/^Host ec2$/,/^Host /s/^\s*HostName.*/HostName $1/" ~/.ssh/config
+  echo "✅ HostName を $1 に変更しました。"
+}

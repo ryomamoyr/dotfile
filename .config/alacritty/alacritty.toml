@@ -1,0 +1,44 @@
+[general]
+import = ["~/.config/alacritty/themes/themes/challenger_deep.toml"]
+
+[window]
+padding = { x = 5, y = 2 }
+opacity = 0.85
+blur = false
+startup_mode = "Maximized"
+decorations = "None"
+
+[cursor]
+style = "Beam"
+
+[scrolling]
+history = 100000
+multiplier = 3
+
+[font]
+size = 13.5
+offset = { x = 0, y = 4}
+
+# brew install --cask font-jetbrains-mono-nerd-font
+# brew install --cask font-hack-nerd-font
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+# family = "Hack Nerd Font"
+# style = "Regular"
+style = "Italic"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+[font.bold_italic]
+family = "JetBrainsMono Nerd Font"
+style = "Bold Italic"
+
+[terminal]
+shell = { program = "/bin/zsh", args = ["-l", "-c", "exec ~/.config/alacritty/start_tmux.sh"] }

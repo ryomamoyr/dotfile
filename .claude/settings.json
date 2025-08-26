@@ -1,0 +1,12 @@
+{
+  "maxFileSearchResults": 100,
+  "interactiveMode": true,
+  "tools": {
+    "bash": {
+      "enabled": true
+    },
+    "edit": {
+      "enabled": true
+    }
+  }
+}

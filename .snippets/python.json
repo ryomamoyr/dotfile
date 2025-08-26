@@ -1,0 +1,595 @@
+{
+  "input()": {
+    "prefix": "ip",
+    "body": "input()"
+  },
+  "int(input())": {
+    "prefix": "ii",
+    "body": "int(input())"
+  },
+  "for i in range(N)": {
+    "prefix": "for",
+    "body": "for i in range(N)"
+  },
+  "for _ in range(N)": {
+    "prefix": "for_",
+    "body": "for _ in range(M):"
+  },
+  "map(int,input().split())": {
+    "prefix": "ma",
+    "body": "map(int,input().split())"
+  },
+  "map(lambda x:int(x)-1,input().split())": {
+    "prefix": "mala",
+    "body": "map(lambda x:int(x)-1,input().split())"
+  },
+  "list(map(int,input().split()))": {
+    "prefix": "li",
+    "body": "list(map(int,input().split()))"
+  },
+  "list(map(lambda x: int(x) - 1, input().split()))": {
+    "prefix": "lila",
+    "body": "list(map(lambda x: int(x) - 1, input().split()))"
+  },
+  "floor": {
+    "prefix": "floor",
+    "body": "def floor(x, y):\n\treturn x // y"
+  },
+  "ceil": {
+    "prefix": "ceil",
+    "body": "def ceil(x, y):\n\treturn -(-x // y)"
+  },
+  "comb": {
+    "prefix": "comb",
+    "body": "from math import comb"
+  },
+  "perm": {
+    "prefix": "perm",
+    "body": "from math import perm"
+  },
+  "再帰上限": {
+    "prefix": "sys",
+    "body": "import sys\nsys.setrecursionlimit(10**8)"
+  },
+  "lambda x:int(x)-1": {
+    "prefix": "la",
+    "body": "lambda x:int(x)-1"
+  },
+  "di=defaultdict()": {
+    "prefix": "di=",
+    "body": "from collections import defaultdict\nd=defaultdict(int)"
+  },
+  "edge=": {
+    "prefix": "edge=",
+    "body": "from collections import defaultdict\nedge=defaultdict(list)\n"
+  },
+  "deque": {
+    "prefix": "deque",
+    "body": "from collections import deque\nq=deque()"
+  },
+  "c=Counter()": {
+    "prefix": "c=",
+    "body": "from collections import Counter\nc=Counter()"
+  },
+  "heapq": {
+    "prefix": "heap",
+    "body": "from heapq import heapify,heappop,heappush\n"
+  },
+  "UnionFind": {
+    "prefix": "uf",
+    "body": "from atcoder.dsu import DSU\nuf=DSU(N)"
+  },
+  "DSU": {
+    "prefix": "dsu",
+    "body": "from atcoder.dsu import DSU\ndsu=DSU(N)"
+  },
+  "lcm": {
+    "prefix": "lcm",
+    "body": "from math import lcm"
+  },
+  "gcd": {
+    "prefix": "gcd",
+    "body": "from math import gcd"
+  },
+  "INF": {
+    "prefix": "INF",
+    "body": "INF=10**18"
+  },
+  "998244353": {
+    "prefix": "mod",
+    "body": "MOD=998244353"
+  },
+  "1000000007": {
+    "prefix": "mod",
+    "body": "MOD=1000000007"
+  },
+  "invN": {
+    "prefix": "invN",
+    "body": "invN = pow(N, MOD - 2, MOD)"
+  },
+  "inside": {
+    "prefix": "inside",
+    "body": "def inside(y,x):\n\treturn 0<=y<H and 0<=x<W"
+  },
+  "yes": {
+    "prefix": "yes",
+    "body": "print('Yes')"
+  },
+  "no": {
+    "prefix": "no",
+    "body": "print('No')"
+  },
+  "yesno": {
+    "prefix": "yesno",
+    "body": "print('Yes' if ans else 'No')"
+  },
+  "abc": {
+    "prefix": "abc",
+    "body": "abc = 'abcdefghijklmnopqrstuvwxyz'"
+  },
+  "大文字アルファベット": {
+    "prefix": "ABC",
+    "body": "ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"
+  },
+  "bit_count": {
+    "prefix": "bit_c",
+    "body": "def bit_count(self):\n\treturn bin(self).count('1')"
+  },
+  "dp": {
+    "prefix": "dp",
+    "body": "dp = [[-1]* yoko for _ in range(tate)]\nfor i in range(tate):\n\tfor j in range(yoko):"
+  },
+  "3次元dp": {
+    "prefix": "3dp",
+    "body": "dp = [[[-1]* z for _ in range(y)] for _ in range(x)]\nfor i in range(x):\n\tfor j in range(y):\n\t\tfor k in range(z):\n\t\t\td[i][j][k] = 0"
+  },
+  "メモ化再帰": {
+    "prefix": "memo",
+    "body": "from functools import cache\n@cache"
+  },
+  "素数列挙": {
+    "prefix": "prime",
+    "body": "R = 10**6 + 1\nis_prime = [True] * R\nis_prime[0] = False\nis_prime[1] = False\nfor i in range(R):\n\tif is_prime[i]:\n\t\tfor j in range(i * i, R, i):\n\t\t\tis_prime[j] = False\nprimes = [i for i in range(R) if is_prime[i]]",
+    "description": "Generate a list of prime numbers using the Sieve of Eratosthenes"
+  },
+  "素因数分解": {
+    "prefix": "prime",
+    "body": [
+      "from collections import defaultdict",
+      "def prime_factorize(n: int) -> dict:",
+      "    \"\"\"prime factorization",
+      "    Args:",
+      "        n (int): integer",
+      "    Returns:",
+      "        dict: {prime: count}",
+      "    \"\"\"",
+      "    res: dict = defaultdict(int)",
+      "    while n % 2 == 0:",
+      "        res[2] += 1",
+      "        n //= 2",
+      "    f = 3",
+      "    while f * f <= n:",
+      "        if n % f == 0:",
+      "            res[f] += 1",
+      "            n //= f",
+      "        else:",
+      "            f += 2",
+      "    if n != 1:",
+      "        res[n] += 1",
+      "    return res"
+    ]
+  },
+  "lineplotの描画": {
+    "prefix": "line",
+    "body": [
+      "fig, ax = plt.subplots(figsize=(20, 5))",
+      "sns.lineplot(data=df, x=\"timestamp\", y=col, ax=ax, color=\"black\",linewidth=1)"
+    ]
+  },
+  "hist_plot": {
+    "prefix": "hist_plot",
+    "body": [
+      "fig, ax = plt.subplots(figsize=(20, 5))",
+      "sns.histplot(data=df, x=col, ax=ax, color=\"black\",linewidth=1, bins=100)"
+    ]
+  },
+  "count_plot": {
+    "prefix": "count_plot",
+    "body": [
+      "fig, ax = plt.subplots(figsize=(20, 5))",
+      "sns.countplot(data=df, x=col, ax=ax)"
+    ]
+  },
+  "scatter_plot": {
+    "prefix": "scatter_plot",
+    "body": [
+      "fig, ax = plt.subplots(figsize=(20, 5))",
+      "sns.scatterplot(data=df, x=col, y=col, ax=ax, s=1)"
+    ]
+  },
+  "ディレクトリの作成": {
+    "prefix": "mkdir",
+    "body": "Path(\"./dir\").mkdir(parents=True, exist_ok=True)"
+  },
+  "ファイルの作成": {
+    "prefix": "touch",
+    "body": "Path(\"./file\").touch()"
+  },
+  "read": {
+    "prefix": "read",
+    "body": "with open(\"./file\", \"r\") as f:\n\tlines = f.readlines()"
+  },
+  "initial": {
+    "prefix": "init",
+    "body": [
+      "\"\"\"",
+      "    auther:  ryoma yokoyama",
+      "    created: $CURRENT_YEAR.$CURRENT_MONTH.$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND",
+      "\"\"\"",
+      "import os",
+      "import sys",
+      "import time",
+      "from pathlib import Path",
+      "",
+      "import matplotlib.pyplot as plt",
+      "import numpy as np",
+      "import polars as pl",
+      "import seaborn as sns",
+      "from matplotlib import dates as mdates",
+      "from tqdm.auto import tqdm",
+      "",
+      "from src.utils.setup import initialize_setup",
+      "",
+      "initialize_setup()",
+      ""
+    ],
+    "description": "initial notebooks"
+  },
+  "glob": {
+    "prefix": "glob",
+    "body": "file_list = list(Path(cfg.dir.input).glob(\"$1*.csv\"))",
+    "description": "all csv files in cfg.dir.input"
+  },
+  "savefig": {
+    "prefix": "savefig",
+    "body": [
+      "fig.savefig(OUTPUT_DIR / $1.png\", dpi=300)"
+    ],
+  },
+  "1次元いもす法": {
+    "prefix": "imos",
+    "body": [
+      "class Imos:",
+      "    def __init__(self, n):",
+      "        self.n = n",
+      "        self.imos = [0] * (self.n + 1)",
+      "",
+      "    def __getitem__(self, i):",
+      "        return self.imos[i]",
+      "",
+      "    def add(self, l, r, val):",
+      "        \"\"\"add value in range [l, r)\"\"\"",
+      "        self.imos[r] -= val",
+      "        self.imos[l] += val",
+      "",
+      "    def build(self):",
+      "        for i in range(self.n):",
+      "            self.imos[i + 1] += self.imos[i]"
+    ],
+    "description": "1次元いもす法"
+  },
+  "2次元いもす法": {
+    "prefix": "imos",
+    "body": [
+      "class Imos2D:",
+      "    def __init__(self, h, w):",
+      "        self.h = h",
+      "        self.w = w",
+      "        self.imos = [[0] * (self.w + 1) for _ in range(self.h + 1)]",
+      "",
+      "    def __getitem__(self, i):",
+      "        return self.imos[i]",
+      "",
+      "    def add(self, hl, hr, wl, wr, val):",
+      "        \"\"\"add value in range [hl, hr) * [wl, wr)\"\"\"",
+      "        self.imos[hl][wl] += val",
+      "        self.imos[hr][wl] -= val",
+      "        self.imos[hl][wr] -= val",
+      "        self.imos[hr][wr] += val",
+      "",
+      "    def build(self):",
+      "        for i in range(self.h):",
+      "            for j in range(self.w):",
+      "                self.imos[i][j + 1] += self.imos[i][j]",
+      "        for i in range(self.h):",
+      "            for j in range(self.w):",
+      "                self.imos[i + 1][j] += self.imos[i][j]"
+    ],
+    "description": "2次元いもす法"
+  },
+  "ランレングス圧縮": {
+    "prefix": "rle",
+    "body": [
+      "from itertools import groupby",
+      "A = [(k, len(list(g))) for k, g in groupby(map(int, input().split()))]"
+    ],
+  },
+  "hydra in jupyternotebook": {
+    "prefix": "hydra",
+    "body": [
+      "from hydra import compose, initialize",
+      "",
+      "with initialize(config_path=\"$1../config\", version_base=None):",
+      "    cfg = compose(config_name=\"config.yaml\")"
+    ],
+  },
+  "Signature": {
+    "prefix": "sign",
+    "body": [
+      "\"\"\"",
+      "    auther:  ryoma yokoyama",
+      "    created: $CURRENT_YEAR.$CURRENT_MONTH.$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND",
+      "\"\"\""
+    ],
+  },
+  "Update_timestamp": {
+    "prefix": "update",
+    "body": [
+      "updated : $CURRENT_YEAR.$CURRENT_MONTH.$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND",
+      "\"\"\"",
+    ],
+  },
+  "座標圧縮": {
+    "prefix": "zaa",
+    "body": [
+      "def compress(A):",
+      "    \"\"\" 座標圧縮",
+      "    Args:",
+      "        A (list): 座標圧縮したい配列",
+      "    Returns:",
+      "        dict: 圧縮後の値と元の値の対応",
+      "    \"\"\"",
+      "    A2 = sorted(set(A))",
+      "    D = {a: i for i, a in enumerate(A2)}",
+      "    return D"
+    ],
+    "description": "座標圧縮"
+  },
+  "2次元座標圧縮": {
+    "prefix": "zaa2D",
+    "body": [
+      "def compress_2D(A: list, B: list):",
+      "    \"\"\"座標圧縮",
+      "    Args:",
+      "        A (list): 座標圧縮したいlist",
+      "        B (list): 座標圧縮したいlist",
+      "    Returns:",
+      "        X (dict): 圧縮後のx座標を返すdict",
+      "        Y (dict): 圧縮後のy座標を返すdict",
+      "    \"\"\"",
+      "    A2 = sorted(set(A))",
+      "    B2 = sorted(set(B))",
+      "    X = {x: i for i, x in enumerate(A2)}",
+      "    Y = {y: i for i, y in enumerate(B2)}",
+      "    return X, Y"
+    ],
+    "description": "2次元座標圧縮"
+  },
+  "文字列のソート": {
+    "prefix": "str_sorted",
+    "body": [
+      "def str_sorted(s):",
+      "    return \"\".join(sorted(s))"
+    ],
+    "description": "文字列のソート"
+  },
+  "ローリングハッシュ": {
+    "prefix": "rh",
+    "body": [
+      "class RollingHash:",
+      "    def __init__(self, string):",
+      "        self.n = len(string)",
+      "        self.BASE = 1234",
+      "        self.MASK30 = (1 << 30) - 1",
+      "        self.MASK31 = (1 << 31) - 1",
+      "        self.MASK61 = (1 << 61) - 1",
+      "        self.MOD = self.MASK61",
+      "        self.hash = [0] * (self.n + 1)",
+      "        self.pow = [1] * (self.n + 1)",
+      "",
+      "        for i, char in enumerate(string):",
+      "            self.hash[i + 1] = self._calc_mod(self._mul(self.hash[i], self.BASE) + ord(char))",
+      "            self.pow[i + 1] = self._calc_mod(self._mul(self.pow[i], self.BASE))",
+      "",
+      "    def get_hash(self, l, r):",
+      "        \"\"\"return hash of s[l:r]\"\"\"",
+      "        res = self._calc_mod(self.hash[r] - self._mul(self.hash[l], self.pow[r - l]))",
+      "        return res",
+      "",
+      "    def get_lcp(self, l1, r1, l2, r2):",
+      "        \"\"\"return length of longest common prefix of s[l1:r1] and s[l2:r2]\"\"\"",
+      "        ng = min(r1 - l1, r2 - l2) + 1",
+      "        ok = 0",
+      "        while abs(ok - ng) > 1:",
+      "            mid = (ok + ng) // 2",
+      "            if self.get_hash(l1, l1 + mid) == self.get_hash(l2, l2 + mid):",
+      "                ok = mid",
+      "            else:",
+      "                ng = mid",
+      "        return ok",
+      "",
+      "    def _calc_mod(self, x):",
+      "        xu = x >> 61",
+      "        xd = x & self.MASK61",
+      "        x = xu + xd",
+      "        if x >= self.MOD:",
+      "            x -= self.MOD",
+      "        return x",
+      "",
+      "    def _mul(self, a, b):",
+      "        au = a >> 31",
+      "        ad = a & self.MASK31",
+      "        bu = b >> 31",
+      "        bd = b & self.MASK31",
+      "        mid = ad * bu + au * bd",
+      "        midu = mid >> 30",
+      "        midd = mid & self.MASK30",
+      "        return self._calc_mod(au * bu * 2 + midu + (midd << 31) + ad * bd)",
+      "",
+      "    def _merge(self, h1, h2, length2):",
+      "        return self._calc_mod(self._mul(h1, self.pow[length2]) + h2)"
+    ],
+    "description": "ローリングハッシュ"
+  },
+  "グラフテンプレ": {
+    "prefix": "G=",
+    "body": [
+      "G = [[] for _ in range(N)]",
+      "for _ in range(N - 1):",
+      "    a, b = map(lambda x: int(x) - 1, input().split())",
+      "    G[a].append(b)",
+      "    G[b].append(a)"
+    ],
+    "description": "グラフテンプレ"
+  },
+  "warshall_floyd": {
+    "prefix": "warshall",
+    "body": [
+      "INF = float(\"inf\")",
+      "d = [[0 if i == j else INF for j in range(N)] for i in range(N)]",
+      "",
+      "for _ in range(M):",
+      "    u, v, w = map(int, input().split())",
+      "    d[u - 1][v - 1] = w",
+      "",
+      "for k in range(N):",
+      "    for i in range(N):",
+      "        for j in range(N):",
+      "            d[i][j] = min(d[i][j], d[i][k] + d[k][j])",
+      ""
+    ],
+  },
+  "Dijkstra": {
+    "prefix": "dijkstra",
+    "body": [
+      "from heapq import heappop, heappush",
+      "INF = 10**18",
+      "def dijkstra(s: int) -> list:",
+      "    cost = [INF] * N",
+      "    cost[s] = 0",
+      "    hq = [(0, s)]",
+      "    while hq:",
+      "        c, x = heappop(hq)",
+      "        if c > cost[x]:",
+      "            continue",
+      "        for nx, nc in G[x]:",
+      "            total = c + nc",
+      "            if total >= cost[nx]:",
+      "                continue",
+      "            cost[nx] = total",
+      "            heappush(hq, (total, nx))",
+      "    return cost",
+      ""
+    ],
+  },
+  "8方向": {
+    "prefix": "dir",
+    "body": [
+      "D = [(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (-1, 1), (-1, -1), (1, -1)]"
+    ],
+  },
+  "4方向": {
+    "prefix": "dir",
+    "body": [
+      "D = [(1, 0), (0, 1), (-1, 0), (0, -1)]"
+    ],
+  },
+  "二次元配列を90度回転": {
+    "prefix": "rotate",
+    "body": [
+      "def rotate90(array):",
+      "    \"\"\"二次元配列を時計回りに90度回転させる\"\"\"",
+      "    return list(zip(*array[::-1]))",
+      "",
+      "",
+      "def rotate270(array):",
+      "    \"\"\"二次元配列を反時計回りに90度回転させる\"\"\"",
+      "    return list(zip(*[r[::-1] for r in array]))"
+    ],
+  },
+  "累積和": {
+    "prefix": "ruiseki",
+    "body": [
+      "from itertools import accumulate",
+      "S = list(accumulate(A, initial=0)",
+    ],
+  },
+  "エラー出力": {
+    "prefix": "err",
+    "body": [
+      "import sys",
+      "print(\"\", file=sys.stderr)"
+    ],
+  },
+  "FFT": {
+    "prefix": "fft",
+    "body": [
+      "from cmath import exp, pi",
+      "",
+      "",
+      "def _fft(a, h):",
+      "    roots = [exp(2.0j * pi / 2**i) for i in range(h + 1)]",
+      "    for i in range(h):",
+      "        m = 1 << (h - i - 1)",
+      "        for j in range(1 << i):",
+      "            w = 1",
+      "            j *= 2 * m",
+      "            for k in range(m):",
+      "                a[j + k], a[j + k + m] = a[j + k] + a[j + k + m], (a[j + k] - a[j + k + m]) * w",
+      "                w *= roots[h - i]",
+      "",
+      "",
+      "def _ifft(a, h):",
+      "    iroots = [exp(-2.0j * pi / 2**i) for i in range(h + 1)]",
+      "    for i in range(h):",
+      "        m = 1 << i",
+      "        for j in range(1 << (h - i - 1)):",
+      "            w = 1",
+      "            j *= 2 * m",
+      "            for k in range(m):",
+      "                a[j + k], a[j + k + m] = a[j + k] + a[j + k + m] * w, a[j + k] - a[j + k + m] * w",
+      "                w *= iroots[i + 1]",
+      "    n = 1 << h",
+      "    for i in range(n):",
+      "        a[i] /= n",
+      "",
+      "",
+      "def fft_convolve(a, b):",
+      "    len_ab = len(a) + len(b)",
+      "    n = 1 << (len(a) + len(b) - 1).bit_length()",
+      "    h = n.bit_length() - 1",
+      "    a = list(a) + [0] * (n - len(a))",
+      "    b = list(b) + [0] * (n - len(b))",
+      "",
+      "    _fft(a, h), _fft(b, h)",
+      "    a = [va * vb for va, vb in zip(a, b)]",
+      "    _ifft(a, h)",
+      "    return [int(abs(a[i]) + 0.5) for i in range(len_ab - 1)]"
+    ],
+  },
+  "コメント": {
+    "prefix": "comment",
+    "body": [
+      "\"\"\"",
+      "$1",
+      "\"\"\""
+    ]
+  },
+  "polars.read_csv": {
+    "prefix": "plr",
+    "body": [
+      "df = pl.read_csv($1,try_parse_dates=True)"
+    ],
+    "description": "polars.read_csv"
+  }
+}
