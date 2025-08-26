@@ -29,7 +29,6 @@ BL=$1; BR=$2
 
 tmux -L five resize-pane -t $TL -x $w
 tmux -L five resize-pane -t $TM -x $w
-
 tmux -L five send-keys -t $TL 'cd ~/00_project/obsidian' C-m C-l
 tmux -L five send-keys -t $TM 'cd ~/00_project/dotfiles' C-m C-l
 tmux -L five send-keys -t $TR 'htop' C-m

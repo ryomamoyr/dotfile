@@ -76,6 +76,7 @@ ln -sf "$(pwd)/.config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacri
 ln -sf "$(pwd)/.config/alacritty/start_tmux.sh" "$HOME/.config/alacritty/start_tmux.sh"
 ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
 ln -sf "$(pwd)/.snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
+chmod +x "$HOME/.config/alacritty/start_tmux.sh"
 
 echo -e "${GREEN}Installation is complete and symbolic links have been created.${NO_COLOR}"
 echo -e "${YELLOW}Please restart your terminal to apply the changes.${NO_COLOR}"
