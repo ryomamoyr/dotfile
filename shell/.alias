@@ -72,6 +72,4 @@ alias gl='git log'
 alias copy='pbcopy <'
 alias imgcat='imgcat --width $(tput cols)'
 alias tt='pbpaste|plamo-translate'
-
 alias "da_yokoyama.pem"="~/.ssh/da_yokoyama.pem"
-alias $=''

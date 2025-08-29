@@ -1,112 +1,100 @@
 # dotfiles
 
-macOS環境のセットアップを自動化するdotfilesコレクションです。
+MacOSで環境構築するためのリポジトリ
 
-## セットアップ
-
-### フルセットアップ
-
-```bash
-chmod +x setup.sh
-./setup.sh
-```
-
-### 最小限セットアップ
-
-```bash
-chmod +x setup-minimal.sh
-./setup-minimal.sh
-```
-
-## セットアップ内容
-
-### インストールされるツール
-
-`setup.sh`は以下のツールを自動的にインストールします：
-
-1. **Xcode Command Line Tools** - macOS開発に必要な基本ツール
-2. **Homebrew** - macOS用パッケージマネージャー
-3. **Nodebrew** - Node.js バージョン管理ツール
-4. **uv** - Python パッケージマネージャー
-5. **Zinit** - Zsh プラグインマネージャー
-6. **git** - バージョン管理システム
-7. **zsh-git-prompt** - Gitリポジトリ情報を表示するZshプロンプト
-
-### 作成されるシンボリックリンク
-
-セットアップ時に以下のファイルがホームディレクトリにリンクされます：
-
-```
-shell/.alias       → ~/.alias
-shell/.function    → ~/.function
-shell/.zshrc       → ~/.zshrc
-shell/.bashrc      → ~/.bashrc
-shell/.tmux.conf   → ~/.tmux.conf
-.config/alacritty/alacritty.toml → ~/.config/alacritty/alacritty.toml
-.config/alacritty/start_tmux.sh  → ~/.config/alacritty/start_tmux.sh
-.config/nvim       → ~/.config/nvim
-.snippets          → ~/Library/Application Support/Cursor/User/snippets
-```
-
-## ディレクトリ構成
+## プロジェクト構成
 
 ```
 .
 ├── README.md                   # このファイル
 ├── CLAUDE.md                   # Claude Code用の設定
-├── setup.sh                    # フルセットアップスクリプト
+├── setup.sh                    # 初期セットアップスクリプト（フル）
 ├── setup-minimal.sh            # 最小限のセットアップスクリプト
-├── .Brewfile                   # Homebrew GUIアプリ定義
-├── shell/                      # シェル関連設定
-│   ├── .zshrc                  # Zsh設定（Zinit、補完、履歴など）
-│   ├── .alias                  # コマンドエイリアス
-│   ├── .function               # カスタム関数
+├── Brewfile                    # brew bundle用パッケージ定義
+├── shell/                      # シェル関連設定ファイル
+│   ├── .zshrc                  # ZSHシェル設定
+│   ├── .alias                  # エイリアス定義
+│   ├── .function               # カスタム関数定義
 │   ├── .bashrc                 # Bash設定
 │   └── .tmux.conf              # tmux設定
-├── .config/
-│   ├── alacritty/              # Alacrittyターミナル設定
-│   └── nvim/                   # Neovim設定（LazyVimベース）
-└── .snippets/                  # VSCode形式コードスニペット
+├── .config/                    # アプリケーション設定
+│   ├── alacritty/              # Alacritty設定
+│   ├── nvim/                   # Neovim設定（LazyVimベース）
+│   └── karabiner/              # Karabiner設定
+└── .snippets/                  # コードスニペット
+    ├── python.json             # Pythonスニペット（VSCode形式）
+    └── cpp.json                # C++スニペット
 ```
 
-## パッケージ（.Brewfile）
+## セットアップ手順
 
-`.Brewfile`で管理されるアプリケーション・ツール：
+### フルセットアップ
 
-### GUIアプリケーション（cask）
-
-| アプリ | 用途 |
-|--------|------|
-| cursor | AI統合版VSCode |
-| alacritty | 高速GPUアクセラレーション対応ターミナル |
-| tmux | ターミナルマルチプレクサー |
-| docker | Docker Desktop |
-| brave-browser | プライバシー重視ブラウザ |
-| google-japanese-ime | 日本語入力 |
-| raycast | キーボードランチャー |
-| rectangle | ウィンドウ管理 |
-| karabiner-elements | キーリマップ |
-| slack | チームコミュニケーション |
-| notion | ドキュメント管理 |
-| microsoft-teams | ビデオ会議 |
-| zoom | ビデオ会議 |
-
-### CLIツール（brew）
-
-| ツール | 用途 |
-|--------|------|
-| git | バージョン管理システム |
-| stow | シンボリックリンク管理 |
-| neovim | モダンVim |
-| ripgrep | 高速grep代替 |
-| eza | lsコマンド代替 |
-
-個別インストールの場合：
-
-```bash
-brew bundle --file=.Brewfile
+```sh
+./setup.sh
 ```
 
-## 使用後
+### 最小限セットアップ
 
-セットアップ完了後はターミナルを再起動して設定を反映してください。
+```sh
+./setup-minimal.sh
+```
+
+## setup.shの実行内容
+
+### 1. 各ソフトウェアをインストール
+
+- **Xcode Command Line Tools**: 開発ツールの基盤
+- **Homebrew**: macOSパッケージマネージャー
+- **Nodebrew**: Node.jsバージョン管理
+- **uv**: 高速Python パッケージマネージャー
+- **Zinit**: zshプラグインマネージャー
+- **Git**: バージョン管理システム
+- **zsh-git-prompt**: Gitステータス表示
+
+### 2. 設定ファイルのシンボリックリンク作成
+
+| 元ファイル | リンク先 | 説明 |
+|------------|----------|------|
+| `shell/.zshrc` | `~/.zshrc` | zsh基本設定、.aliasと.functionを読み込み |
+| `shell/.alias` | `~/.alias` | コマンドエイリアス定義 |
+| `shell/.function` | `~/.function` | カスタム関数定義 |
+| `shell/.bashrc` | `~/.bashrc` | Bash設定 |
+| `shell/.tmux.conf` | `~/.tmux.conf` | tmux設定 |
+| `.config/alacritty/alacritty.toml` | `~/.config/alacritty/alacritty.toml` | Alacritty設定 |
+| `.config/alacritty/start_tmux.sh` | `~/.config/alacritty/start_tmux.sh` | tmux起動スクリプト |
+| `.config/nvim/` | `~/.config/nvim/` | Neovim設定 |
+| `.config/karabiner/karabiner.json` | `~/.config/karabiner/karabiner.json` | キーリマップ設定 |
+| `.snippets/` | `~/Library/Application Support/Cursor/User/snippets/` | Cursorスニペット |
+
+### 3. Homebrewパッケージのインストール
+
+`Brewfile`を使用して必要なCLIツールとGUIアプリケーションを一括インストール:
+
+```sh
+brew bundle
+```
+
+## 主要な機能
+
+### シェル設定
+- **Zinit**: 高速zshプラグインマネージャー
+- **カスタムエイリアス**: よく使うコマンドの短縮形
+- **カスタム関数**: `plamo_translate`など便利な関数群
+- **Git統合**: プロンプトにGitステータス表示
+
+### ターミナル環境
+- **Alacritty**: GPU加速ターミナルエミュレータ
+- **tmux**: ターミナルマルチプレクサ、セッション管理
+- **カスタムキーバインド**: 効率的な操作のための設定
+
+### 開発環境
+- **Neovim**: LazyVimベースのモダンなエディタ設定
+- **Cursor**: AI統合開発環境のスニペット連携
+- **Karabiner**: キーリマップによる効率化
+
+## 注意事項
+
+- 既存の設定ファイルは自動的にバックアップされます
+- セットアップ後は新しいターミナルセッションで設定が有効になります
+- 個別にファイルを編集したい場合は、このリポジトリ内のファイルを直接編集してください（シンボリックリンクにより反映されます）

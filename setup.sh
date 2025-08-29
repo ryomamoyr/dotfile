@@ -50,7 +50,7 @@ else
     echo -e "${GREEN}Zinit is already installed.${NO_COLOR}"
 fi
 
-# 必要なHomebrewパッケージをインストール
+# Homebrewをインストール
 if ! brew list git &> /dev/null; then
     echo -e "${YELLOW}Installing git...${NO_COLOR}"
     brew install git
@@ -65,17 +65,20 @@ else
     echo -e "${GREEN}zsh-git-prompt is already installed.${NO_COLOR}"
 fi
 
-
+mkdir -p "$HOME/.config/alacritty"
+mkdir -p "$HOME/.config/karabiner"
 # シンボリックリンクを作成
 ln -sf "$(pwd)/shell/.alias" "$HOME/.alias"
 ln -sf "$(pwd)/shell/.function" "$HOME/.function"
 ln -sf "$(pwd)/shell/.zshrc" "$HOME/.zshrc"
 ln -sf "$(pwd)/shell/.bashrc" "$HOME/.bashrc"
 ln -sf "$(pwd)/shell/.tmux.conf" "$HOME/.tmux.conf"
+ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
 ln -sf "$(pwd)/.config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
 ln -sf "$(pwd)/.config/alacritty/start_tmux.sh" "$HOME/.config/alacritty/start_tmux.sh"
-ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
 ln -sf "$(pwd)/.snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
+ln -sf "$(pwd)/Brewfile" "$HOME/Brewfile"
+
 chmod +x "$HOME/.config/alacritty/start_tmux.sh"
 
 echo -e "${GREEN}Installation is complete and symbolic links have been created.${NO_COLOR}"

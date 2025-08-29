@@ -1,10 +1,14 @@
+# mkdir -p ~/.config/alacritty/themes
+# git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
+
+
 [general]
-#import = ["~/.config/alacritty/themes/themes/challenger_deep.toml"]
-import = ["~/.config/alacritty/themes/themes/google.toml"]
+# cyber_punk_neon, challenger_deep,tomorrow_night_bright, iterm
+import = ["~/.config/alacritty/themes/themes/tomorrow_night_bright.toml"]
 
 [window]
 padding = { x = 5, y = 2 }
-opacity = 0.8
+opacity = 0.85
 blur = false
 startup_mode = "Maximized"
 decorations = "None"
@@ -21,11 +25,10 @@ size = 13.5
 offset = { x = 0, y = 4}
 
 # brew install --cask font-jetbrains-mono-nerd-font
-# brew install --cask font-hack-nerd-font
 
 [font.normal]
-family = "JetBrainsMono Nerd Font"
-#family = "Hack Nerd Font"
+#family = "JetBrainsMono Nerd Font"
+family  = "0xProto"
 # style = "Regular"
 style = "Italic"
 
