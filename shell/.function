@@ -190,6 +190,17 @@ opush() {
   gh auth switch --user ryomamoyr
 }
 
+# ryomaoyrにswitch
+rr() {
+  gh auth switch --user ryomamoyr
+}
+
+# ryomac1にswitch
+rc() {
+  gh auth switch --user ryomac1
+}
+
+
 # ec2_ssmのホスト名を変更する
 chost() {
   # Host ec2 ブロック内で HostName の行を、スペースを付けて正しく置換します

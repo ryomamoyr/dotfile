@@ -85,16 +85,11 @@ zinit light zdharma-continuum/fast-syntax-highlighting
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"' # FZFのデフォルトコマンド
 export FZF_DEFAULT_OPTS="--preview '[[ -d {} ]] && (tree -C {} | head -200) || (bat --style=numbers --color=always {})'"
 
-
+# AWS設定
 export AWS_PROFILE=ssm-access
 export AWS_REGION=ap-northeast-1
-export CLAUDE_CODE_USE_BEDROCK=1
 
-# 推論プロファイル ARN（Sonnet 3.7）
-# export ANTHROPIC_MODEL="arn:aws:bedrock:ap-northeast-1:590184100863:inference-profile/apac.anthropic.claude-3-7-sonnet-20250219-v1:0"
-export ANTHROPIC_MODEL="arn:aws:bedrock:ap-northeast-1:590184100863:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0"
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/dts-da002n/.lmstudio/bin"
 # End of LM Studio CLI section
-

@@ -73,3 +73,10 @@ alias copy='pbcopy <'
 alias imgcat='imgcat --width $(tput cols)'
 alias tt='pbpaste|plamo-translate'
 alias "da_yokoyama.pem"="~/.ssh/da_yokoyama.pem"
+
+
+
+# 起動しているインスタンス一覧の取得
+alias ec2_running='aws ec2 describe-instances --output=table --query "Reservations[].Instances[?State.Name=='"'"'running'"'"'][].{InstanceId: InstanceId, PrivateIp: join('"'"', '"'"', NetworkInterfaces[].PrivateIpAddress), GlobalIP: join('"'"', '"'"', NetworkInterfaces[].Association.PublicIp), Platform:Platform, State: State.Name, SecurityGroupId: join('"'"', '"'"', SecurityGroups[].GroupId) ,Name: Tags[?Key=='"'"'Name'"'"'].Value|[0]}"'
+# 全インスタンス一覧の取得
+alias ec2_all='aws ec2 describe-instances --output=table --query "Reservations[].Instances[].{InstanceId: InstanceId, PrivateIp: join('"'"', '"'"', NetworkInterfaces[].PrivateIpAddress), GlobalIP: join('"'"', '"'"', NetworkInterfaces[].Association.PublicIp), Platform:Platform, State: State.Name, SecurityGroupId: join('"'"', '"'"', SecurityGroups[].GroupId) ,Name: Tags[?Key=='"'"'Name'"'"'].Value|[0]}"'
