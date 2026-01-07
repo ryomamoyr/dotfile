@@ -7,7 +7,6 @@ MacOSで環境構築するためのリポジトリ
 ```
 .
 ├── README.md                   # このファイル
-├── CLAUDE.md                   # Claude Code用の設定
 ├── setup.sh                    # 初期セットアップスクリプト（フル）
 ├── setup-minimal.sh            # 最小限のセットアップスクリプト
 ├── Brewfile                    # brew bundle用パッケージ定義
@@ -21,9 +20,15 @@ MacOSで環境構築するためのリポジトリ
 │   ├── alacritty/              # Alacritty設定
 │   ├── nvim/                   # Neovim設定（LazyVimベース）
 │   └── karabiner/              # Karabiner設定
-└── .snippets/                  # コードスニペット
-    ├── python.json             # Pythonスニペット（VSCode形式）
-    └── cpp.json                # C++スニペット
+├── .snippets/                  # コードスニペット（Cursor用）
+│   ├── python.json             # Pythonスニペット
+│   └── markdown.json           # Markdownスニペット
+├── .claude/                    # Claude Code グローバル設定
+│   ├── CLAUDE.md               # 個人共通ルール
+│   ├── settings.json           # Claude Code設定
+│   └── rules/                  # 詳細ルール（uv, Python, Polars等）
+└── .codex/                     # OpenAI Codex グローバル設定
+    └── AGENTS.md               # 個人共通ルール
 ```
 
 ## セットアップ手順
@@ -66,6 +71,11 @@ MacOSで環境構築するためのリポジトリ
 | `.config/nvim/` | `~/.config/nvim/` | Neovim設定 |
 | `.config/karabiner/karabiner.json` | `~/.config/karabiner/karabiner.json` | キーリマップ設定 |
 | `.snippets/` | `~/Library/Application Support/Cursor/User/snippets/` | Cursorスニペット |
+| `Brewfile` | `~/Brewfile` | brew bundle用パッケージ定義 |
+| `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | Claude Code共通ルール |
+| `.claude/settings.json` | `~/.claude/settings.json` | Claude Code設定 |
+| `.claude/rules/*.md` | `~/.claude/rules/` | Claude Code詳細ルール |
+| `.codex/AGENTS.md` | `~/.codex/AGENTS.md` | Codex共通ルール |
 
 ### 3. Homebrewパッケージのインストール
 

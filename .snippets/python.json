@@ -586,10 +586,42 @@
     ]
   },
   "polars.read_csv": {
-    "prefix": "plr",
+    "prefix": "plread",
     "body": [
       "df = pl.read_csv($1,try_parse_dates=True)"
     ],
     "description": "polars.read_csv"
+  },
+  "PolarsFilterEQ": {
+    "prefix": "fil",
+    "body": [
+      ".filter(pl.col(\"$1\")==\"\")"
+    ],
+    "description": "PolarsFilterEQ"
+  },
+  "PolarsFilterGE": {
+    "prefix": "filege",
+    "body": [
+      ".filter(pl.col(\"$1\")>=\"\")"
+    ],
+    "description": "PolarsFilterGE"
+  },
+  "PolarsFilterLE": {
+    "prefix": "filele",
+    "body": [
+      ".filter(pl.col(\"$1\")<=\"\")"
+    ],
+    "description": "PolarsFilterLE"
+  },
+  "Polarsconfig": {
+    "prefix": "plconfig",
+    "body": [
+      "with pl.Config() as cfg:",
+      "    cfg.set_tbl_rows(100)",
+      "    cfg.set_tbl_cols(100)",
+      "    display($1)",
+      ""
+    ],
+    "description": "Polarsconfig"
   }
 }

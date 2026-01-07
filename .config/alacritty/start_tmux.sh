@@ -40,7 +40,7 @@ tmux -L "$SOCKET_NAME" resize-pane -t "$TM" -x "$w"
 
 tmux -L "$SOCKET_NAME" send-keys -t "$TL" 'cd ~/00_project/obsidian' C-m C-l
 tmux -L "$SOCKET_NAME" send-keys -t "$TM" 'cd ~/00_project/dotfiles' C-m C-l
-tmux -L "$SOCKET_NAME" send-keys -t "$TR" 'cd ~/Documents' C-m
+tmux -L "$SOCKET_NAME" send-keys -t "$TR" 'cd ~/Documents' C-m C-l
 tmux -L "$SOCKET_NAME" send-keys -t "$BL" 'cd ~/00_project' C-m C-l
 tmux -L "$SOCKET_NAME" send-keys -t "$BR" 'cd ~/00_project' C-m C-l
 

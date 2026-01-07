@@ -67,6 +67,8 @@ fi
 
 mkdir -p "$HOME/.config/alacritty"
 mkdir -p "$HOME/.config/karabiner"
+mkdir -p "$HOME/.claude/rules"
+mkdir -p "$HOME/.codex"
 # シンボリックリンクを作成
 ln -sf "$(pwd)/shell/.alias" "$HOME/.alias"
 ln -sf "$(pwd)/shell/.function" "$HOME/.function"
@@ -76,8 +78,15 @@ ln -sf "$(pwd)/shell/.tmux.conf" "$HOME/.tmux.conf"
 ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
 ln -sf "$(pwd)/.config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
 ln -sf "$(pwd)/.config/alacritty/start_tmux.sh" "$HOME/.config/alacritty/start_tmux.sh"
+rm -rf "$HOME/Library/Application Support/Cursor/User/snippets"
 ln -sf "$(pwd)/.snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
 ln -sf "$(pwd)/Brewfile" "$HOME/Brewfile"
+ln -sf "$(pwd)/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+ln -sf "$(pwd)/.claude/settings.json" "$HOME/.claude/settings.json"
+for f in "$(pwd)/.claude/rules"/*.md; do
+    ln -sf "$f" "$HOME/.claude/rules/$(basename "$f")"
+done
+ln -sf "$(pwd)/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 
 chmod +x "$HOME/.config/alacritty/start_tmux.sh"
 

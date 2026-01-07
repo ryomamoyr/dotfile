@@ -93,3 +93,9 @@ export AWS_REGION=ap-northeast-1
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/dts-da002n/.lmstudio/bin"
 # End of LM Studio CLI section
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/dts-da002n/00_project/dotfiles/ls/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/dts-da002n/00_project/dotfiles/ls/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/dts-da002n/00_project/dotfiles/ls/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/dts-da002n/00_project/dotfiles/ls/google-cloud-sdk/completion.zsh.inc'; fi
