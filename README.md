@@ -76,7 +76,7 @@ MacOSで環境構築するためのリポジトリ
 | `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | Claude Code共通ルール |
 | `.claude/settings.json` | `~/.claude/settings.json` | Claude Code設定 |
 | `.claude/rules/*.md` | `~/.claude/rules/` | Claude Code詳細ルール |
-| `.claude/skills/*/` | `~/.claude/skills/` | Claude Codeカスタムスキル |
+| `.claude/skills/` | `~/.claude/skills` | Claude Codeカスタムスキル（ディレクトリ全体） |
 | `.codex/AGENTS.md` | `~/.codex/AGENTS.md` | Codex共通ルール |
 
 ### 3. Homebrewパッケージのインストール
