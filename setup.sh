@@ -68,6 +68,7 @@ fi
 mkdir -p "$HOME/.config/alacritty"
 mkdir -p "$HOME/.config/karabiner"
 mkdir -p "$HOME/.claude/rules"
+mkdir -p "$HOME/.claude/skills"
 mkdir -p "$HOME/.codex"
 # シンボリックリンクを作成
 ln -sf "$(pwd)/shell/.alias" "$HOME/.alias"
@@ -85,6 +86,15 @@ ln -sf "$(pwd)/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 ln -sf "$(pwd)/.claude/settings.json" "$HOME/.claude/settings.json"
 for f in "$(pwd)/.claude/rules"/*.md; do
     ln -sf "$f" "$HOME/.claude/rules/$(basename "$f")"
+done
+for d in "$(pwd)/.claude/skills"/*/; do
+    if [ -d "$d" ]; then
+        skill_name=$(basename "$d")
+        mkdir -p "$HOME/.claude/skills/$skill_name"
+        for f in "$d"*; do
+            [ -e "$f" ] && ln -sf "$f" "$HOME/.claude/skills/$skill_name/$(basename "$f")"
+        done
+    fi
 done
 ln -sf "$(pwd)/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 

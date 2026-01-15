@@ -26,7 +26,8 @@ MacOSで環境構築するためのリポジトリ
 ├── .claude/                    # Claude Code グローバル設定
 │   ├── CLAUDE.md               # 個人共通ルール
 │   ├── settings.json           # Claude Code設定
-│   └── rules/                  # 詳細ルール（uv, Python, Polars等）
+│   ├── rules/                  # 詳細ルール（uv, Python, Polars等）
+│   └── skills/                 # カスタムスキル定義
 └── .codex/                     # OpenAI Codex グローバル設定
     └── AGENTS.md               # 個人共通ルール
 ```
@@ -75,6 +76,7 @@ MacOSで環境構築するためのリポジトリ
 | `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | Claude Code共通ルール |
 | `.claude/settings.json` | `~/.claude/settings.json` | Claude Code設定 |
 | `.claude/rules/*.md` | `~/.claude/rules/` | Claude Code詳細ルール |
+| `.claude/skills/*/` | `~/.claude/skills/` | Claude Codeカスタムスキル |
 | `.codex/AGENTS.md` | `~/.codex/AGENTS.md` | Codex共通ルール |
 
 ### 3. Homebrewパッケージのインストール
