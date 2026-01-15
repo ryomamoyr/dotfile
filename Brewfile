@@ -10,10 +10,10 @@ brew "bat"       # catコマンドのモダンな代替
 brew "fd"        # findコマンドのモダンな代替
 brew "fzf"       # ファイル検索
 brew "zoxide"    # ディレクトリの移動
+brew "tmux"      # ターミナルマルチプレクサ
 
 cask "cursor"
 cask "alacritty"
-cask "tmux"
 cask "docker"
 cask "brave-browser"
 cask "raycast"
