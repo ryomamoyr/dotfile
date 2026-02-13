@@ -69,5 +69,8 @@ keymap("n", "<C-l>", "<C-w>l", { desc = "右のウィンドウへ移動" })
 keymap("n", "<S-l>", "<cmd>bnext<CR>", { desc = "次のバッファへ" })
 keymap("n", "<S-h>", "<cmd>bprevious<CR>", { desc = "前のバッファへ" })
 keymap("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "現在のバッファを閉じる" }) -- buffer delete
+-- ファイル実行 (Cmd+Return)
+keymap("n", "<F20>", "<cmd>lua RunCurrentFile()<CR>", { desc = "ファイルを実行 (Cmd+Return)" })
+
 -- その他
 keymap("n", "<leader>'", "<cmd>ToggleTerm<cr>", { desc = "ターミナルを開く/閉じる" })

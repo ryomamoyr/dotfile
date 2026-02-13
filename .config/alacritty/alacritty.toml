@@ -44,5 +44,10 @@ style = "Italic"
 family = "JetBrainsMono Nerd Font"
 style = "Bold Italic"
 
+[keyboard]
+bindings = [
+  { key = "Return", mods = "Command", chars = "\u001b[34~" },
+]
+
 [terminal]
 shell = { program = "/bin/zsh", args = ["-l", "-c", "exec ~/.config/alacritty/start_tmux.sh"] }
