@@ -1,30 +1,36 @@
 function RunCurrentFile()
-  -- 実行前にまずファイルを保存する
-  vim.cmd("w")
-
-  local filetype = vim.bo.filetype
-  local command
-
-  -- ファイルタイプに応じて実行コマンドを決定
-  if filetype == "python" then
-    command = "python " .. vim.fn.expand("%")
-  elseif filetype == "sh" then
-    command = "bash " .. vim.fn.expand("%")
-  elseif filetype == "javascript" then
-    command = "node " .. vim.fn.expand("%")
-  elseif filetype == "go" then
-    command = "go run " .. vim.fn.expand("%")
-  else
-    -- 対応するコマンドがない場合はメッセージを表示
-    vim.notify(
-      "このファイルタイプ用の実行コマンドがありません: " .. filetype,
-      vim.log.levels.WARN
-    )
+  local buftype = vim.bo.buftype
+  if buftype ~= "" then
+    vim.notify("実行可能なファイルではありません", vim.log.levels.WARN)
     return
   end
 
-  -- ターミナルを垂直分割（右側）で開き、コマンドを実行
-  vim.cmd("ToggleTerm cmd='" .. command .. "', direction=vertical")
+  -- 実行前にファイルを保存
+  if vim.bo.modified then
+    vim.cmd("silent write")
+  end
+
+  local filetype = vim.bo.filetype
+  local filepath = vim.fn.expand("%:p")
+  local command
+
+  if filetype == "python" then
+    command = "uv run " .. filepath
+  elseif filetype == "sh" then
+    command = "bash " .. filepath
+  elseif filetype == "javascript" then
+    command = "node " .. filepath
+  elseif filetype == "go" then
+    command = "go run " .. filepath
+  else
+    vim.notify("このファイルタイプ用の実行コマンドがありません: " .. filetype, vim.log.levels.WARN)
+    return
+  end
+
+  vim.cmd("TermExec cmd='" .. command .. "' direction=vertical go_back=0")
+  vim.defer_fn(function()
+    vim.cmd("startinsert")
+  end, 100)
 end
 
 -- これ以降に local keymap = vim.keymap.set ... の記述が続く
@@ -69,8 +75,6 @@ keymap("n", "<C-l>", "<C-w>l", { desc = "右のウィンドウへ移動" })
 keymap("n", "<S-l>", "<cmd>bnext<CR>", { desc = "次のバッファへ" })
 keymap("n", "<S-h>", "<cmd>bprevious<CR>", { desc = "前のバッファへ" })
 keymap("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "現在のバッファを閉じる" }) -- buffer delete
--- ファイル実行 (Cmd+Return)
-keymap("n", "<F20>", "<cmd>lua RunCurrentFile()<CR>", { desc = "ファイルを実行 (Cmd+Return)" })
 
 -- その他
 keymap("n", "<leader>'", "<cmd>ToggleTerm<cr>", { desc = "ターミナルを開く/閉じる" })

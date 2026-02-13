@@ -46,7 +46,7 @@ style = "Bold Italic"
 
 [keyboard]
 bindings = [
-  { key = "Return", mods = "Command", chars = "\u001b[34~" },
+  { key = "Return", mods = "Command", chars = "\u001b:lua RunCurrentFile()\u000d" },
 ]
 
 [terminal]
