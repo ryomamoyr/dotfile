@@ -21,7 +21,8 @@ macOS用の環境セットアップを自動化するdotfilesコレクション�
 ├── .claude/                    # Claude Code設定
 │   ├── CLAUDE.md, settings.json, rules/*.md
 └── .codex/                     # OpenAI Codex設定
-    └── AGENTS.md
+    ├── AGENTS.md
+    └── config.toml
 ```
 
 ## セットアップコマンド
@@ -52,6 +53,7 @@ setup.sh実行時に以下のリンクが作成されます：
 | `.claude/settings.json` | `~/.claude/settings.json` |
 | `.claude/rules/*.md` | `~/.claude/rules/` |
 | `.codex/AGENTS.md` | `~/.codex/AGENTS.md` |
+| `.codex/config.toml` | `~/.codex/config.toml` |
 | `Brewfile` | `~/Brewfile` |
 
 ## 注意事項

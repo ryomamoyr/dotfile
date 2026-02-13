@@ -89,6 +89,7 @@ done
 rm -rf "$HOME/.claude/skills"
 ln -sf "$(pwd)/.claude/skills" "$HOME/.claude/skills"
 ln -sf "$(pwd)/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
+ln -sf "$(pwd)/.codex/config.toml" "$HOME/.codex/config.toml"
 
 chmod +x "$HOME/.config/alacritty/start_tmux.sh"
 
