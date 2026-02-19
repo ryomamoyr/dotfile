@@ -110,11 +110,11 @@ ftpane() {
     tmux select-window -t $target_window
   fi
 }
-# ifzでimgcatのプレビューが見れる
+# ifzで画像をプレビューしながらfzfで選択・表示
 function ifz() {
-  local selected_file=$(find . -type f -not -path '*/\.*' | fzf --preview 'imgcat {}' --preview-window=right:60%)
+  local selected_file=$(find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.bmp' -o -iname '*.svg' \) -not -path '*/\.*' | fzf --preview 'chafa -f symbols -s ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} {}' --preview-window=right:60%)
   if [[ -n "$selected_file" ]]; then
-    imgcat "$selected_file"
+    timg -pk --grid=1 "$selected_file"
   fi
 }
 

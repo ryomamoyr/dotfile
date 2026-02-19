@@ -11,9 +11,13 @@ brew "fd"        # findコマンドのモダンな代替
 brew "fzf"       # ファイル検索
 brew "zoxide"    # ディレクトリの移動
 brew "tmux"      # ターミナルマルチプレクサ
+brew "timg"      # Kittyグラフィックスプロトコル対応画像表示
+brew "chafa"     # テキストベース画像表示（fzfプレビュー用）
 
 cask "cursor"
 cask "alacritty"
+cask "ghostty"
+cask "font-hackgen-nerd"
 cask "docker"
 cask "brave-browser"
 cask "raycast"

@@ -4,8 +4,10 @@ return {
   "akinsho/toggleterm.nvim",
   version = "*",
   opts = {
-    -- ここでターミナルの設定ができます
-    direction = "float", -- フローティングウィンドウで開く
-    open_mapping = [[<c-\>]], -- インサートモードでも開けるようにする設定
+    direction = "vertical",
+    size = function(term)
+      return math.floor(vim.o.columns * 0.3)
+    end,
+    open_mapping = [[<c-\>]],
   },
 }

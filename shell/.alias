@@ -70,7 +70,7 @@ alias gl='git log'
 
 # mac
 alias copy='pbcopy <'
-alias imgcat='imgcat --width $(tput cols)'
+alias timg='timg -pk --grid=1'
 alias tt='pbpaste|plamo-translate'
 alias "da_yokoyama.pem"="~/.ssh/da_yokoyama.pem"
 

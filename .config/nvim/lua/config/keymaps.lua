@@ -78,3 +78,27 @@ keymap("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "現在のバッファを
 
 -- その他
 keymap("n", "<leader>'", "<cmd>ToggleTerm<cr>", { desc = "ターミナルを開く/閉じる" })
+
+-- Cmd+j: ターミナルトグル / Cmd+b: neo-treeトグル（全モード対応）
+for _, mode in ipairs({ "n", "i", "v", "t" }) do
+  keymap(mode, "<D-j>", "<cmd>ToggleTerm<cr>", { desc = "ターミナルを開く/閉じる" })
+  keymap(mode, "<D-b>", "<cmd>Neotree toggle<cr>", { desc = "エクスプローラーを開く/閉じる" })
+end
+
+-- ターミナルモードからノーマルモードに戻る
+keymap("t", "<Esc>", [[<C-\><C-n>]], { desc = "ターミナルモードを抜ける" })
+keymap("t", "jj", [[<C-\><C-n>]], { desc = "ターミナルモードを抜ける" })
+
+-- ペインジャンプ
+keymap("n", "<leader>e", "<cmd>Neotree focus<cr>", { desc = "エクスプローラーにフォーカス" })
+keymap("n", "<leader>t", function()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    if vim.bo[buf].filetype == "toggleterm" then
+      vim.api.nvim_set_current_win(win)
+      vim.cmd("startinsert")
+      return
+    end
+  end
+  vim.cmd("ToggleTerm")
+end, { desc = "ターミナルにフォーカス" })

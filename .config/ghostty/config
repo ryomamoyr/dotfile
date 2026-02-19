@@ -1,0 +1,41 @@
+# Theme
+theme = Tomorrow Night Bright
+
+# Window
+background-opacity = 0.85
+maximize = true
+window-decoration = false
+window-padding-x = 5
+window-padding-y = 2
+
+# Cursor
+cursor-style = bar
+
+# Scrollback
+scrollback-limit = 10000000
+
+# Font
+font-family = 0xProto
+font-family-bold = 0xProto
+font-family-italic = 0xProto
+font-family-bold-italic = 0xProto
+font-size = 13.5
+font-style = Italic
+font-style-bold = Bold
+font-style-italic = Italic
+font-style-bold-italic = Bold Italic
+adjust-cell-height = 4
+font-thicken = true
+font-feature = -dlig
+
+# Japanese font (Hiragino Sans = macOS default, Alacritty fallback と同じ)
+font-codepoint-map = U+3000-U+30FF,U+4E00-U+9FFF,U+FF00-U+FFEF,U+3400-U+4DBF=Hiragino Kaku Gothic ProN
+
+# Keybind (Cmd+Return → Neovim RunCurrentFile)
+keybind = cmd+enter=text:\x1b:lua RunCurrentFile()\x0d
+# Cmd+j → ToggleTerm / Cmd+b → Neotree toggle
+keybind = cmd+j=text:\x1b:ToggleTerm\x0d
+keybind = cmd+b=text:\x1b:Neotree toggle\x0d
+
+# Shell (tmux auto-start)
+command = /bin/zsh -l -c "exec ~/.config/alacritty/start_tmux.sh"

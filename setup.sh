@@ -66,6 +66,7 @@ else
 fi
 
 mkdir -p "$HOME/.config/alacritty"
+mkdir -p "$HOME/.config/ghostty"
 mkdir -p "$HOME/.config/karabiner"
 mkdir -p "$HOME/.claude/rules"
 mkdir -p "$HOME/.codex"
@@ -78,6 +79,7 @@ ln -sf "$(pwd)/shell/.tmux.conf" "$HOME/.tmux.conf"
 ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
 ln -sf "$(pwd)/.config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
 ln -sf "$(pwd)/.config/alacritty/start_tmux.sh" "$HOME/.config/alacritty/start_tmux.sh"
+ln -sf "$(pwd)/.config/ghostty/config" "$HOME/.config/ghostty/config"
 rm -rf "$HOME/Library/Application Support/Cursor/User/snippets"
 ln -sf "$(pwd)/.snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
 ln -sf "$(pwd)/Brewfile" "$HOME/Brewfile"
