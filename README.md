@@ -1,5 +1,10 @@
 # dotfiles
 
+![macOS](https://img.shields.io/badge/macOS-000?logo=apple&logoColor=white)
+![Neovim](https://img.shields.io/badge/Neovim-57A143?logo=neovim&logoColor=white)
+![Ghostty](https://img.shields.io/badge/Ghostty-000?logo=ghostty&logoColor=white)
+![tmux](https://img.shields.io/badge/tmux-1BB91F?logo=tmux&logoColor=white)
+
 MacOSで環境構築するためのリポジトリ
 
 ## プロジェクト構成
