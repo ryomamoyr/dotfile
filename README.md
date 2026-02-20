@@ -17,7 +17,7 @@ MacOSで環境構築するためのリポジトリ
 │   ├── .bashrc                 # Bash設定
 │   └── .tmux.conf              # tmux設定
 ├── .config/                    # アプリケーション設定
-│   ├── alacritty/              # Alacritty設定
+│   ├── ghostty/                # Ghostty設定
 │   ├── nvim/                   # Neovim設定（LazyVimベース）
 │   └── karabiner/              # Karabiner設定
 ├── .snippets/                  # コードスニペット（Cursor用）
@@ -67,8 +67,8 @@ MacOSで環境構築するためのリポジトリ
 | `shell/.function` | `~/.function` | カスタム関数定義 |
 | `shell/.bashrc` | `~/.bashrc` | Bash設定 |
 | `shell/.tmux.conf` | `~/.tmux.conf` | tmux設定 |
-| `.config/alacritty/alacritty.toml` | `~/.config/alacritty/alacritty.toml` | Alacritty設定 |
-| `.config/alacritty/start_tmux.sh` | `~/.config/alacritty/start_tmux.sh` | tmux起動スクリプト |
+| `.config/ghostty/config` | `~/.config/ghostty/config` | Ghostty設定 |
+| `.config/ghostty/start_tmux.sh` | `~/.config/ghostty/start_tmux.sh` | tmux起動スクリプト |
 | `.config/nvim/` | `~/.config/nvim/` | Neovim設定 |
 | `.config/karabiner/karabiner.json` | `~/.config/karabiner/karabiner.json` | キーリマップ設定 |
 | `.snippets/` | `~/Library/Application Support/Cursor/User/snippets/` | Cursorスニペット |
@@ -96,7 +96,7 @@ brew bundle
 - **Git統合**: プロンプトにGitステータス表示
 
 ### ターミナル環境
-- **Alacritty**: GPU加速ターミナルエミュレータ
+- **Ghostty**: 高速ターミナルエミュレータ
 - **tmux**: ターミナルマルチプレクサ、セッション管理
 - **カスタムキーバインド**: 効率的な操作のための設定
 
