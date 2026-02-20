@@ -24,12 +24,12 @@ font-style = Italic
 font-style-bold = Bold
 font-style-italic = Italic
 font-style-bold-italic = Bold Italic
-adjust-cell-height = 4
+adjust-cell-height = 0
 font-thicken = true
 font-feature = -dlig
 
-# Japanese font (Hiragino Sans = macOS default, Alacritty fallback と同じ)
-font-codepoint-map = U+3000-U+30FF,U+4E00-U+9FFF,U+FF00-U+FFEF,U+3400-U+4DBF=Hiragino Kaku Gothic ProN
+# Japanese font (Zen Maru Gothic: 丸ゴシック・やわらかい)
+font-codepoint-map = U+3000-U+30FF,U+4E00-U+9FFF,U+FF00-U+FFEF,U+3400-U+4DBF=Zen Maru Gothic
 
 # Keybind (Cmd+Return → Neovim RunCurrentFile)
 keybind = cmd+enter=text:\x1b:lua RunCurrentFile()\x0d
