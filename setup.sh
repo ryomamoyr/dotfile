@@ -65,7 +65,6 @@ else
     echo -e "${GREEN}zsh-git-prompt is already installed.${NO_COLOR}"
 fi
 
-mkdir -p "$HOME/.config/alacritty"
 mkdir -p "$HOME/.config/ghostty"
 mkdir -p "$HOME/.config/karabiner"
 mkdir -p "$HOME/.claude/rules"
@@ -77,9 +76,8 @@ ln -sf "$(pwd)/shell/.zshrc" "$HOME/.zshrc"
 ln -sf "$(pwd)/shell/.bashrc" "$HOME/.bashrc"
 ln -sf "$(pwd)/shell/.tmux.conf" "$HOME/.tmux.conf"
 ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
-ln -sf "$(pwd)/.config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
-ln -sf "$(pwd)/.config/alacritty/start_tmux.sh" "$HOME/.config/alacritty/start_tmux.sh"
 ln -sf "$(pwd)/.config/ghostty/config" "$HOME/.config/ghostty/config"
+ln -sf "$(pwd)/.config/ghostty/start_tmux.sh" "$HOME/.config/ghostty/start_tmux.sh"
 rm -rf "$HOME/Library/Application Support/Cursor/User/snippets"
 ln -sf "$(pwd)/.snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
 ln -sf "$(pwd)/Brewfile" "$HOME/Brewfile"
@@ -93,7 +91,7 @@ ln -sf "$(pwd)/.claude/skills" "$HOME/.claude/skills"
 ln -sf "$(pwd)/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 ln -sf "$(pwd)/.codex/config.toml" "$HOME/.codex/config.toml"
 
-chmod +x "$HOME/.config/alacritty/start_tmux.sh"
+chmod +x "$HOME/.config/ghostty/start_tmux.sh"
 
 echo -e "${GREEN}Installation is complete and symbolic links have been created.${NO_COLOR}"
 echo -e "${YELLOW}Please restart your terminal to apply the changes.${NO_COLOR}"

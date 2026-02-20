@@ -38,4 +38,4 @@ keybind = cmd+j=text:\x1b:ToggleTerm\x0d
 keybind = cmd+b=text:\x1b:Neotree toggle\x0d
 
 # Shell (tmux auto-start)
-command = /bin/zsh -l -c "exec ~/.config/alacritty/start_tmux.sh"
+command = /bin/zsh -l -c "exec ~/.config/ghostty/start_tmux.sh"

@@ -15,7 +15,6 @@ brew "timg"      # Kittyグラフィックスプロトコル対応画像表示
 brew "chafa"     # テキストベース画像表示（fzfプレビュー用）
 
 cask "cursor"
-cask "alacritty"
 cask "ghostty"
 cask "font-hackgen-nerd"
 cask "font-zen-maru-gothic"
