@@ -102,3 +102,10 @@ keymap("n", "<leader>t", function()
   end
   vim.cmd("ToggleTerm")
 end, { desc = "ターミナルにフォーカス" })
+
+-- Molten (Jupyter)
+keymap("n", "<leader>ji", ":MoltenInit<cr>", { desc = "Molten: カーネル起動" })
+keymap("n", "<leader>jl", ":MoltenEvaluateLine<cr>", { desc = "Molten: 行を実行" })
+keymap("v", "<leader>jv", ":<C-u>MoltenEvaluateVisual<cr>gv", { desc = "Molten: 選択範囲を実行" })
+keymap("n", "<leader>jo", ":noautocmd MoltenEnterOutput<cr>", { desc = "Molten: 出力を表示" })
+keymap("n", "<leader>jd", ":MoltenDelete<cr>", { desc = "Molten: 出力を削除" })

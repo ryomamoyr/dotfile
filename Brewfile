@@ -13,6 +13,8 @@ brew "zoxide"    # ディレクトリの移動
 brew "tmux"      # ターミナルマルチプレクサ
 brew "timg"      # Kittyグラフィックスプロトコル対応画像表示
 brew "chafa"     # テキストベース画像表示（fzfプレビュー用）
+brew "imagemagick" # 画像処理（molten-nvim用）
+brew "luajit"      # Lua JITコンパイラ（image.nvim用）
 
 cask "cursor"
 cask "ghostty"
