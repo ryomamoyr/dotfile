@@ -207,3 +207,12 @@ chost() {
   sed -i '' "/^Host ec2$/,/^Host /s/^\s*HostName.*/HostName $1/" ~/.ssh/config
   echo "✅ HostName を $1 に変更しました。"
 }
+
+# Jupyter カーネル登録（uv プロジェクト用）
+# 使い方: jk [カーネル名]  ※省略時はディレクトリ名を使用
+jk() {
+  local name="${1:-$(basename $(pwd))}"
+  uv add --quiet ipykernel 2>/dev/null
+  uv run python -m ipykernel install --user --name "$name"
+  echo "カーネル '$name' を登録しました。Neovimで :MoltenInit → $name を選択"
+}
