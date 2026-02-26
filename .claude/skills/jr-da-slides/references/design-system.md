@@ -1,7 +1,25 @@
 # JR-DA スライド デザインシステム仕様書
 
 > `template.potx` から抽出した公式デザイントークンとコンポーネント定義。
-> スライド生成時は本仕様に厳密に従うこと。
+
+## 目次
+
+1. [テンプレートパス](#1-テンプレートパス)
+2. [スライドサイズ](#2-スライドサイズ)
+3. [カラートークン](#3-カラートークン)
+4. [タイポグラフィ](#4-タイポグラフィ)
+5. [レイアウト定義](#5-レイアウト定義)
+6. [グリッドシステム](#6-グリッドシステム)
+7. [コンポーネント関数](#7-コンポーネント関数)
+   - 7.1 共通ユーティリティ
+   - 7.2 テーブル
+   - 7.3 チャート（matplotlib → 画像挿入）
+   - 7.4 2x2 マトリクス
+   - 7.5 KPI カード
+   - 7.6 バレットポイント
+   - 7.7 フッター／出典
+8. [スライド構成パターン](#8-スライド構成パターン)
+9. [注意事項](#9-注意事項)
 
 ---
 
@@ -108,15 +126,16 @@ CHART_PALETTE_DIVERGING = [C.BLUE, C.BLUE_LIGHT, C.GRAY_LIGHT, C.RED_LIGHT, C.RE
 | スライドタイトル | 24 | Regular | `dk1` | Level1/Level2 の見出し |
 | セクションタイトル | 28 | Bold | `accent1` | start レイアウトの大見出し |
 | カバータイトル | 32 | Bold | `lt1` | 表紙メインタイトル |
-| セクション番号 | 大 | Bold | `lt1` | Section レイアウトの番号 |
+| セクション番号 | 大 | Bold | `lt1` | Section レイアウトの番号（0埋めしない） |
 | H2 キャプション | 20 | Bold | `dk1` | コンテンツ領域の中見出し |
-| 本文 | 16 | Regular | `dk1` | 説明テキスト |
-| 小キャプション | 14 | Regular | `dk2` | サブセクション名・出典 |
-| 注釈・フッター | 10–12 | Regular | `dk2` | 脚注・出典 |
-| テーブルヘッダー | 11–12 | Bold | `lt1` (白背景時は `dk1`) | |
-| テーブルセル | 10–11 | Regular | `dk1` | |
-| チャートラベル | 9–10 | Regular | `dk2` | 軸ラベル・凡例 |
-| チャート値 | 10–11 | Bold | `dk1` | データラベル |
+| 本文・箇条書き | 14–16 | Regular | `dk1` | 説明テキスト |
+| 注釈・フッター | 10 | Regular | `dk2` | 脚注・出典（唯一14pt未満が許容される要素） |
+| テーブルヘッダー | 14 | Bold | `lt1` (白背景時は `dk1`) | |
+| テーブルセル | 14 | Regular | `dk1` | 上下左右中央揃え |
+| チャートラベル | 14 | Regular | `dk2` | 軸ラベル・凡例 |
+| チャート値 | 14 | Bold | `dk1` | データラベル |
+
+> **最小フォントサイズ**: 出典・注釈を除き **14pt 以上**。9–12pt は使用禁止。
 
 ### 4.3 行間・段落
 
@@ -353,8 +372,8 @@ def add_table(slide, left, top, width, height, rows, cols,
     return table_shape
 
 
-def _set_cell_text(cell, text, size, color, bold=False, align=PP_ALIGN.LEFT):
-    """セルのテキストを設定"""
+def _set_cell_text(cell, text, size, color, bold=False, align=PP_ALIGN.CENTER):
+    """セルのテキストを設定（上下左右中央揃え）"""
     cell.text = ""
     p = cell.text_frame.paragraphs[0]
     p.alignment = align
@@ -366,6 +385,8 @@ def _set_cell_text(cell, text, size, color, bold=False, align=PP_ALIGN.LEFT):
     cell.margin_right = Emu(72_000)
     cell.margin_top = Emu(36_000)
     cell.margin_bottom = Emu(36_000)
+    # 垂直中央揃え
+    cell.vertical_anchor = MSO_ANCHOR.MIDDLE
 
 
 def _set_cell_border(cell, border_tag, hex_color, width):
