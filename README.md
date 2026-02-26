@@ -4,112 +4,106 @@
 ![Neovim](https://img.shields.io/badge/Neovim-57A143?logo=neovim&logoColor=white)
 ![Ghostty](https://img.shields.io/badge/Ghostty-000?logo=ghostty&logoColor=white)
 ![tmux](https://img.shields.io/badge/tmux-1BB91F?logo=tmux&logoColor=white)
+![Claude Code](https://img.shields.io/badge/Claude_Code-D97757?logo=anthropic&logoColor=white)
 
 ## プロジェクト構成
 
 ```
 .
-├── README.md                   # このファイル
 ├── setup.sh                    # 初期セットアップスクリプト（フル）
 ├── setup-minimal.sh            # 最小限のセットアップスクリプト
 ├── Brewfile                    # brew bundle用パッケージ定義
 ├── shell/                      # シェル関連設定ファイル
-│   ├── .zshrc                  # ZSHシェル設定
+│   ├── .zshrc                  # zsh基本設定
 │   ├── .alias                  # エイリアス定義
-│   ├── .function               # カスタム関数定義
+│   ├── .function               # カスタム関数定義（pj, jk, tm 等）
 │   ├── .bashrc                 # Bash設定
 │   └── .tmux.conf              # tmux設定
 ├── .config/                    # アプリケーション設定
-│   ├── ghostty/                # Ghostty設定
+│   ├── ghostty/                # Ghostty設定（tmux自動起動含む）
 │   ├── nvim/                   # Neovim設定（LazyVimベース）
 │   └── karabiner/              # Karabiner設定
 ├── .snippets/                  # コードスニペット（Cursor用）
-│   ├── python.json             # Pythonスニペット
-│   └── markdown.json           # Markdownスニペット
 ├── .claude/                    # Claude Code グローバル設定
 │   ├── CLAUDE.md               # 個人共通ルール
 │   ├── settings.json           # Claude Code設定
-│   ├── rules/                  # 詳細ルール（uv, Python, Polars等）
-│   └── skills/                 # カスタムスキル定義
+│   ├── rules/                  # トピック別ルール
+│   │   ├── 00-uv.md            # uv環境管理
+│   │   ├── 10-python.md        # Pythonコーディング規約
+│   │   ├── 20-polars.md        # Polars固定・Pandas禁止
+│   │   ├── 30-viz.md           # Seaborn可視化ルール
+│   │   ├── 40-notebook.md      # Notebook出力形式
+│   │   └── 50-git.md           # Git運用ルール
+│   └── skills/                 # カスタムスキル
+│       ├── creating-rules/
+│       ├── creating-skills/
+│       ├── generating-commit-messages/
+│       ├── improving-skills-and-rules/
+│       └── jr-da-slides/
 └── .codex/                     # OpenAI Codex グローバル設定
-    └── AGENTS.md               # 個人共通ルール
+    ├── AGENTS.md               # 個人共通ルール
+    └── config.toml
 ```
 
-## セットアップ手順
-
-### フルセットアップ
+## セットアップ
 
 ```sh
+git clone https://github.com/ryomamoyr/dotfile.git ~/00_project/dotfiles
+cd ~/00_project/dotfiles
 ./setup.sh
+brew bundle --file=~/Brewfile
 ```
 
-### 最小限セットアップ
+`setup.sh` の実行内容：
+1. Xcode Command Line Tools / Homebrew / Nodebrew / uv / Zinit をインストール
+2. 全設定ファイルのシンボリックリンクを作成
 
-```sh
-./setup-minimal.sh
-```
+## シンボリックリンク一覧
 
-## setup.shの実行内容
+| 元ファイル | リンク先 |
+|------------|----------|
+| `shell/.zshrc` | `~/.zshrc` |
+| `shell/.alias` | `~/.alias` |
+| `shell/.function` | `~/.function` |
+| `shell/.bashrc` | `~/.bashrc` |
+| `shell/.tmux.conf` | `~/.tmux.conf` |
+| `.config/nvim/` | `~/.config/nvim/` |
+| `.config/ghostty/config` | `~/.config/ghostty/config` |
+| `.config/ghostty/start_tmux.sh` | `~/.config/ghostty/start_tmux.sh` |
+| `.snippets/` | `~/Library/Application Support/Cursor/User/snippets/` |
+| `Brewfile` | `~/Brewfile` |
+| `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
+| `.claude/settings.json` | `~/.claude/settings.json` |
+| `.claude/rules/*.md` | `~/.claude/rules/` |
+| `.claude/skills/` | `~/.claude/skills/` |
+| `.codex/AGENTS.md` | `~/.codex/AGENTS.md` |
+| `.codex/config.toml` | `~/.codex/config.toml` |
 
-### 1. 各ソフトウェアをインストール
+## Neovim プラグイン
 
-- **Xcode Command Line Tools**: 開発ツールの基盤
-- **Homebrew**: macOSパッケージマネージャー
-- **Nodebrew**: Node.jsバージョン管理
-- **uv**: 高速Python パッケージマネージャー
-- **Zinit**: zshプラグインマネージャー
-- **Git**: バージョン管理システム
-- **zsh-git-prompt**: Gitステータス表示
+LazyVim ベースで以下を追加：
 
-### 2. 設定ファイルのシンボリックリンク作成
+| プラグイン | 役割 |
+|-----------|------|
+| neo-tree.nvim | ファイルツリー |
+| toggleterm.nvim | 統合ターミナル |
+| molten-nvim | Jupyter カーネル実行 |
+| image.nvim | インライン画像表示（Kitty Graphics Protocol） |
+| jupytext.nvim | `.ipynb` ↔ `.py` 自動変換 |
+| NotebookNavigator.nvim | セル間移動・セル実行 |
 
-| 元ファイル | リンク先 | 説明 |
-|------------|----------|------|
-| `shell/.zshrc` | `~/.zshrc` | zsh基本設定、.aliasと.functionを読み込み |
-| `shell/.alias` | `~/.alias` | コマンドエイリアス定義 |
-| `shell/.function` | `~/.function` | カスタム関数定義 |
-| `shell/.bashrc` | `~/.bashrc` | Bash設定 |
-| `shell/.tmux.conf` | `~/.tmux.conf` | tmux設定 |
-| `.config/ghostty/config` | `~/.config/ghostty/config` | Ghostty設定 |
-| `.config/ghostty/start_tmux.sh` | `~/.config/ghostty/start_tmux.sh` | tmux起動スクリプト |
-| `.config/nvim/` | `~/.config/nvim/` | Neovim設定 |
-| `.config/karabiner/karabiner.json` | `~/.config/karabiner/karabiner.json` | キーリマップ設定 |
-| `.snippets/` | `~/Library/Application Support/Cursor/User/snippets/` | Cursorスニペット |
-| `Brewfile` | `~/Brewfile` | brew bundle用パッケージ定義 |
-| `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | Claude Code共通ルール |
-| `.claude/settings.json` | `~/.claude/settings.json` | Claude Code設定 |
-| `.claude/rules/*.md` | `~/.claude/rules/` | Claude Code詳細ルール |
-| `.claude/skills/` | `~/.claude/skills` | Claude Codeカスタムスキル（ディレクトリ全体） |
-| `.codex/AGENTS.md` | `~/.codex/AGENTS.md` | Codex共通ルール |
+## 便利なシェル関数
 
-### 3. Homebrewパッケージのインストール
-
-`Brewfile`を使用して必要なCLIツールとGUIアプリケーションを一括インストール:
-
-```sh
-brew bundle
-```
-
-## 主要な機能
-
-### シェル設定
-- **Zinit**: zshプラグインマネージャー
-- **カスタムエイリアス**: コマンドの短縮形
-- **カスタム関数**: `plamo_translate`等
-- **Git統合**: プロンプトにGitステータス表示
-
-### ターミナル環境
-- **Ghostty**: Zig製ターミナルエミュレータ
-- **tmux**: ターミナルマルチプレクサ
-- **カスタムキーバインド**: Karabiner-Elementsによるキーリマップ
-
-### 開発環境
-- **Neovim**: LazyVimベースのエディタ設定
-- **Cursor**: AI統合開発環境、スニペット連携
-- **Karabiner**: キーリマップ
+| コマンド | 動作 |
+|---------|------|
+| `pj [名前]` | tmux 作業ウィンドウ作成（新規 → リネーム → 左右分割） |
+| `jk [名前]` | Jupyter カーネル登録（uv プロジェクト用） |
+| `tm` | tmux セッションを fzf で選択して切替 |
+| `vfz` | fzf でファイル検索 → Neovim で開く |
+| `ifz` | 画像を fzf プレビュー → timg で表示 |
+| `fd` / `fda` / `fdr` | fzf でディレクトリ移動 |
 
 ## 注意事項
 
-- 既存の設定ファイルは自動的にバックアップされます
-- セットアップ後は新しいターミナルセッションで設定が有効になります
-- 個別にファイルを編集したい場合は、このリポジトリ内のファイルを直接編集してください（シンボリックリンクにより反映されます）
+- `.claude/` と `.codex/` は AI ツール用のグローバル設定（個人ルール）
+- 設定変更はこのリポジトリを編集すればシンボリックリンク経由で即反映

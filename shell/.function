@@ -216,3 +216,12 @@ jk() {
   uv run python -m ipykernel install --user --name "$name"
   echo "カーネル '$name' を登録しました。Neovimで :MoltenInit → $name を選択"
 }
+
+# tmux作業ウィンドウ作成（新規ウィンドウ → リネーム → 左右分割）
+# 使い方: pj [名前]  ※省略時はディレクトリ名を使用
+pj() {
+  local name="${1:-$(basename $(pwd))}"
+  tmux new-window -n "$name"
+  tmux split-window -h -c '#{pane_current_path}'
+  tmux select-pane -L
+}

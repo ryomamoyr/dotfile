@@ -2,11 +2,11 @@ return {
   -- image.nvim: Kitty Graphics Protocolでインライン画像表示
   {
     "3rd/image.nvim",
-    ft = { "python", "markdown" },
+    ft = { "python" },
     opts = {
       backend = "kitty",
       integrations = {
-        markdown = { enabled = true },
+        markdown = { enabled = false },
       },
       max_width = 100,
       max_height = 30,
@@ -45,8 +45,8 @@ return {
   {
     "GCBallesteros/NotebookNavigator.nvim",
     dependencies = {
-      "echasnovski/mini.comment",
-      "echasnovski/mini.hipatterns",
+      "nvim-mini/mini.comment",
+      "nvim-mini/mini.hipatterns",
       "benlubas/molten-nvim",
     },
     ft = { "python" },

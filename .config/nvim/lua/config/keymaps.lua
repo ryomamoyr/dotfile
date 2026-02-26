@@ -37,10 +37,6 @@ end
 local keymap = vim.keymap.set
 local opts = { silent = true, noremap = true }
 
--- リーダーキーをスペースキーに設定 (LazyVimのデフォルト)
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
 -- モード設定
 -- jjでインサートモードを抜ける (押しやすい)
 keymap("i", "jj", "<Esc>", { desc = "インサートモードを抜ける" })

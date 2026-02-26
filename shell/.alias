@@ -37,8 +37,8 @@ alias excel="open /Applications/Microsoft\ Excel.app/"
 alias te='osascript -e '\''tell application "Microsoft Teams" to activate'\'''
 
 
-# VSCode, Command + Shift + P -> Shell Command: Install 'code' command in PATH
-alias v="code ."
+# neovim
+alias v="nvim"
 # Cursor, Command + Shift + P -> Shell Command: Install 'cursor' command in PATH
 alias c="cursor ."
 
