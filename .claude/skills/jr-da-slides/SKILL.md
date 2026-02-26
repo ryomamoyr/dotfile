@@ -33,21 +33,25 @@ description: コンサルティング品質の日本語PowerPointスライドを
 from pptx import Presentation
 import os
 
+# 正規の保存場所 → フォールバック の優先順で検索
 template_paths = [
     os.path.expanduser(
         "~/Library/Group Containers/UBF8T346G9.Office/"
         "User Content.localized/Templates.localized/template.potx"
     ),
+    os.path.expanduser("~/Documents/template.pptx"),
     os.path.expanduser("~/Documents/template.potx"),
 ]
 template = next((p for p in template_paths if os.path.exists(p)), None)
 if template is None:
-    raise FileNotFoundError("template.potx が見つかりません")
+    raise FileNotFoundError("template.potx / template.pptx が見つかりません")
 
 prs = Presentation(template)
 ```
 
-`Presentation()` を空で呼ぶとテーマ・レイアウトが白紙になるため、テンプレートのパスを渡すこと。
+**注意:**
+- `Presentation()` を空で呼ぶとテーマ・レイアウトが白紙になるため、テンプレートのパスを必ず渡すこと
+- `.potx` は python-pptx で Content-Type エラーになる場合がある。その場合は `.pptx` 形式のコピーを `~/Documents/template.pptx` に配置してフォールバックとして使用する
 
 ### Step 2: スライド構成の設計
 
