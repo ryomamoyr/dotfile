@@ -48,8 +48,8 @@
 ## セットアップ
 
 ```sh
-git clone https://github.com/ryomamoyr/dotfile.git ~/00_project/dotfiles
-cd ~/00_project/dotfiles
+git clone https://github.com/ryomamoyr/dotfile.git <任意のディレクトリ>
+cd <任意のディレクトリ>
 ./setup.sh
 brew bundle --file=~/Brewfile
 ```
