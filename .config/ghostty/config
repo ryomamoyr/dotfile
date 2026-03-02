@@ -37,5 +37,8 @@ keybind = cmd+enter=text:\x1b:lua RunCurrentFile()\x0d
 keybind = cmd+j=text:\x1b:ToggleTerm\x0d
 keybind = cmd+b=text:\x1b:Neotree toggle\x0d
 
+# Bell (デスクトップ通知 + Dockバウンス)
+bell-features = title,attention,system,border
+
 # Shell (tmux auto-start)
 command = /bin/zsh -l -c "exec ~/.config/ghostty/start_tmux.sh"
