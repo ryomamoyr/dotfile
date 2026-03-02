@@ -9,7 +9,7 @@ if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
 fi
 
 # 既存がなければ新しくレイアウトを作る
-tmux new-session -d -s "$SESSION_NAME" -n "1<<5"
+tmux new-session -d -s "$SESSION_NAME" -n "main-da"
 
 P0=$(tmux list-panes -F '#{pane_id}')
 tmux split-window -v -p 40 -t "$P0"
