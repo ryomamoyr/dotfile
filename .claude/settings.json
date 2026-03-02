@@ -1,8 +1,31 @@
 {
-  "preferredNotifChannel": "terminal_bell",
   "alwaysThinkingEnabled": true,
   "maxFileSearchResults": 100,
   "interactiveMode": true,
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"cwd\": \"'\"$(pwd)\"'\", \"notification_type\": \"stop\"}' | ~/.claude/hooks/tmux-notify.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/tmux-notify.sh"
+          }
+        ]
+      }
+    ]
+  },
   "tools": {
     "bash": {
       "enabled": true

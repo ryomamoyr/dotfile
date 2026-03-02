@@ -89,6 +89,8 @@ for f in "$(pwd)/.claude/rules"/*.md; do
 done
 rm -rf "$HOME/.claude/skills"
 ln -sf "$(pwd)/.claude/skills" "$HOME/.claude/skills"
+rm -rf "$HOME/.claude/hooks"
+ln -sf "$(pwd)/.claude/hooks" "$HOME/.claude/hooks"
 ln -sf "$(pwd)/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 ln -sf "$(pwd)/.codex/config.toml" "$HOME/.codex/config.toml"
 
