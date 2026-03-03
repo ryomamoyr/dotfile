@@ -21,12 +21,12 @@ font-family-bold = 0xProto
 font-family-italic = 0xProto
 font-family-bold-italic = 0xProto
 font-size = 13.5
-font-style = Italic
+font-style = Regular
 font-style-bold = Bold
 font-style-italic = Italic
 font-style-bold-italic = Bold Italic
 adjust-cell-height = 0
-font-thicken = true
+font-thicken = false
 font-feature = -dlig
 
 # Japanese font (Zen Maru Gothic: 丸ゴシック・やわらかい)
