@@ -11,7 +11,7 @@ case "$notification_type" in
     terminal-notifier -title "Claude Code" -subtitle "$project" -message "許可待ち" -sound "Ping" -activate "com.mitchellh.ghostty"
     ;;
   "idle_prompt")
-    terminal-notifier -title "Claude Code" -subtitle "$project" -message "入力待ち" -sound "Purr" -activate "com.mitchellh.ghostty"
+    # 入力待ちは通知しない
     ;;
   "stop")
     terminal-notifier -title "Claude Code" -subtitle "$project" -message "タスク完了" -sound "Glass" -activate "com.mitchellh.ghostty"

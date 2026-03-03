@@ -1,7 +1,4 @@
 {
-  "alwaysThinkingEnabled": true,
-  "maxFileSearchResults": 100,
-  "interactiveMode": true,
   "hooks": {
     "Stop": [
       {
@@ -24,8 +21,53 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/guard-sensitive-files.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/guard-dangerous-commands.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/auto-format.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/session-start.sh"
+          }
+        ]
+      }
     ]
   },
+  "alwaysThinkingEnabled": true,
+  "maxFileSearchResults": 100,
+  "interactiveMode": true,
   "tools": {
     "bash": {
       "enabled": true
