@@ -16,10 +16,10 @@ cursor-style = bar
 scrollback-limit = 10000000
 
 # Font
-font-family = Osaka-Mono
-font-family-bold = Osaka-Mono
-font-family-italic = Osaka-Mono
-font-family-bold-italic = Osaka-Mono
+font-family = 0xProto
+font-family-bold = 0xProto
+font-family-italic = 0xProto
+font-family-bold-italic = 0xProto
 font-size = 13.5
 font-style = Regular
 font-style-bold = Bold
