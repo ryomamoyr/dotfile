@@ -29,8 +29,8 @@ adjust-cell-height = 0
 font-thicken = false
 font-feature = -dlig
 
-# Japanese font (Zen Maru Gothic: 丸ゴシック・やわらかい)
-font-codepoint-map = U+3000-U+30FF,U+4E00-U+9FFF,U+FF00-U+FFEF,U+3400-U+4DBF=Zen Maru Gothic
+# Japanese font (Osaka-Mono: 等幅)
+font-codepoint-map = U+3000-U+30FF,U+4E00-U+9FFF,U+FF00-U+FFEF,U+3400-U+4DBF=Osaka-Mono
 
 # Keybind (Cmd+Return → Neovim RunCurrentFile)
 keybind = cmd+enter=text:\x1b:lua RunCurrentFile()\x0d
