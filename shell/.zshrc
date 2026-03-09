@@ -80,7 +80,8 @@ zinit light zdharma/history-search-multi-word
 # Fast Syntax Highlighting (より高性能版)
 zinit light zdharma-continuum/fast-syntax-highlighting
 # Abbreviations (aliasの展開表示版)
-zinit light olets/zsh-abbr
+export ABBR_USER_ABBREVIATIONS_FILE="$HOME/.abbr"
+source $(brew --prefix)/share/zsh-abbr/zsh-abbr.zsh
 
 
 # FZF設定

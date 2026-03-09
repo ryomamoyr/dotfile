@@ -67,7 +67,6 @@ fi
 
 mkdir -p "$HOME/.config/ghostty"
 mkdir -p "$HOME/.config/karabiner"
-mkdir -p "$HOME/.config/zsh-abbr"
 mkdir -p "$HOME/.claude/rules"
 mkdir -p "$HOME/.codex"
 # シンボリックリンクを作成
@@ -80,7 +79,7 @@ ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
 ln -sf "$(pwd)/.config/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
 ln -sf "$(pwd)/.config/ghostty/config" "$HOME/.config/ghostty/config"
 ln -sf "$(pwd)/.config/ghostty/start_tmux.sh" "$HOME/.config/ghostty/start_tmux.sh"
-ln -sf "$(pwd)/.config/zsh-abbr/user-abbreviations" "$HOME/.config/zsh-abbr/user-abbreviations"
+ln -sf "$(pwd)/shell/.abbr" "$HOME/.abbr"
 rm -rf "$HOME/Library/Application Support/Cursor/User/snippets"
 ln -sf "$(pwd)/.snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
 ln -sf "$(pwd)/Brewfile" "$HOME/Brewfile"
