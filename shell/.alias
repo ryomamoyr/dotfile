@@ -60,13 +60,8 @@ alias vp="v a.py"
 alias pc="cat a.py|pbcopy"
 alias vc="v a.cpp"
 
-# git関連
-alias gs='git status'
-alias gb='git branch'
-alias gc='git checkout'
+# git関連 → abbr に移行済み（gs, gb, gco, gd, gl）
 alias gct='git commit'
-alias gd='git diff'
-alias gl='git log'
 
 # mac
 alias copy='pbcopy <'
