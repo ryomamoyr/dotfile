@@ -14,15 +14,7 @@ alias view="nvim -R"
 alias python="python3"
 alias py="python3"
 
-# rc file
-alias zshrc="v ~/.zshrc"
-alias tmuxrc="v ~/.tmux.conf"
-alias szsh="source ~/.zshrc"
-
 # open applications
-alias op="open ."
-alias opd="open ~/Documents"
-alias opdl="open ~/Downloads"
 alias br="open /Applications/Brave\ Browser.app"
 alias nt="open /Applications/Notion.app"
 alias sl="open /Applications/Slack.app"
@@ -42,26 +34,23 @@ alias v="nvim"
 # Cursor, Command + Shift + P -> Shell Command: Install 'cursor' command in PATH
 alias c="cursor ."
 
-# github copilot for cli
-alias sug='gh copilot suggest'
-alias exp='gh copilot explain'
+# github copilot for cli → abbr に移行済み（sug, exp）
 
 # cpp関連
 alias g="g++ -std=c++23 -O2"
 alias a="./a.out"
-alias ga="g++ -std=c++23 -O2 a.cpp -o a.out && ./a.out"
+# ga → abbr に移行済み
 
 # python3関連
 alias pp="python3 a.py|pbcopy"
 alias p="python3"
-alias pa="python3 a.py"
+# pa → abbr に移行済み
 alias dp="python3 data.py|pbcopy"
 alias vp="v a.py"
 alias pc="cat a.py|pbcopy"
 alias vc="v a.cpp"
 
-# git関連 → abbr に移行済み（gs, gb, gco, gd, gl）
-alias gct='git commit'
+# git関連 → abbr に移行済み（gs, gb, gco, gct, gd, gl）
 
 # mac
 alias copy='pbcopy <'
