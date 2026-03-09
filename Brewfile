@@ -18,6 +18,8 @@ brew "chafa"     # テキストベース画像表示（fzfプレビュー用）
 brew "imagemagick" # 画像処理（molten-nvim用）
 brew "luajit"      # Lua JITコンパイラ（image.nvim用）
 brew "ghostscript"  # ImageMagickのPDF/フォント処理に必要
+brew "jq"             # JSONパーサー（Claude Code hooks等で使用）
+brew "terminal-notifier" # macOS通知センターへのCLI通知
 
 cask "cursor"
 cask "ghostty"
