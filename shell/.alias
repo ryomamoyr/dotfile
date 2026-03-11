@@ -23,7 +23,6 @@ alias ff='osascript -e '\''tell application "Finder" to activate'\'''
 
 
 # microsoft office
-alias pp="open /Applications/Microsoft\ PowerPoint.app/"
 alias wd="open /Applications/Microsoft\ Word.app/"
 alias excel="open /Applications/Microsoft\ Excel.app/"
 alias te='osascript -e '\''tell application "Microsoft Teams" to activate'\'''
