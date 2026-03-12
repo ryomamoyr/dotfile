@@ -2,7 +2,7 @@
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-alias ls='eza --icons -la'
+alias ls='eza --icons -a'
 
 # neovim
 alias nv="nvim"
