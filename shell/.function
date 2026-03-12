@@ -5,7 +5,7 @@ chpwd() {
 }
 ls_abbrev() {
     local ls_result
-    ls_result=$(eza --icons -a --color=always)
+    ls_result=$(eza --icons=always -a --color=always)
 
     local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
 
