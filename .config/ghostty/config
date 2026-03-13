@@ -2,7 +2,7 @@
 theme = Tomorrow Night Bright
 
 # Window
-background-opacity = 0.7
+background-opacity = 0.87
 
 maximize = true
 window-decoration = false
@@ -17,6 +17,7 @@ scrollback-limit = 10000000
 
 # Font
 font-family = 0xProto
+font-family = "Osaka-Mono"
 font-family-bold = 0xProto
 font-family-italic = 0xProto
 font-family-bold-italic = 0xProto
