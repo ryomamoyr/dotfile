@@ -1,3 +1,4 @@
+abbr "cc"="claude"
 abbr "exp"="gh copilot explain"
 abbr "ga"="g++ -std=c++23 -O2 a.cpp -o a.out && ./a.out"
 abbr "gb"="git branch"
