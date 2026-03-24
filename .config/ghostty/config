@@ -16,12 +16,9 @@ cursor-style = bar
 scrollback-limit = 10000000
 
 # Font
-font-family = 0xProto
+font-family = "0xProto"
 font-family = "Osaka-Mono"
-font-family-bold = 0xProto
-font-family-italic = 0xProto
-font-family-bold-italic = 0xProto
-font-size = 13.5
+font-size = 14
 font-style = Regular
 font-style-bold = Bold
 font-style-italic = Italic
@@ -29,10 +26,6 @@ font-style-bold-italic = Bold Italic
 adjust-cell-height = 0
 font-thicken = false
 font-feature = -dlig
-
-# Japanese font (Osaka-Mono: 等幅)
-font-codepoint-map = U+3000-U+30FF,U+4E00-U+9FFF,U+FF00-U+FFEF,U+3400-U+4DBF=Osaka-Mono
-
 # Keybind (Cmd+Return → Neovim RunCurrentFile)
 keybind = cmd+enter=text:\x1b:lua RunCurrentFile()\x0d
 # Cmd+j → ToggleTerm / Cmd+b → Neotree toggle
