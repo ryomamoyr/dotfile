@@ -5,5 +5,8 @@ collaboration_modes = true
 [projects."/Users/dts-da002n/00_project/dotfiles"]
 trust_level = "trusted"
 
+[projects."/Users/dts-da002n/00_project/escon"]
+trust_level = "trusted"
+
 [notice.model_migrations]
 "gpt-5.2-codex" = "gpt-5.3-codex"
