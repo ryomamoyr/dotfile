@@ -65,6 +65,10 @@
       }
     ]
   },
+  "env": {
+    "EDITOR": "cursor --wait",
+    "VISUAL": "cursor --wait"
+  },
   "alwaysThinkingEnabled": true,
   "maxFileSearchResults": 100,
   "interactiveMode": true,
