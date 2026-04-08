@@ -12,7 +12,9 @@ brew "fzf"       # ファイル検索
 brew "zoxide"    # ディレクトリの移動
 brew "tmux"      # ターミナルマルチプレクサ
 tap "olets/tap"
+tap "k1LoW/tap"
 brew "zsh-abbr"  # zsh用abbreviation
+brew "mo"        # Markdown viewer
 brew "timg"      # Kittyグラフィックスプロトコル対応画像表示
 brew "chafa"     # テキストベース画像表示（fzfプレビュー用）
 brew "imagemagick" # 画像処理（molten-nvim用）

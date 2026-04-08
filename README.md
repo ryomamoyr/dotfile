@@ -102,6 +102,7 @@ LazyVim ベースで以下を追加：
 | `vfz` | fzf でファイル検索 → Neovim で開く |
 | `ifz` | 画像を fzf プレビュー → timg で表示 |
 | `fd` / `fda` / `fdr` | fzf でディレクトリ移動 |
+| `mo` | Markdown をターミナルで閲覧 |
 
 ## 注意事項
 
