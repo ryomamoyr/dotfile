@@ -34,3 +34,4 @@ PS1='\[\e[32m\]\w\[\e[0m\]\$ ' #カレントディレクトリのみ表示(色�
 export PATH="$PATH:/Users/dts-da002n/.lmstudio/bin"
 # End of LM Studio CLI section
 
+. "$HOME/.cargo/env"
