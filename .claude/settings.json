@@ -1,4 +1,11 @@
 {
+  "env": {
+    "EDITOR": "cursor --wait",
+    "VISUAL": "cursor --wait"
+  },
+  "permissions": {
+    "defaultMode": "auto"
+  },
   "hooks": {
     "Stop": [
       {
@@ -65,11 +72,9 @@
       }
     ]
   },
-  "env": {
-    "EDITOR": "cursor --wait",
-    "VISUAL": "cursor --wait"
-  },
   "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true,
   "maxFileSearchResults": 100,
   "interactiveMode": true,
   "tools": {
@@ -79,5 +84,6 @@
     "edit": {
       "enabled": true
     }
-  }
+  },
+  "model": "claude-opus-4-7"
 }
