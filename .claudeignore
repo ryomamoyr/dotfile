@@ -1,0 +1,44 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+
+# Build / Cache
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+node_modules/
+
+# Data files
+*.csv
+*.parquet
+*.xlsx
+*.sqlite
+*.db
+
+# Binary / Media
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.mp4
+*.zip
+*.tar.gz
+
+# Environment / Secrets
+.env
+.env.*
+credentials.json
+*.pem
+*.key
+
+# Logs
+*.log
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
