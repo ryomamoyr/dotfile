@@ -17,7 +17,9 @@ scrollback-limit = 10000000
 
 # Font
 font-family = "0xProto"
-font-family = "Osaka-Mono"
+font-family = Osaka-Mono
+font-family = JetBrains Mono NL
+font-family = "Hiragino Sans"
 font-size = 14
 font-style = Regular
 font-style-bold = Bold
