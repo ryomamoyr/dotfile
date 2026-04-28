@@ -30,8 +30,8 @@ alias te='osascript -e '\''tell application "Microsoft Teams" to activate'\'''
 
 # neovim
 alias v="nvim"
-# Cursor, Command + Shift + P -> Shell Command: Install 'cursor' command in PATH
-alias c="cursor ."
+# VSCode, Command + Shift + P -> Shell Command: Install 'code' command in PATH
+alias c="code ."
 
 # github copilot for cli → abbr に移行済み（sug, exp）
 
