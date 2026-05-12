@@ -129,13 +129,52 @@ CHART_PALETTE_DIVERGING = [C.BLUE, C.BLUE_LIGHT, C.GRAY_LIGHT, C.RED_LIGHT, C.RE
 | セクション番号 | 大 | Bold | `lt1` | Section レイアウトの番号（0埋めしない） |
 | H2 キャプション | 20 | Bold | `dk1` | コンテンツ領域の中見出し |
 | 本文・箇条書き | 14–16 | Regular | `dk1` | 説明テキスト |
-| 注釈・フッター | 10 | Regular | `dk2` | 脚注・出典（唯一14pt未満が許容される要素） |
 | テーブルヘッダー | 14 | Bold | `lt1` (白背景時は `dk1`) | |
 | テーブルセル | 14 | Regular | `dk1` | 上下左右中央揃え |
 | チャートラベル | 14 | Regular | `dk2` | 軸ラベル・凡例 |
 | チャート値 | 14 | Bold | `dk1` | データラベル |
+| **コード/等幅(Menlo)** | **11** | Regular | 文脈に応じる | ターミナル風ボックス、コマンド例 |
+| 注釈・フッター | 10 | Regular | `dk2` | 脚注・出典（唯一14pt未満が許容される本文以外の要素） |
 
-> **最小フォントサイズ**: 出典・注釈を除き **14pt 以上**。9–12pt は使用禁止。
+> ## 🚨 【絶対ルール】最小フォントサイズ
+>
+> - **本文・箇条書き・テーブル・チャートラベル: 14pt 以上**（厳守）
+> - **コード/等幅フォント(Menlo等): 11pt 以上**（ターミナル風ボックス内含む）
+> - **出典・注釈: 10pt 以上**（唯一14pt未満が許容される要素）
+>
+> 「情報量が多くて入らない」は理由にならない。サイズは保ち、内容を絞るか別スライドに分割する。
+>
+> ### ❌ NGパターン（過去に違反した実例）
+>
+> ```python
+> # 本文・テーブルで14pt未満は禁止
+> add_textbox(slide, x, y, w, h, "説明文", size_pt=11)          # ❌ 11pt
+> add_textbox(slide, x, y, w, h, "説明文", size_pt=12)          # ❌ 12pt
+> add_textbox(slide, x, y, w, h, "説明文", size_pt=13)          # ❌ 13pt
+> add_table_with_data(..., header_size=12, body_size=11)        # ❌ 表11/12pt
+> {"text": "・項目", "size": 11}                                # ❌ リスト11pt
+>
+> # ターミナル風ボックスでコードが11pt未満は禁止
+> {"text": "$ git log", "size": 9,  "font": "Menlo"}            # ❌ コード9pt
+> {"text": "$ git log", "size": 10, "font": "Menlo"}            # ❌ コード10pt
+> ```
+>
+> ### ✅ OKパターン
+>
+> ```python
+> add_textbox(slide, x, y, w, h, "説明文", size_pt=14)                          # OK
+> add_textbox(slide, x, y, w, h, "見出し", size_pt=16, bold=True)               # OK
+> add_table_with_data(..., header_size=14, body_size=14)                        # OK
+> {"text": "・項目", "size": 14}                                                # OK
+> {"text": "$ git pull",   "size": 11, "font": "Menlo"}                         # OK コード
+> {"text": "出典: 〇〇調査", "size": 10, "color": C.GRAY}                       # OK 注釈
+> ```
+>
+> ### 保存前セルフチェック
+> 1. 全 `size_pt=` の値が 14 以上か？（コード/注釈以外）
+> 2. 全 `body_size=` / `header_size=` の値が 14 以上か？
+> 3. Menlo 等の等幅フォント箇所が 11pt 以上か？
+> 4. 出典・注釈以外で 13pt 以下を使っていないか？
 
 ### 4.3 行間・段落
 
