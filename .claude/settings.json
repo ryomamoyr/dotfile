@@ -6,7 +6,7 @@
   "permissions": {
     "defaultMode": "auto"
   },
-  "model": "claude-opus-4-7",
+  "model": "sonnet",
   "hooks": {
     "Stop": [
       {
@@ -73,9 +73,16 @@
       }
     ]
   },
+  "language": "Japanese",
   "alwaysThinkingEnabled": true,
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
   "skipDangerousModePermissionPrompt": true,
+  "theme": "dark-daltonized",
   "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true,
   "maxFileSearchResults": 100,
   "interactiveMode": true,
   "tools": {
@@ -85,6 +92,5 @@
     "edit": {
       "enabled": true
     }
-  },
-  "theme": "dark-daltonized"
+  }
 }
