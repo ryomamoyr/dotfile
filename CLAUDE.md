@@ -51,6 +51,7 @@ setup.sh実行時に以下のリンクが作成されます：
 | `.config/ghostty/start_tmux.sh` | `~/.config/ghostty/start_tmux.sh` |
 | `shell/.abbr` | `~/.abbr` |
 | `.snippets/` | `~/Library/Application Support/Cursor/User/snippets` |
+| `.snippets/` | `~/Library/Application Support/Code/User/snippets` |
 | `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | `.claude/settings.json` | `~/.claude/settings.json` |
 | `.claude/rules/*.md` | `~/.claude/rules/` |
