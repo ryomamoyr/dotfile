@@ -72,6 +72,14 @@
       }
     ]
   },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
   "language": "Japanese",
   "alwaysThinkingEnabled": true,
   "effortLevel": "medium",
@@ -92,5 +100,8 @@
     "edit": {
       "enabled": true
     }
+  },
+  "enabledPlugins": {
+    "codex@openai-codex": true
   }
 }

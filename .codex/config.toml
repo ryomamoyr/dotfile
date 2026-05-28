@@ -1,5 +1,5 @@
-model = "gpt-5.4"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.5"
+model_reasoning_effort = "medium"
 [features]
 collaboration_modes = true
 
@@ -24,6 +24,12 @@ trust_level = "trusted"
 [projects."/Users/dts-da002n/Desktop"]
 trust_level = "trusted"
 
+[projects."/Users/dts-da002n/00_project/knowledge-management"]
+trust_level = "trusted"
+
+[projects."/Users/dts-da002n/00_project/dia-check"]
+trust_level = "trusted"
+
 [notice.model_migrations]
 "gpt-5.2-codex" = "gpt-5.3-codex"
 "gpt-5.3-codex" = "gpt-5.4"
@@ -32,3 +38,6 @@ trust_level = "trusted"
 last_updated = "2026-04-27T23:54:32Z"
 source_type = "local"
 source = "/Users/dts-da002n/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 2
