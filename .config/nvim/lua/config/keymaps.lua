@@ -1,39 +1,3 @@
-function RunCurrentFile()
-  local buftype = vim.bo.buftype
-  if buftype ~= "" then
-    vim.notify("実行可能なファイルではありません", vim.log.levels.WARN)
-    return
-  end
-
-  -- 実行前にファイルを保存
-  if vim.bo.modified then
-    vim.cmd("silent write")
-  end
-
-  local filetype = vim.bo.filetype
-  local filepath = vim.fn.expand("%:p")
-  local command
-
-  if filetype == "python" then
-    command = "uv run " .. filepath
-  elseif filetype == "sh" then
-    command = "bash " .. filepath
-  elseif filetype == "javascript" then
-    command = "node " .. filepath
-  elseif filetype == "go" then
-    command = "go run " .. filepath
-  else
-    vim.notify("このファイルタイプ用の実行コマンドがありません: " .. filetype, vim.log.levels.WARN)
-    return
-  end
-
-  vim.cmd("TermExec cmd='" .. command .. "' direction=vertical go_back=0")
-  vim.defer_fn(function()
-    vim.cmd("startinsert")
-  end, 100)
-end
-
--- これ以降に local keymap = vim.keymap.set ... の記述が続く
 local keymap = vim.keymap.set
 local opts = { silent = true, noremap = true }
 
@@ -53,6 +17,9 @@ keymap("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "選択範囲を上に移動" 
 
 -- Ctrl+sで保存
 keymap({ "i", "n", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "ファイルを保存" })
+
+-- Cmd+Returnで現在ファイルを実行しない
+keymap({ "i", "n", "v", "t" }, "<D-CR>", "<Nop>", { desc = "Cmd+Returnを無効化" })
 
 -- Escキー2回でハイライトを消す
 keymap("n", "<Esc><Esc>", "<cmd>nohlsearch<CR>", opts)

@@ -28,11 +28,6 @@ font-style-bold-italic = Bold Italic
 adjust-cell-height = 0
 font-thicken = false
 font-feature = -dlig
-# Keybind (Cmd+Return → Neovim RunCurrentFile)
-keybind = cmd+enter=text:\x1b:lua RunCurrentFile()\x0d
-# Cmd+j → ToggleTerm / Cmd+b → Neotree toggle
-keybind = cmd+j=text:\x1b:ToggleTerm\x0d
-keybind = cmd+b=text:\x1b:Neotree toggle\x0d
 
 # Shell (tmux auto-start)
 command = /bin/zsh -l -c "exec ~/.config/ghostty/start_tmux.sh"
