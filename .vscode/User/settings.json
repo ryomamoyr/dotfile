@@ -1,0 +1,296 @@
+{
+  "editor.inlayHints.enabled": "off",
+  // ==========================================================================
+  // ワークベンチ (Workbench) - VSCode全体のUI/UXに関する設定
+  // ==========================================================================
+  // --- ウィンドウとレイアウト ---
+  // 新規ウィンドウを最後にアクティブだったウィンドウと同じサイズで開く
+  "window.newWindowDimensions": "inherit",
+  // タイトルバーに表示されるコマンドセンターを非表示にする
+  "window.commandCenter": false,
+  // エディタ上部に表示されるパンくずリスト（ファイルパス階層）を非表示にする
+  "breadcrumbs.enabled": false,
+  // パネル（ターミナル、問題など）のデフォルト表示位置を右側に設定
+  "workbench.panel.defaultLocation": "right",
+  // アクティビティバー（サイドバー）のデフォルト表示位置を上部に設定
+  "workbench.activityBar.location": "top",
+  // パネルのアイコンにラベル（「ターミナル」など）を表示
+  "workbench.panel.showLabels": false,
+  // アニメーションなどのUIモーションを減らし、パフォーマンスを向上させる
+  "workbench.reduceMotion": "on",
+  // ステータスバーを非表示にする
+  // "workbench.statusBar.visible": false,
+  // アクティビティバーの向きを垂直にする
+  // "workbench.activityBar.orientation": "vertical",
+  // --- 外観とテーマ ---
+  // UIのカラーテーマ
+  "workbench.colorTheme": "Absolute Black",
+  // ライトモード時の優先カラーテーマ
+  "workbench.preferredLightColorTheme": "Absolute Black",
+  // OSのカラースキーム（ライト/ダーク）を自動で検出し、テーマを切り替える
+  "window.autoDetectColorScheme": true,
+  // ファイルアイコンのテーマ
+  "workbench.iconTheme": "material-icon-theme",
+  // --- ファイルツリー（エクスプローラー） ---
+  // ファイルツリーのインデント幅を指定
+  "workbench.tree.indent": 20,
+  // ファイルツリーでインデントの深さを示すガイドラインを常に表示する
+  "workbench.tree.renderIndentGuides": "always",
+  // --- 検索 ---
+  // 検索結果に行番号を表示する
+  "search.showLineNumbers": true,
+  // --- UIの配色カスタマイズ ---
+  // ワークベンチの各パーツの色を個別にカスタマイズ
+  "workbench.colorCustomizations": {
+    // インデントガイドの色 (ネストの深さに応じて1から6まで順番に適用)
+    "editorIndentGuide.background1": "#cb997e", // インデントレベル1
+    "editorIndentGuide.background2": "#ddbea9", // インデントレベル2
+    "editorIndentGuide.background3": "#ffe8d6", // インデントレベル3
+    "editorIndentGuide.background4": "#b7b7a4", // インデントレベル4
+    "editorIndentGuide.background5": "#a5a58d", // インデントレベル5
+    "editorIndentGuide.background6": "#6b705c", // インデントレベル6
+    // アクティブな(カーソルがある)インデントガイドの色
+    "editorIndentGuide.activeBackground1": "#06d6a0", // アクティブなインデントレベル1
+    "editorIndentGuide.activeBackground2": "#06d6a0", // アクティブなインデントレベル2
+    "editorIndentGuide.activeBackground3": "#06d6a0", // アクティブなインデントレベル3
+    "editorIndentGuide.activeBackground4": "#06d6a0", // アクティブなインデントレベル4
+    "editorIndentGuide.activeBackground5": "#06d6a0", // アクティブなインデントレベル5
+    "editorIndentGuide.activeBackground6": "#06d6a0", // アクティブなインデントレベル6
+    // 行番号やグリフが表示される領域(ガター)の背景色
+    // "editorGutter.background": "#000000",
+    // 行番号の文字色
+    // "editorLineNumber.foreground": "#406a93",
+    // アクティブな行の行番号の文字色
+    "editorLineNumber.activeForeground": "#fff",
+    // テキストを選択した範囲の背景色
+    "editor.selectionBackground": "#3856da88",
+    // アクティブなタブの背景色
+    "tab.activeBackground": "#44250e",
+    // アクティブなタブの文字色
+    "tab.activeForeground": "#ffba79",
+    // ウィンドウ下部のステータスバーの背景色
+    // "statusBar.background": "#007acc",
+    // サイドバーとエディタの境界線の色
+    "sideBar.border": "#ffffff",
+    "panel.border": "#ffffff"
+    // サイドバーのセクションヘッダー(例: 「エクスプローラー」)の背景色
+    // "sideBarSectionHeader.background": "#007acc",
+  },
+  // シンタックスハイライトの色を個別にカスタマイズ
+  "editor.tokenColorCustomizations": {
+    // コメント
+    "comments": "#53cee7",
+    // 文字列リテラル
+    "strings": "#9ece6a",
+    // キーワード（if, for, return など）
+    "keywords": "#7aa2f7",
+    // 数値リテラル
+    "numbers": "#ff9e64",
+    // クラス名や型名
+    "types": "#e0af68",
+    // 関数名（識別子）
+    "functions": "#bb9af7",
+    // 変数名
+    "variables": "#a9b1d6"
+  },
+  // ==========================================================================
+  // エディタ (Editor) - テキストエディタの表示や動作に関する設定
+  // ==========================================================================
+  // --- フォントと表示 ---
+  // エディタのフォントファミリー（指定した順に試される）
+  "editor.fontFamily": "'0xPropt', 'Fira Code', 'Cica', 'monospace'",
+  // フォントサイズ
+  "editor.fontSize": 13,
+  // フォントの太さ
+  "editor.fontWeight": "300",
+  // 文字と文字の間隔
+  "editor.letterSpacing": 0,
+  // 行の高さ（行間）
+  "editor.lineHeight": 1.4,
+  // 空白文字をすべて可視化する
+  "editor.renderWhitespace": "all",
+  // テキストを選択した範囲の角を丸くする
+  "editor.roundedSelection": true,
+  // コードの全体像を右側に表示するミニマップを無効にする
+  "editor.minimap.enabled": false,
+  // タブのサイズ（スペース4つ分）
+  "editor.tabSize": 4,
+  // codeLensの表示
+  "editor.codeLens": false,
+  // インデントの深さを示す縦のガイドラインを表示する
+  "editor.guides.indentation": true,
+  // 対応する括弧のペアを線で結んで表示する
+  "editor.guides.bracketPairsHorizontal": true,
+  // 括弧の種類ごとにネストしたときの色分けを独立させる
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  // --- 折り返し (Word Wrap) ---
+  // 行がエディタの幅を超えた場合に自動で折り返す
+  "editor.wordWrap": "on",
+  // 折り返しが発生する文字数
+  "editor.wordWrapColumn": 140,
+  // 折り返された行に、元の行と同じインデントを適用する
+  "editor.wrappingIndent": "same",
+  // --- フォーマットと保存 ---
+  // ファイル保存時に自動でフォーマットを実行する
+  "editor.formatOnSave": false,
+  // 入力中に自動でフォーマットを実行する
+  "editor.formatOnType": true,
+  // ペースト時に自動でフォーマットを実行する
+  "editor.formatOnPaste": true,
+  // --- 入力補助 (IntelliSense) とスニペット ---
+  // マウスカーソルを合わせた際に表示される情報（ホバー）を有効にする
+  "editor.hover.enabled": "on",
+  // スニペットのプレフィックスを入力してTabキーで展開できるようにする
+  "editor.tabCompletion": "on",
+  // 補完候補の中でスニペットを最優先で表示する
+  "editor.snippetSuggestions": "top",
+  // TabキーでEmmetの略語を展開する
+  "emmet.triggerExpansionOnTab": true,
+  // スクロール時に、現在のスコープの開始行をエディタ上部に固定表示する（最大20行）
+  "editor.stickyScroll.maxLineCount": 20,
+  // 「定義へ移動」などをした際に、新しいタブを開かず、現在のエディタ内にプレビュー(Peek)で表示する
+  "editor.definitionLinkOpensInPeek": true,
+  // ==========================================================================
+  // ファイル (Files) & エクスプローラー (Explorer) - ファイル操作に関する設定
+  // ==========================================================================
+  // --- 保存時の動作 ---
+  // 一定時間が経過した後、自動的にファイルを保存する
+  "files.autoSave": "afterDelay",
+  // ファイル保存時に、ファイルの最後に新しい行を自動的に挿入する
+  "files.insertFinalNewline": true,
+  // ファイル保存時に、末尾にある複数の空行を1行にまとめる
+  "files.trimFinalNewlines": true,
+  // ファイル保存時に、各行の末尾にある不要な空白を削除する
+  "files.trimTrailingWhitespace": true,
+  // --- ファイル操作 ---
+  // ファイルを開くときに文字コードを自動で推測する
+  "files.autoGuessEncoding": true,
+  // ファイルやフォルダを削除する際に確認ダイアログを表示しない
+  "explorer.confirmDelete": false,
+  // ドラッグ＆ドロップでファイルやフォルダを移動する際に確認ダイアログを表示しない
+  "explorer.confirmDragAndDrop": false,
+  // サブフォルダが1つしかない場合に、フォルダを階層通りに表示する
+  "explorer.compactFolders": false,
+  // --- ファイルの関連付けと言語モード ---
+  "files.associations": {
+    "*.py": "python",
+    "*.md": "markdown",
+    "*.toml": "toml",
+    "*.html": "html",
+    "*.txt": "text",
+    "*.tsx": "typescriptreact",
+    "Makefile": "makefile"
+  },
+  // --- 除外設定 ---
+  // エクスプローラーや検索結果から除外するファイルやフォルダ
+  "files.exclude": {
+    "src/__pycache__": true,
+    ".mypy_cache": true,
+    ".pytest_cache": true,
+    ".ruff_cache": true,
+    "**/.idea": true,
+    "**/*_cache": true
+  },
+  // 検索対象から除外するファイル/フォルダ
+  "search.exclude": {
+    "**/__pycache__": true,
+    "**/*.egg-info": true,
+    "**/data/**": true,
+    "**/.venv": true,
+    "**/.git": true,
+    "**/.gitignore": true
+  },
+  // ファイル変更監視から除外するファイル/フォルダ
+  "files.watcherExclude": {
+    "**/*": true
+  },
+  // ==========================================================================
+  // ターミナル (Terminal) - 統合ターミナルに関する設定
+  // ==========================================================================
+  "terminal.integrated.fontFamily": "'0xproto'",
+  "terminal.integrated.fontSize": 12,
+  "terminal.integrated.fontWeight": "300",
+  "terminal.integrated.lineHeight": 1.1,
+  "terminal.integrated.letterSpacing": 0.1,
+  // ターミナルに複数行のテキストをペーストする際の警告を表示しない
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  // 統合ターミナルのデフォルトの場所をエディタ領域に設定
+  "terminal.integrated.defaultLocation": "editor",
+  // ==========================================================================
+  // ノートブック (Notebook) - Jupyter Notebookなどのノートブック環境に関する設定
+  // ==========================================================================
+  "notebook.formatOnSave.enabled": true,
+  "notebook.codeActionsOnSave": {
+    "notebook.source.fixAll": "explicit",
+    "notebook.source.organizeImports": "explicit"
+  },
+  "notebook.output.scrolling": true,
+  "notebook.insertFinalNewline": true,
+  "jupyter.askForKernelRestart": false,
+  // ==========================================================================
+  // バージョン管理 (Version Control) - Git, GitLens, GitHub Copilotに関する設定
+  // ==========================================================================
+  // --- Git ---
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.openRepositoryInParentFolders": "never",
+  // --- GitHub Copilot ---
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "scminput": false,
+    "markdown": true
+  },
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.chat.localeOverride": "ja",
+  "github.copilot.chat.codeGeneration.useInstructionFiles": false,
+  // --- GitLens ---
+  "gitlens.hovers.enabled": false,
+  "gitlens.hovers.avatars": false,
+  // ==========================================================================
+  // 言語別設定 (Language Specific)
+  // ==========================================================================
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.snippetSuggestions": "top",
+    "editor.suggest.preview": true,
+    "editor.suggestSelection": "first",
+    "editor.suggest.localityBonus": true,
+    "editor.suggest.shareSuggestSelections": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "vscode.markdown-language-features"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[javascript, typescript, typescriptreact, json]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  // ==========================================================================
+  // 拡張機能 (Extensions) - その他の拡張機能に関する設定
+  // ==========================================================================
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "explorer.confirmPasteNative": false,
+  "files.saveConflictResolution": "overwriteFileOnDisk",
+  "markdown.marp.html": "all",
+  "editor.inlineSuggest.edits.showCollapsed": true,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "python.interpreter.infoVisibility": "always",
+  "python.analysis.typeCheckingMode": "basic",
+  "workbench.startupEditor": "none",
+  "security.workspace.trust.untrustedFiles": "open",
+  "extensions.ignoreRecommendations": true,
+  "editor.accessibilitySupport": "off",
+  "accessibility.signalOptions.volume": 0,
+}

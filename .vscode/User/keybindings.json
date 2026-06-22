@@ -1,0 +1,33 @@
+// 既定値を上書きするには、このファイル内にキー バインドを挿入します
+[
+    {
+        "key": "shift+alt+cmd+v",
+        "command": "yaml2table.showPreview",
+        "when": "editorLangId == 'dockercompose' || editorLangId == 'yaml'"
+    },
+    {
+        "key": "shift+cmd+v",
+        "command": "yaml2table.showPreviewToSide",
+        "when": "editorLangId == 'dockercompose' || editorLangId == 'yaml'"
+    },
+    {
+        "key": "shift+cmd+v",
+        "command": "markdown.showPreviewToSide",
+        "when": "!notebookEditorFocused && editorLangId == 'markdown'"
+    },
+    {
+        "key": "cmd+k v",
+        "command": "-markdown.showPreviewToSide",
+        "when": "!notebookEditorFocused && editorLangId == 'markdown'"
+    },
+    {
+        "key": "shift+alt+cmd+v",
+        "command": "markdown.showPreview",
+        "when": "!notebookEditorFocused && editorLangId == 'markdown'"
+    },
+    {
+        "key": "shift+cmd+v",
+        "command": "-markdown.showPreview",
+        "when": "!notebookEditorFocused && editorLangId == 'markdown'"
+    }
+]

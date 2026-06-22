@@ -52,6 +52,10 @@ setup.sh実行時に以下のリンクが作成されます：
 | `shell/.abbr` | `~/.abbr` |
 | `.snippets/` | `~/Library/Application Support/Cursor/User/snippets` |
 | `.snippets/` | `~/Library/Application Support/Code/User/snippets` |
+| `.vscode/User/settings.json` | `~/Library/Application Support/Code/User/settings.json` |
+| `.vscode/User/keybindings.json` | `~/Library/Application Support/Code/User/keybindings.json` |
+| `.cursor/User/settings.json` | `~/Library/Application Support/Cursor/User/settings.json` |
+| `.cursor/User/keybindings.json` | `~/Library/Application Support/Cursor/User/keybindings.json` |
 | `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | `.claude/settings.json` | `~/.claude/settings.json` |
 | `.claude/rules/*.md` | `~/.claude/rules/` |
