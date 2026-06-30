@@ -24,6 +24,7 @@ brew "jq"             # JSONパーサー（Claude Code hooks等で使用）
 brew "terminal-notifier" # macOS通知センターへのCLI通知
 
 cask "cursor"
+cask "zed"
 cask "ghostty"
 cask "font-hackgen-nerd"
 cask "font-zen-maru-gothic"
