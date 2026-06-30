@@ -1,0 +1,100 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "agent": {
+    "button": false,
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+    "anthropic_retention": false
+  },
+  "vim_mode": false,
+  "hover_popover_enabled": true,
+  "terminal": {
+    "dock": "right",
+    "font_size": 12.0,
+    "font_family": "0xproto",
+    "line_height": {
+      "custom": 1.1
+    }
+  },
+  "project_panel": {
+    "dock": "left",
+    "auto_fold_dirs": false
+  },
+  "jupyter": {
+    "kernel_selections": {
+      "python": "python3"
+    }
+  },
+  "minimap": {
+    "show": "never"
+  },
+  "rounded_selection": true,
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
+    }
+  },
+  "buffer_font_fallbacks": [
+    "Cica"
+  ],
+  "buffer_font_family": "0xproto",
+  "file_types": {
+    "markdown": [
+      "*.md",
+      "*.md"
+    ],
+    "typescriptreact": [
+      "*.tsx",
+      "*.tsx"
+    ],
+    "text": [
+      "*.txt",
+      "*.txt"
+    ],
+    "html": [
+      "*.html",
+      "*.html"
+    ],
+    "toml": [
+      "*.toml",
+      "*.toml"
+    ],
+    "makefile": [
+      "Makefile",
+      "Makefile"
+    ],
+    "python": [
+      "*.py",
+      "*.py"
+    ]
+  },
+  "auto_indent_on_paste": true,
+  "use_on_type_format": true,
+  "show_whitespaces": "all",
+  "ensure_final_newline_on_save": true,
+  "indent_guides": {
+    "enabled": true
+  },
+  "preferred_line_length": 140,
+  "soft_wrap": "editor_width",
+  "tab_size": 4,
+  "base_keymap": "VSCode",
+  "ui_font_size": 16,
+  "buffer_font_size": 13.0,
+  "theme": {
+    "mode": "system",
+    "light": "Ayu Light",
+    "dark": "Ayu Dark",
+  },
+}

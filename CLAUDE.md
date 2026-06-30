@@ -16,7 +16,7 @@ macOS用の環境セットアップを自動化するdotfilesコレクション�
 ├── shell/                      # シェル関連設定
 │   ├── .zshrc, .alias, .abbr, .function, .bashrc, .tmux.conf
 ├── .config/                    # アプリケーション設定
-│   ├── ghostty/, nvim/, karabiner/
+│   ├── ghostty/, nvim/, karabiner/, zed/
 ├── .snippets/                  # Cursor用コードスニペット
 ├── .claude/                    # Claude Code設定
 │   ├── CLAUDE.md, settings.json, rules/*.md
@@ -49,6 +49,9 @@ setup.sh実行時に以下のリンクが作成されます：
 | `.config/nvim/` | `~/.config/nvim/` |
 | `.config/ghostty/config` | `~/.config/ghostty/config` |
 | `.config/ghostty/start_tmux.sh` | `~/.config/ghostty/start_tmux.sh` |
+| `.config/zed/settings.json` | `~/.config/zed/settings.json` |
+| `.config/zed/tasks.json` | `~/.config/zed/tasks.json` |
+| `.config/zed/keymap.json` | `~/.config/zed/keymap.json` |
 | `shell/.abbr` | `~/.abbr` |
 | `.snippets/` | `~/Library/Application Support/Cursor/User/snippets` |
 | `.snippets/` | `~/Library/Application Support/Code/User/snippets` |

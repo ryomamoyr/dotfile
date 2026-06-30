@@ -1,0 +1,15 @@
+[
+  {
+    "context": "Editor && extension == py",
+    "bindings": {
+      "cmd-enter": ["task::Spawn", { "task_name": "Run Python file" }]
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-j": "workspace::ToggleRightDock",
+      "cmd-b": "workspace::ToggleLeftDock"
+    }
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "label": "Run Python file",
+    "command": "uv",
+    "args": ["run", "python", "$ZED_FILE"],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  }
+]
