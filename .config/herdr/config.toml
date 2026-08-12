@@ -1,0 +1,7 @@
+onboarding = false
+[keys]
+prefix = "cmd+b"
+
+[theme]
+name = "solarized-light"
+auto_switch = false

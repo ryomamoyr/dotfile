@@ -78,11 +78,14 @@ ln -sf "$(pwd)/shell/.tmux.conf" "$HOME/.tmux.conf"
 ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
 ln -sf "$(pwd)/.config/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
 ln -sf "$(pwd)/.config/ghostty/config" "$HOME/.config/ghostty/config"
+mkdir -p "$HOME/.config/herdr"
+ln -sf "$(pwd)/.config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 mkdir -p "$HOME/.config/zed"
 ln -sf "$(pwd)/.config/zed/settings.json" "$HOME/.config/zed/settings.json"
 ln -sf "$(pwd)/.config/zed/tasks.json" "$HOME/.config/zed/tasks.json"
 ln -sf "$(pwd)/.config/zed/keymap.json" "$HOME/.config/zed/keymap.json"
 ln -sf "$(pwd)/.config/ghostty/start_tmux.sh" "$HOME/.config/ghostty/start_tmux.sh"
+ln -sf "$(pwd)/.config/ghostty/start_herdr.sh" "$HOME/.config/ghostty/start_herdr.sh"
 ln -sf "$(pwd)/shell/.abbr" "$HOME/.abbr"
 rm -rf "$HOME/Library/Application Support/Cursor/User/snippets"
 ln -sf "$(pwd)/.snippets" "$HOME/Library/Application Support/Cursor/User/snippets"
@@ -114,6 +117,7 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
 chmod +x "$HOME/.config/ghostty/start_tmux.sh"
+chmod +x "$HOME/.config/ghostty/start_herdr.sh"
 
 echo -e "${GREEN}Installation is complete and symbolic links have been created.${NO_COLOR}"
 echo -e "${YELLOW}Please restart your terminal to apply the changes.${NO_COLOR}"

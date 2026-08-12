@@ -11,6 +11,7 @@ brew "fd"        # findコマンドのモダンな代替
 brew "fzf"       # ファイル検索
 brew "zoxide"    # ディレクトリの移動
 brew "tmux"      # ターミナルマルチプレクサ
+brew "herdr"     # AIエージェント対応ターミナルマルチプレクサ
 tap "olets/tap"
 tap "k1LoW/tap"
 brew "zsh-abbr"  # zsh用abbreviation
