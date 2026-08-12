@@ -106,6 +106,12 @@ rm -rf "$HOME/.claude/hooks"
 ln -sf "$(pwd)/.claude/hooks" "$HOME/.claude/hooks"
 ln -sf "$(pwd)/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 ln -sf "$(pwd)/.codex/config.toml" "$HOME/.codex/config.toml"
+ln -sf "$(pwd)/.gitignore_global" "$HOME/.gitignore_global"
+git config --global core.excludesfile "$HOME/.gitignore_global"
+
+# .DS_Store作成抑止（ネットワーク・USBドライブ）
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
 chmod +x "$HOME/.config/ghostty/start_tmux.sh"
 

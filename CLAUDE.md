@@ -65,6 +65,7 @@ setup.sh実行時に以下のリンクが作成されます：
 | `.codex/AGENTS.md` | `~/.codex/AGENTS.md` |
 | `.codex/config.toml` | `~/.codex/config.toml` |
 | `Brewfile` | `~/Brewfile` |
+| `.gitignore_global` | `~/.gitignore_global` |
 
 ## 注意事項
 
