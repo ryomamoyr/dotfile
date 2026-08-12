@@ -30,5 +30,9 @@ adjust-cell-height = 0
 font-thicken = false
 font-feature = -dlig
 
+# Keybind (cmd+opt+矢印をherdrへ素通しさせる)
+keybind = super+alt+arrow_left=unbind
+keybind = super+alt+arrow_right=unbind
+
 # Shell (herdr auto-start)
 command = /bin/zsh -l -c "exec ~/.config/ghostty/start_herdr.sh"

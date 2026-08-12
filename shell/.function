@@ -200,19 +200,33 @@ jk() {
   echo "カーネル '$name' を登録しました。Neovimで :MoltenInit → $name を選択"
 }
 
-# tmux作業ウィンドウ作成（新規ウィンドウ → リネーム → 左右分割）
-# 使い方: pjs [名前]  ※省略時はディレクトリ名を使用
+# 作業タブ作成（herdr優先・tmuxフォールバック）
+# 使い方: pjs [名前]  ※省略時はディレクトリ名を使用（上下分割・上にフォーカス）
 pjs() {
   local name="${1:-$(basename $(pwd))}"
-  tmux new-window -n "$name"
-  tmux split-window -v -c '#{pane_current_path}'
-  tmux select-pane -U
+  if herdr status server 2>/dev/null | grep -q "status: running"; then
+    local pane_id
+    pane_id=$(herdr tab create --cwd "$PWD" --label "$name" --focus 2>/dev/null | jq -r '.result.root_pane.pane_id')
+    [[ -n "$pane_id" && "$pane_id" != "null" ]] || return 1
+    herdr pane split "$pane_id" --direction down --ratio 0.5 --cwd "$PWD" --no-focus >/dev/null 2>&1
+  else
+    tmux new-window -n "$name"
+    tmux split-window -v -c '#{pane_current_path}'
+    tmux select-pane -U
+  fi
 }
 
-# 使い方: pj [名前]  ※省略時はディレクトリ名を使用
+# 使い方: pj [名前]  ※省略時はディレクトリ名を使用（左右分割・左にフォーカス）
 pj() {
   local name="${1:-$(basename $(pwd))}"
-  tmux new-window -n "$name"
-  tmux split-window -h -c '#{pane_current_path}'
-  tmux select-pane -L
+  if herdr status server 2>/dev/null | grep -q "status: running"; then
+    local pane_id
+    pane_id=$(herdr tab create --cwd "$PWD" --label "$name" --focus 2>/dev/null | jq -r '.result.root_pane.pane_id')
+    [[ -n "$pane_id" && "$pane_id" != "null" ]] || return 1
+    herdr pane split "$pane_id" --direction right --ratio 0.5 --cwd "$PWD" --no-focus >/dev/null 2>&1
+  else
+    tmux new-window -n "$name"
+    tmux split-window -h -c '#{pane_current_path}'
+    tmux select-pane -L
+  fi
 }

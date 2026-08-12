@@ -1,7 +1,9 @@
 onboarding = false
 [keys]
-prefix = "cmd+b"
+prefix = "ctrl+k"
+next_tab = ["prefix+n", "cmd+alt+right"]
+previous_tab = ["prefix+p", "cmd+alt+left"]
 
 [theme]
-name = "solarized-light"
+name = "rose-pine"
 auto_switch = false
