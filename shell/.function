@@ -158,7 +158,7 @@ pt() {
 
 # obsidian用のpull, push
 opull() {
-  gh auth switch --user ryomac1
+  gh auth switch --user ryomac5
   git fetch origin
   git reset --hard origin/main
   gh auth switch --user ryomamoyr
@@ -166,7 +166,7 @@ opull() {
 
 
 opush() {
-  gh auth switch --user ryomac1
+  gh auth switch --user ryomac5
   git add .
   git commit -m "$(date '+%Y-%m-%d %H:%M:%S') commit"
   git push -u origin main
@@ -178,9 +178,9 @@ rr() {
   gh auth switch --user ryomamoyr
 }
 
-# ryomac1にswitch
+# ryomac5にswitch
 rc() {
-  gh auth switch --user ryomac1
+  gh auth switch --user ryomac5
 }
 
 
