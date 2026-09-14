@@ -27,6 +27,10 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
     # 左上ペインの作業ディレクトリを移動
     herdr pane run "$P1" "cd ~/00_project/obsidian && clear" >/dev/null 2>&1
+
+    # workspace名を固定（自動命名だとcwd名=obsidianになる）
+    WS=$(herdr workspace list 2>/dev/null | jq -r '.result.workspaces[0].workspace_id')
+    [[ -n "$WS" && "$WS" != "null" ]] && herdr workspace rename "$WS" main >/dev/null 2>&1
 ) &!
 
 exec herdr || exec /bin/zsh -l
