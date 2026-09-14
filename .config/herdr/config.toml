@@ -1,8 +1,9 @@
 onboarding = false
 [keys]
-prefix = "ctrl+k"
+prefix = "ctrl+a"
 next_tab = ["prefix+n", "cmd+alt+right"]
 previous_tab = ["prefix+p", "cmd+alt+left"]
+split_horizontal = ["prefix+minus", "prefix+s"]
 
 [theme]
 name = "rose-pine"
