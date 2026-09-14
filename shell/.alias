@@ -2,7 +2,7 @@
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-alias ls='eza --icons -a'
+alias ls='eza --icons -a --ignore-glob=".DS_Store"'
 
 # neovim
 alias nv="nvim"
