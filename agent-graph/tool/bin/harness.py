@@ -61,7 +61,19 @@ PROTECTED_GLOBS = [
     "bin/harness.py",
     "bin/agent_hook.py",
     "bin/common.py",
+    "bin/graph_model.py",
     ".agents/graph/**/tasks.yaml",
+    # Python起動時のimportフック横取り対策
+    "bin/sitecustomize.py",
+    "bin/usercustomize.py",
+    # 依存関係・仮想環境・コンパイル済みキャッシュの改ざん対策
+    ".venv/**",
+    "pyproject.toml",
+    "uv.lock",
+    "bin/__pycache__/**",
+    "bin/*.pyc",
+    # ガード本体の置き場（root所有）。絶対パスでのみ一致する
+    "/usr/local/lib/agent-graph/**",
 ]
 
 # コマンドの区切り。ここを境に次のコマンド名が始まる

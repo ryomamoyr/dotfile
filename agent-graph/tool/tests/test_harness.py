@@ -56,6 +56,24 @@ TOOLKIT_PROTECTED = [
     BIN_DIR / "harness.py",
     BIN_DIR / "agent_hook.py",
     BIN_DIR / "common.py",
+    BIN_DIR / "graph_model.py",
+]
+
+# import フック横取り・依存関係・キャッシュの改ざん対策で保護される、ツールキット直下の実行環境一式
+TOOLKIT_ENV_PROTECTED = [
+    BIN_DIR / "sitecustomize.py",
+    BIN_DIR / "usercustomize.py",
+    BIN_DIR.parent / ".venv" / "pyvenv.cfg",
+    BIN_DIR.parent / "pyproject.toml",
+    BIN_DIR.parent / "uv.lock",
+    BIN_DIR / "__pycache__" / "harness.cpython-312.pyc",
+    BIN_DIR / "harness.cpython-312.pyc",
+]
+
+# root 所有ガード本体の置き場。絶対パス文字列でのみ一致する（symlink越しの解決はしない）
+GUARD_ROOT_PROTECTED = [
+    "/usr/local/lib/agent-graph/harness.py",
+    "/usr/local/lib/agent-graph/sub/x.py",
 ]
 
 # ツールキット相対でも保護対象外（scope 外のスクリプトは編集可）
@@ -117,6 +135,18 @@ def test_toolkit_own_script_is_denied(project: Path, path: Path) -> None:
 @pytest.mark.parametrize("path", TOOLKIT_ALLOWED)
 def test_toolkit_other_script_is_allowed(project: Path, path: Path) -> None:
     assert harness.check_path(str(path), project) == ""
+
+
+@pytest.mark.parametrize("path", TOOLKIT_ENV_PROTECTED)
+def test_toolkit_env_is_denied(project: Path, path: Path) -> None:
+    # importフック横取り・依存関係・キャッシュの改ざん対策（.venv, pyproject.toml, uv.lock, __pycache__等）
+    assert harness.check_path(str(path), project)
+
+
+@pytest.mark.parametrize("path", GUARD_ROOT_PROTECTED)
+def test_guard_root_is_denied(project: Path, path: Path) -> None:
+    # root所有ガード本体の置き場（/usr/local/lib/agent-graph）への書き込み・退避を拒否する
+    assert harness.check_path(path, project)
 
 
 def test_absolute_path_inside_project_is_denied(project: Path) -> None:

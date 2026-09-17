@@ -73,25 +73,23 @@ import 木を実際に追うと次の 4 つになる。1 つでも書ければ `
 | `harness.py` | `agent_hook.py` が判定関数を取る |
 
 現行 `agent-graph/tool/bin/harness.py` の `PROTECTED_GLOBS` は `bin/harness.py` と `bin/agent_hook.py` と
-`bin/common.py`（`TOOL_DIR` 相対）を保護する。`graph_model.py` は一覧に無く、書き換えれば `harness.check_bash` を
-実行時に差し替えられる。これは移植元にあった保護より狭い。現行ロジックとの一致を優先し、本移植では広げていない。
-広げる場合は現行 `agent-graph/tool/bin/harness.py` 側を直し、本複製を追随させる必要がある（限界の節を参照）。
+`bin/common.py` と `bin/graph_model.py`（すべて `TOOL_DIR` 相対）を保護する。import 木の 4 モジュールは
+移植元 `refference` と同等になった。本複製（`agent-graph/stage/guard/harness.py`）は判定ロジックが
+`agent-graph/tool/bin/harness.py` と完全一致することをテスト（`test_guard_stage.py` の同期テスト）で担保する。
 
 `.claude/**` と `.codex/**` は現行の `PROTECTED_GLOBS` に含まれ、hook 入口と設定ごと保護される。
 `agent-graph/tool/bin/` 配下でも `graph_server.py` と `run_graph.py` と `spawn_codex.py` と `herdr_runner.py` は
 import 木の外にあり、保護対象に含めない。日常の改修を止めないためである。
 
 現行ロジックには `sitecustomize.py` / `usercustomize.py` / `.venv/**` / `pyproject.toml` / `uv.lock` /
-`__pycache__` 経由の差し替え対策、および `GUARD_ROOT` 自体への `mv`/`rm`/`chmod` 拒否は含まれていない。
-これらは移植元 `refference/.agents/stage/guard/harness.py` には存在する追加防御だが、
-「現行のharness.pyと同じ判定ロジックにする」という要件に基づき本移植では持ち込んでいない。
+`__pycache__` 経由の差し替え対策、および `GUARD_ROOT`（`/usr/local/lib/agent-graph/**`）自体への書き込み拒否も
+`PROTECTED_GLOBS` に含めた。移植元 `refference/.agents/stage/guard/harness.py` にあった追加防御と同等になっている。
 
 ## 限界
 
 hook 入口と `settings.json` はリポジトリ内に残る。書き換えれば hook 自体を外せる。
 外した瞬間から判定は動かない。ガードは判定の中身を守るが登録は守らない。
-`.venv` 配下の実体は保護パスで拒否するだけである。root 所有ではないので判定を外せば書ける
-（現行ロジックには `.venv` 自体の保護エントリも無い。上記「保護範囲」を参照）。
+`.venv` 配下の実体は保護パスで拒否するだけである。root 所有ではないので判定を外せば書ける。
 未導入と退避後は区別できない。置き場を消せる環境では無効化に落とせる。
 拒否できるのは hook を通る操作だけである。hook を経ない書き込みは見えない。
 入口の root 化と `settings.json` の root 化は別の作業とする。
