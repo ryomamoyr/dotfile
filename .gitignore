@@ -8,6 +8,3 @@ __pycache__/
 
 # Claude Code が同期する skill のキャッシュ
 .claude/skills/synced/
-
-# refference実装との突き合わせ用に置いている参照専用クローン（自身の.gitを持つため追跡しない）
-/refference/
