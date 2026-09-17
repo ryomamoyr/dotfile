@@ -115,6 +115,22 @@ Claude Code / Codex CLI / herdr を横断するタスクグラフ実行基盤。
 詳細・導入手順・既知の制約は `agent-graph/README.md` を参照。AI agent向けの利用規約は
 `docs/agents/agent-graph.md` にまとめている。
 
+### harnessガード（stage/guard）
+
+`agent-graph/tool/bin/harness.py`（危険操作の拒否・保護パス判定を行う本体）は、リポジトリ内に置く
+だけだとエージェント自身が書き換えて拒否ロジックを無効化できてしまう。この改ざんを防ぐため、
+`agent-graph/stage/guard/` に harness.py の複製とroot所有配置スクリプト（`install-guard.sh`）を用意している。
+
+```bash
+sudo agent-graph/stage/guard/install-guard.sh
+cp agent-graph/stage/guard/agent-graph-hook.sh agent-graph/claude/hooks/agent-graph-hook.sh
+chmod +x agent-graph/claude/hooks/agent-graph-hook.sh
+```
+
+`/usr/local/lib/agent-graph/harness.py` にroot所有・0644で配置され、hook入口が起動のたびに
+祖先ディレクトリの所有権を確認してから判定を実行する。sudoを伴うためエージェントには実行させず、
+必ず人が導入する。設計・脅威モデル・限界は `agent-graph/stage/guard/DESIGN.md` を参照。
+
 ## Neovim プラグイン
 
 LazyVim ベースで以下を追加：
