@@ -6,6 +6,7 @@
     "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS": "6"
   },
   "permissions": {
+    "defaultMode": "auto",
     "allow": [
       "Bash(agr *)",
       "Bash(agc *)",
@@ -26,10 +27,9 @@
       "Edit(./.env)",
       "Edit(./.env.*)",
       "Read(~/.ssh/**)"
-    ],
-    "defaultMode": "auto"
+    ]
   },
-  "model": "sonnet",
+  "model": "fable[1m]",
   "hooks": {
     "Stop": [
       {
@@ -204,41 +204,6 @@
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark-daltonized",
   "skipAutoPermissionPrompt": true,
-  "autoMode": {
-    "allow": [
-      "$defaults",
-      "Bash(uv sync:*)",
-      "Bash(uv run:*)",
-      "Bash(iconv:*)"
-    ],
-    "environment": [
-      "### Org-wide",
-      "**Organization**: None configured",
-      "**Primary use of Claude Code**: software development (railway operations data ETL/analysis — chromatic diagram MVP)",
-      "**Cloud provider(s)**: None configured",
-      "**Repository visibility**: assume private (no remote configured; local-only repo)",
-      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
-      "**Secrets management**: None configured",
-      "**Default / protected branches**: not queryable (no remote configured for this repo)",
-      "**CI/CD deploy targets**: None configured",
-      "**Network posture**: None configured",
-      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine with open internet",
-      "**Source control**: this repo only (/Users/dts-da002n/00_project/chromatic-dia) — no remote configured, no additional orgs configured",
-      "**Trusted internal domains**: None configured",
-      "**Trusted cloud buckets**: None configured",
-      "**Key internal services**: None configured",
-      "**Internal package registry**: None configured",
-      "**Sensitive data locations & audiences**: `data/` and `docs/` (gitignored) — contain real railway operations data (実績ダイヤ/計画ダイヤ CSVs) and vendor spec documents (クロマティックダイヤ操作マニュアル.docx etc.); treat as confidential business data, share only with audiences cleared at the [named+specifics] bar",
-      "**Data retention / declassification**: None configured",
-      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
-      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
-      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
-      "### User-specific",
-      "**Trusted repo**: the git repository at /Users/dts-da002n/00_project/chromatic-dia (working directory) — no remotes configured, so scope is local-only; treat as private given no remote/visibility signal",
-      "**Org-specific CLIs**: None configured",
-      "routine under /Users/dts-da002n/00_project/chromatic-dia/ prefix: uv (env/dependency management), iconv (CP932→UTF-8 conversion) per CLAUDE.md workflow"
-    ]
-  },
   "voiceEnabled": true,
   "maxFileSearchResults": 100,
   "interactiveMode": true,

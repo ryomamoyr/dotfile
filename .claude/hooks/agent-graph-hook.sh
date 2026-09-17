@@ -1,0 +1,1 @@
+../../agent-graph/claude/hooks/agent-graph-hook.sh

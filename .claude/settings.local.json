@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p config scripts)",
+      "Bash(cat:*)",
+      "WebSearch",
+      "Bash(nvim +'let @a=execute\\(\"\"set all\"\"\\)' +\"%s/ /\\\\r/g\" +'%s/=/\\\\r=/g' +'g/python3/p' +q!)",
+      "Bash(git mv:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(mv:*)",
+      "Bash(brew install:*)",
+      "Bash(zsh:*)"
+    ],
+    "deny": []
+  }
+}

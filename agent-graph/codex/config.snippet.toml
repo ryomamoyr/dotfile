@@ -1,0 +1,2 @@
+# ~/.codex/config.toml に追記する分。gpt-6-astra を既定にし、herdr の integration 用の通知は既存設定を維持する
+model = "gpt-6-astra"

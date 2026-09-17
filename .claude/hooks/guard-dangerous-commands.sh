@@ -16,7 +16,7 @@ if echo "$command" | grep -qE 'rm\s+(-[a-zA-Z]*r[a-zA-Z]*f|-[a-zA-Z]*f[a-zA-Z]*r
 fi
 
 # git push --force / -f
-if [ -z "$matched" ] && echo "$command" | grep -qE 'git\s+push\s+.*(\s--force\b|\s-f\b)'; then
+if [ -z "$matched" ] && echo "$command" | grep -qE 'git\s+push\s+(.*\s)?(--force|-f)\b'; then
   matched="git push --force"
 fi
 

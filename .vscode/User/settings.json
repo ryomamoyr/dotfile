@@ -293,4 +293,5 @@
   "extensions.ignoreRecommendations": true,
   "editor.accessibilitySupport": "off",
   "accessibility.signalOptions.volume": 0,
+  "claudeCode.preferredLocation": "panel",
 }

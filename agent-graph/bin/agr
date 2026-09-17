@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# agr: タスクグラフの CLI（run_graph.py）を ~/.local/share/agent-graph の uv 環境で実行する
+export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
+TOOL_DIR="${AGENT_GRAPH_TOOL_DIR:-$HOME/.local/share/agent-graph}"
+exec uv run --project "$TOOL_DIR" python "$TOOL_DIR/bin/run_graph.py" "$@"

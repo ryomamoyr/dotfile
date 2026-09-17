@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="agent-graph-token" content="__AGENT_GRAPH_TOKEN__">
+<title>プロジェクトの進捗</title>
+<style>
+  :root {
+    --ink: #1B2230;
+    --surface: #243040;
+    --line: #3A4859;
+    --text: #E8E4D8;
+    --muted: #9AA5B4;
+    --running: #F2B441;
+    --done: #6FBF8E;
+    --failed: #E06B6B;
+    --waiting: #C9A0DC;
+    --planned: #56657A;
+    --ended: #7C8796;
+    --claude: #C9A0DC;
+    --codex: #7FB8D6;
+    --task: #B8C4D0;
+    --root: #E8E4D8;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--ink);
+    color: var(--text);
+    font: 14px/1.5 "IBM Plex Sans", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  header h1 { margin: 0; font-size: 17px; font-weight: 500; }
+  select {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font: inherit;
+    max-width: 320px;
+  }
+  select:focus-visible { outline: 2px solid var(--running); outline-offset: 1px; }
+  #updated { color: var(--muted); font-size: 13px; }
+  #summary { display: flex; gap: 10px; font-size: 13px; }
+  #summary span { padding: 2px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+  #summary span.on-running { border-color: var(--running); }
+  #summary span.on-waiting { border-color: var(--waiting); }
+  #summary span.on-failed { border-color: var(--failed); }
+  #summary span.zero { color: var(--muted); }
+  .actions { display: flex; gap: 8px; margin: 10px 0 14px; flex-wrap: wrap; }
+  .actions button {
+    font: inherit; font-size: 13px; padding: 6px 14px; border-radius: 6px; cursor: pointer;
+    background: var(--ink); color: var(--text); border: 1px solid var(--line);
+  }
+  .actions button.approve { border-color: var(--done); }
+  .actions button.retry, .actions button.rerun { border-color: var(--running); }
+  .actions button.reject { border-color: var(--failed); }
+  .actions button:disabled { opacity: 0.5; cursor: wait; }
+  .actions button:focus-visible { outline: 2px solid var(--running); outline-offset: 1px; }
+  #action-result { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+  .legend { margin-left: auto; display: flex; gap: 14px; color: var(--muted); font-size: 13px; }
+  .legend i {
+    display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+    margin-right: 6px; vertical-align: middle;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    height: calc(100% - 50px);
+  }
+  #canvas { overflow: auto; }
+  svg { display: block; }
+  aside {
+    padding: 18px 20px;
+    overflow: auto;
+    background: var(--surface);
+  }
+  aside h2 { margin: 0 0 2px; font-size: 16px; font-weight: 500; overflow-wrap: anywhere; }
+  aside .meta { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+  aside dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 12px;
+    margin: 0 0 16px;
+    font-size: 13px;
+  }
+  aside dt { color: var(--muted); white-space: nowrap; }
+  aside dd { margin: 0; overflow-wrap: anywhere; }
+  aside code { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 12px; }
+  aside h3 { margin: 16px 0 6px; font-size: 13px; font-weight: 500; color: var(--muted); }
+  aside .task, aside pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background: var(--ink);
+    border-radius: 8px;
+    padding: 12px 14px;
+    max-height: 40vh;
+    overflow: auto;
+    font-size: 13px;
+    margin: 0;
+  }
+  aside ul { margin: 0; padding-left: 18px; font-size: 13px; }
+  aside li { margin: 2px 0; overflow-wrap: anywhere; }
+  aside li.pass::marker { color: var(--done); }
+  aside li.fail::marker { color: var(--failed); }
+  aside details { margin: 4px 0; }
+  aside summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+  aside .hint { color: var(--waiting); font-size: 13px; }
+  .empty { color: var(--muted); padding: 40px 20px; max-width: 48ch; }
+
+  .link { fill: none; stroke: var(--line); stroke-width: 1.5; }
+  .link.dep { stroke: var(--task); opacity: 0.55; }
+  .link-label text {
+    fill: var(--muted);
+    font-size: 12px;
+    paint-order: stroke;
+    stroke: var(--ink);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+  .node { cursor: pointer; }
+  .node rect { fill: var(--surface); stroke-width: 1.5; rx: 8; }
+  .node.claude rect { stroke: var(--claude); }
+  .node.codex rect { stroke: var(--codex); }
+  .node.task rect { stroke: var(--task); }
+  .node.task.st-done rect { stroke: var(--done); }
+  .node.task.st-failed rect, .node.task.st-rejected rect, .node.task.st-conflict rect { stroke: var(--failed); }
+  .node.task.st-waiting_human rect { stroke: var(--waiting); }
+  .node.root rect { stroke: var(--root); }
+  .node.codex.st-done rect { stroke: var(--done); }
+  .node.codex.st-failed rect, .node.codex.st-lost rect, .node.claude.st-failed rect { stroke: var(--failed); }
+  .node.fresh rect { animation: appear 4s ease-out; }
+  @keyframes appear { 0% { fill: #4A5A3A; stroke-width: 4; } 100% { fill: var(--surface); } }
+  .node.selected rect, .node:focus-visible rect { stroke-width: 3; }
+  .node:focus { outline: none; }
+  .node text { fill: var(--text); font-size: 13px; }
+  .node .sub { fill: var(--muted); font-size: 11px; }
+  .status { stroke: var(--ink); stroke-width: 2; }
+  .status.running { fill: var(--running); animation: breathe 1.8s ease-in-out infinite; }
+  .status.done { fill: var(--done); }
+  .status.failed { fill: var(--failed); }
+  .status.waiting { fill: var(--waiting); animation: breathe 2.6s ease-in-out infinite; }
+  .status.planned { fill: var(--planned); }
+  .status.ended { fill: var(--ended); }
+  @keyframes breathe { 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: reduce) { .status.running, .status.waiting { animation: none; } }
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside, .legend, #splitter { display: none; }
+  }
+
+  header { flex-wrap: wrap; min-height: 60px; }
+  :root { --aside-w: 36vw; }
+  main { height: calc(100% - 70px); grid-template-columns: minmax(0, 1fr) 8px var(--aside-w); }
+  #splitter { cursor: col-resize; background: transparent; border-left: 1px solid var(--line); position: relative; }
+  #splitter::after { content: ""; position: absolute; top: 50%; left: 2px; width: 3px; height: 36px; margin-top: -18px; border-radius: 2px; background: var(--line); }
+  #splitter:hover, #splitter.dragging, #splitter:focus-visible { background: rgba(154,165,180,.15); outline: none; }
+  #splitter:hover::after, #splitter.dragging::after { background: var(--muted); }
+  body.resizing { cursor: col-resize; user-select: none; }
+  #canvas { padding: 24px; }
+  .project { margin: 0 auto 30px; max-width: 1200px; }
+  .project-heading { margin-bottom: 14px; }
+  .project-heading h2 { font-size: 22px; margin: 0; }
+  .project-path { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+  .session-group { border-left: 2px solid var(--line); padding: 0 0 8px 14px; margin: 18px 0 26px; }
+  .session-group h3 { color: var(--muted); font-size: 12px; font-weight: 500; margin: 0 0 10px; }
+  .goal { white-space: pre-wrap; }
+  .agent-row { display: flex; align-items: center; gap: 12px; width: calc(100% - 90px); min-height: 70px; margin-bottom: 9px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); text-align: left; font: inherit; cursor: pointer; }
+  .agent-row:hover, .agent-row[aria-pressed="true"] { border-color: var(--text); background: #2c3b4d; }
+  .agent-row:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+  .agent-label { display: grid; gap: 4px; min-width: 0; flex: 1; overflow-wrap: anywhere; }
+  .agent-label strong { font-weight: 500; }
+  .agent-label small { color: var(--muted); }
+  .state-label { font-size: 12px; flex-shrink: 0; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .running .dot { background: var(--running); }
+  .done .dot { background: var(--done); }
+  .failed .dot { background: var(--failed); }
+  .waiting .dot { background: var(--waiting); }
+  .idle .dot { background: var(--done); box-shadow: 0 0 0 3px rgba(111,191,142,.25); }
+  .ended .dot { background: var(--ended); }
+  .session-group.ended { opacity: .6; }
+  /* 実寸で描き、はみ出す分は横スクロールに任せる。スクロールバーは常に見える色にして気づけるようにする */
+  .dag-holder { overflow-x: auto; padding: 4px 0 8px; scrollbar-color: var(--muted) var(--surface); scrollbar-width: auto; }
+  .dag-holder::-webkit-scrollbar { height: 10px; }
+  .dag-holder::-webkit-scrollbar-track { background: var(--surface); border-radius: 6px; }
+  .dag-holder::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 6px; }
+  .dag-holder::-webkit-scrollbar-thumb:hover { background: var(--text); }
+  /* 図が枠より狭いときは中央に置き、広いときは左端から横スクロールさせる */
+  .dag { display: block; margin: 0 auto; }
+  .dag .edge path { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+  .dag .edge-back path { stroke: var(--line); stroke-width: 1; }
+  .dag .edge-label { font-size: 11px; fill: var(--muted); paint-order: stroke; stroke: var(--ink); stroke-width: 4px; stroke-linejoin: round; }
+  .dag .node { cursor: pointer; outline: none; }
+  .dag .node .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+  .dag .node:hover .box, .dag .node:focus-visible .box { stroke: var(--muted); }
+  .dag .node.selected .box { stroke: var(--text); stroke-width: 2; }
+  .dag .node .title { font-size: 13px; fill: var(--text); font-weight: 500; }
+  .dag .node .sub { font-size: 11px; fill: var(--muted); }
+  .dag .node .brief { font-size: 11px; fill: var(--text); opacity: .75; }
+  .dag .dismiss circle { fill: var(--ink); stroke: var(--line); stroke-width: 1; }
+  .dag .dismiss text { font-size: 13px; fill: var(--muted); }
+  .dag .dismiss { opacity: .55; cursor: pointer; outline: none; }
+  .dag .node:hover .dismiss, .dag .dismiss:hover, .dag .dismiss:focus-visible { opacity: 1; }
+  .dag .dismiss:hover circle, .dag .dismiss:focus-visible circle { stroke: var(--text); }
+  .dag .status-dot { fill: var(--planned); }
+  .dag .running .status-dot { fill: var(--running); }
+  .dag .done .status-dot, .dag .idle .status-dot { fill: var(--done); }
+  .dag .failed .status-dot { fill: var(--failed); }
+  .dag .waiting .status-dot { fill: var(--waiting); }
+  .dag .ended .status-dot { fill: var(--ended); }
+  .dag .chip { cursor: pointer; outline: none; }
+  .dag .chip rect { fill: var(--ink); stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 3; }
+  .dag .chip:hover rect, .dag .chip:focus-visible rect { stroke: var(--muted); }
+  .dag .chip text { font-size: 12px; fill: var(--muted); }
+  .dag .chip-link { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 3; }
+  form.say { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; margin: 0 0 16px; }
+  form.say textarea { font: inherit; font-size: 13px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--ink); color: var(--text); resize: vertical; min-height: 44px; }
+  form.say textarea:focus-visible { outline: 2px solid var(--running); outline-offset: 1px; }
+  form.say button { font: inherit; font-size: 13px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--ink); color: var(--text); cursor: pointer; }
+  form.say button:disabled { opacity: .5; cursor: wait; }
+  form.say .say-note { grid-column: 1 / -1; margin: 0; font-size: 12px; color: var(--muted); min-height: 1em; }
+  .turn { margin: 8px 0; padding: 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .turn:hover { border-color: var(--muted); }
+  .turn.open-turn { border-left: 3px solid var(--running); }
+  .turn summary { display: grid; grid-template-columns: auto 1fr; column-gap: 10px; align-items: baseline; cursor: pointer; color: var(--text); font-size: 13px; list-style: none; }
+  .turn summary .turn-brief { grid-column: 2; }
+  .turn summary::-webkit-details-marker { display: none; }
+  .turn-time { color: var(--muted); font-size: 12px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .turn-prompt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .turn-brief { margin: 4px 0 0; padding-left: 16px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+  .turn-body { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; }
+  .turn-body h4 { margin: 8px 0 4px; font-size: 12px; font-weight: 500; color: var(--muted); }
+  .turn-body pre { max-height: 320px; overflow: auto; }
+  .ended-sessions { margin: 8px 0 20px; }
+  .ended-sessions summary { color: var(--muted); font-size: 12px; cursor: pointer; }
+  .session-group h3 small { font-weight: 400; margin-left: 8px; }
+  .dependencies { font-size: 12px; color: var(--muted); }
+  @media (max-width: 900px) {
+    main { display: block; height: auto; }
+    #canvas { padding: 16px; }
+    aside { display: block; border-top: 1px solid var(--line); }
+    .agent-row { width: calc(100% - 90px); padding: 10px; flex-wrap: wrap; }
+    .state-label { margin-left: auto; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <span id="project-count">全プロジェクト</span>
+  <div id="summary" aria-live="polite"></div>
+  <span id="updated"></span>
+  <div class="legend">
+    <span><i style="background: var(--planned)"></i>未着手</span>
+    <span><i style="background: var(--running)"></i>作業中</span>
+    <span><i style="background: var(--waiting)"></i>判断待ち</span>
+    <span><i style="background: var(--done)"></i>完了</span>
+    <span><i style="background: var(--failed)"></i>失敗</span>
+  </div>
+</header>
+<main>
+  <div id="canvas"><p class="empty">イベントを待っています。</p></div>
+  <div id="splitter" role="separator" aria-orientation="vertical" aria-label="右パネルの幅（ドラッグ、または ← → キー）" tabindex="0"></div>
+  <aside id="detail"><p class="empty">ノードを選ぶと、渡されたタスク・受け入れ結果・レビューが表示されます。</p></aside>
+</main>
+
+<script>
+  // POST に付ける認証トークン。サーバが起動時に埋め込む
+  const TOKEN = (document.querySelector('meta[name="agent-graph-token"]') || {}).content || "";
+  const POST_HEADERS = { "Content-Type": "application/json", "X-Agent-Graph-Token": TOKEN };
+  const POLL_MS = 2000;
+  const NODE_W = 220;
+  const NODE_H = 56;
+  // 縦レイアウト: 層（root からの深さ）は下方向へ、同じ層のノードは横に並ぶ
+  const GAP_X = 260;
+  const GAP_Y = 150;
+  // 新しく現れたノードを強調する時間
+  const FRESH_MS = 4000;
+  const STATUS_LABEL = {
+    planned: "未着手", running: "作業中", verifying: "受け入れ検証中", reviewing: "レビュー中", merging: "統合中",
+    waiting_human: "人の判断待ち", conflict: "統合で競合（判断待ち）", done: "完了", unverified: "実行完了・検証待ち", failed: "失敗", rejected: "却下", ended: "セッション終了", idle: "待機中（入力待ち）",
+    lost: "追跡不能（待ち受けが途切れた）",
+  };
+  const STATUS_CLASS = {
+    planned: "planned", running: "running", verifying: "running", reviewing: "running", merging: "running",
+    waiting_human: "waiting", conflict: "waiting", done: "done", unverified: "waiting", failed: "failed", rejected: "failed", ended: "ended", lost: "failed", idle: "idle", archive: "archive",
+  };
+  const KIND_LABEL = { root: "根（Claude Code / fable）", task: "グラフのタスク", claude: "Claude サブエージェント", codex: "Codex（単発）" };
+  const ACTIONS = {
+    task_waiting: [["approve", "承認して統合"], ["retry", "再試行"], ["reject", "却下"]],
+    task_failed: [["retry", "再試行（planned に戻す）"], ["reject", "却下"]],
+    codex_failed: [["rerun", "同じ内容で再実行"]],
+  };
+
+  const state = { sessions: [], selectedSession: null, projects: [], selectedNode: null, known: new Map(), fresh: new Map(), expandedArchive: new Set() };
+
+  function markFresh(session) {
+    // 初回表示はすべて既知扱い。以降に増えたノードだけ FRESH_MS の間 fresh にする
+    const seen = state.known.get(session.name);
+    const now = Date.now();
+    if (!seen) { state.known.set(session.name, new Set(session.nodes.map(n => n.id))); return; }
+    for (const n of session.nodes) if (!seen.has(n.id)) { seen.add(n.id); state.fresh.set(`${session.name}/${n.id}`, now + FRESH_MS); }
+    for (const [key, until] of state.fresh) if (until < now) state.fresh.delete(key);
+  }
+  function isFresh(session, n) { return state.fresh.has(`${session.name}/${n.id}`); }
+
+  function countStatuses(session) {
+    const counts = { running: 0, waiting: 0, failed: 0 };
+    for (const n of session.nodes) {
+      if (n.kind === "root") continue;
+      const cls = STATUS_CLASS[n.status];
+      if (cls in counts) counts[cls] += 1;
+    }
+    return counts;
+  }
+
+  function renderSummary(session) {
+    const box = document.getElementById("summary");
+    if (!session) { box.replaceChildren(); document.title = "agent graph"; return; }
+    const c = countStatuses(session);
+    const alive = session.root.status === "running";
+    box.replaceChildren(
+      el("span", alive ? "Claude 稼働中" : "Claude 終了", alive ? "on-running" : "zero"),
+      el("span", `作業中 ${c.running}`, c.running ? "on-running" : "zero"),
+      el("span", `判断待ち ${c.waiting}`, c.waiting ? "on-waiting" : "zero"),
+      el("span", `失敗 ${c.failed}`, c.failed ? "on-failed" : "zero"),
+    );
+    document.title = `${c.running ? `(${c.running}) ` : ""}${c.waiting ? "⏸ " : ""}agent graph ${session.name}`;
+  }
+
+  function fmtTime(ts) {
+    if (!ts) return "";
+    const d = new Date(ts.replace(/(\d{2})(\d{2})$/, "$1:$2"));
+    return isNaN(d) ? ts : d.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function el(tag, text, className) {
+    const node = document.createElement(tag);
+    if (text !== undefined) node.textContent = text;
+    if (className) node.className = className;
+    return node;
+  }
+  function truncate(text, max) { return text.length > max ? text.slice(0, max - 1) + "…" : text; }
+  function statusLabel(s) { return STATUS_LABEL[s] || s; }
+  function currentSession() { return state.sessions.find(s => s.key === state.selectedSession) || null; }
+
+  // 403 やエラーページで JSON を読めないことがある。文面に落として画面を止めない
+  async function readMessage(res) {
+    try { return (await res.json()).message || ""; } catch { return `サーバが ${res.status} を返しました`; }
+  }
+
+  async function fetchGraph() {
+    const res = await fetch("/api/graph", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  }
+
+  function orderNodes(session) {
+    const byId = new Map(session.nodes.map(node => [node.id, node]));
+    const visited = new Set();
+    const ordered = [];
+    function visit(id, depth) {
+      if (visited.has(id) || !byId.has(id)) return;
+      visited.add(id);
+      ordered.push({ node: byId.get(id), depth });
+      for (const edge of session.edges.filter(edge => edge.source === id)) visit(edge.target, depth + 1);
+    }
+    visit("root", 0);
+    for (const node of session.nodes) visit(node.id, 1);
+    return ordered;
+  }
+
+  // ---- 有向グラフの描画（root → 子。タスク間の辺は依存と引き渡した成果物）
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const DAG_W = 240, DAG_H = 80, DAG_COL = 28, DAG_ROW = 72, DAG_PAD = 24;
+  // 子ノードは根より幅を詰めて縦に伸ばす。横に増えても 1 行が広がりすぎないようにする
+  const CHILD_W = 196, CHILD_H = 116;
+  // タイトルと依頼の要点はそれぞれ 2 行まで。行送りは各字送りに合わせる
+  const TITLE_LINES = 2, TITLE_DY = 16;
+  const BRIEF_LINES = 2, BRIEF_DY = 15;
+  const nodeBox = n => n.kind === "root" ? { w: DAG_W, h: DAG_H } : { w: CHILD_W, h: CHILD_H };
+  const CHIP_W = 128, CHIP_H = 30, CHIP_GAP = 18;
+  // 戻りの辺を膨らませる量。子が親の真下でも前向きの辺と重ならないようにする
+  const BACK_BULGE = 46;
+  const KIND_COLOR = { root: "var(--root)", claude: "var(--claude)", codex: "var(--codex)", task: "var(--task)", archive: "var(--planned)" };
+
+  function svgEl(tag, attrs, text) {
+    const node = document.createElementNS(SVG_NS, tag);
+    for (const [k, v] of Object.entries(attrs || {})) node.setAttribute(k, v);
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function layoutSession(view) {
+    // 層 = root からの最長路。root を最上段に置き、層が増えるほど下へ伸びる。同じ層は横に並ぶ
+    const ids = new Set(view.nodes.map(n => n.id));
+    const edges = view.edges.filter(e => ids.has(e.source) && ids.has(e.target) && e.source !== e.target);
+    // 戻りの辺は循環になるため層の計算からは外す。描画には使う
+    const forwardEdges = edges.filter(e => !e.back);
+    const depth = new Map(view.nodes.map(n => [n.id, n.id === "root" ? 0 : 1]));
+    for (let i = 0; i < view.nodes.length; i++) {
+      let changed = false;
+      for (const e of forwardEdges) {
+        const d = depth.get(e.source) + 1;
+        if (d > depth.get(e.target) && d <= view.nodes.length) { depth.set(e.target, d); changed = true; }
+      }
+      if (!changed) break;
+    }
+    const layers = [];
+    for (const n of view.nodes) if (n.kind !== "archive") (layers[depth.get(n.id)] ||= []).push(n);
+    const rows = layers.filter(Boolean);
+    const chip = view.nodes.find(n => n.kind === "archive");
+    // 根と子で大きさが違うので、層の幅と高さは実寸の合計で測る
+    const rowWidth = layer => layer.reduce((w, n) => w + nodeBox(n).w, 0) + (layer.length - 1) * DAG_COL;
+    const rowHeight = layer => Math.max(...layer.map(n => nodeBox(n).h));
+    const inner = Math.max(1, ...rows.map(rowWidth));
+    let width = DAG_PAD * 2 + inner;
+    const height = DAG_PAD * 2 + rows.reduce((h, l) => h + rowHeight(l), 0) + (rows.length - 1) * DAG_ROW;
+    // 各層を中央揃えにする。子が何個でも根が図の中心に来る
+    const pos = new Map();
+    let cursorY = DAG_PAD;
+    rows.forEach(layer => {
+      const h = rowHeight(layer);
+      let x = DAG_PAD + (inner - rowWidth(layer)) / 2;
+      layer.forEach(n => {
+        const box = nodeBox(n);
+        pos.set(n.id, { x, y: cursorY + (h - box.h) / 2, w: box.w, h: box.h });
+        x += box.w + DAG_COL;
+      });
+      cursorY += h + DAG_ROW;
+    });
+    if (chip) {
+      const root = pos.get("root") || { x: DAG_PAD, y: DAG_PAD, w: DAG_W, h: DAG_H };
+      pos.set(chip.id, { x: root.x + root.w + CHIP_GAP, y: root.y + (root.h - CHIP_H) / 2, w: CHIP_W, h: CHIP_H });
+      // チップが右にはみ出さない幅にする
+      width = Math.max(width, root.x + root.w + CHIP_GAP + CHIP_W + DAG_PAD);
+    }
+    return { pos, edges, width, height };
+  }
+
+  const ARCHIVE_ID = "__archive";
+  const DISMISS_KEY = "agent-graph:dismissed";
+  function loadDismissed() { try { return new Set(JSON.parse(localStorage.getItem(DISMISS_KEY) || "[]")); } catch { return new Set(); } }
+  function saveDismissed(set) { localStorage.setItem(DISMISS_KEY, JSON.stringify([...set])); }
+  function toggleDismissed(session, nodeId) {
+    const set = loadDismissed();
+    const key = `${session.key}::${nodeId}`;
+    if (set.has(key)) {
+      set.delete(key);
+    } else {
+      set.add(key);
+      // 畳んだ結果が必ず見えるよう、展開中の一覧は閉じる
+      state.expandedArchive.delete(session.key);
+    }
+    saveDismissed(set);
+    renderDashboard();
+  }
+  function isDismissable(node) {
+    const cls = STATUS_CLASS[node.status];
+    // 作業中・判断待ちは誤って消さないよう × を出さない
+    return (node.kind === "claude" || node.kind === "codex") && cls !== "running" && cls !== "waiting";
+  }
+  function visibleView(session) {
+    // 直近 2 ターンより前に完了した末端の委譲（サブエージェント・単発 Codex）は 1 ノードに畳む。
+    // 失敗・作業中・判断待ちと、依存の線を持つタスクは畳まない
+    const turns = session.turns || [];
+    const cutoff = turns.length >= 2 ? turns[turns.length - 2].ts : "";
+    const hasChildren = new Set(session.edges.map(e => e.source));
+    const dismissed = loadDismissed();
+    // 手動で畳んだノードは子を持っていても隠す。辺が宙に浮かないよう子孫もまとめて隠す
+    const manualRoots = session.nodes.filter(n =>
+      n.kind !== "root" && n.kind !== "task" && dismissed.has(`${session.key}::${n.id}`));
+    const manualHidden = new Set();
+    const byId = new Map(session.nodes.map(n => [n.id, n]));
+    const keepVisible = new Set(["running", "waiting", "failed"]);
+    const roots = new Set(manualRoots.map(n => n.id));
+    const stack = manualRoots.map(n => n.id);
+    const seen = new Set();
+    while (stack.length) {
+      const id = stack.pop();
+      if (id === "root" || seen.has(id)) continue;
+      seen.add(id);
+      const node = byId.get(id);
+      // 子孫でも作業中・判断待ち・失敗なら見せ続ける。畳んだ本人は隠す
+      const active = !roots.has(id) && node && keepVisible.has(STATUS_CLASS[node.status]);
+      if (!active) manualHidden.add(id);
+      for (const e of session.edges) if (e.source === id) stack.push(e.target);
+    }
+    // 自動で畳むのは今までどおり。子を持たず完了して cutoff より前に始まったものだけ
+    const autoHidden = session.nodes.filter(n =>
+      n.kind !== "root" && n.kind !== "task" && !hasChildren.has(n.id) && !manualHidden.has(n.id)
+      && STATUS_CLASS[n.status] === "done" && cutoff && n.started && n.started < cutoff);
+    const archived = session.nodes.filter(n => manualHidden.has(n.id)).concat(autoHidden);
+    if (!archived.length) return { nodes: session.nodes, edges: session.edges, archived: 0, expanded: false, dismissed };
+    const expanded = state.expandedArchive.has(session.key);
+    const archiveNode = { id: ARCHIVE_ID, kind: "archive", status: "archive", model: "", started: "",
+      label: expanded ? `${archived.length} 件を隠す` : `非表示 ${archived.length} 件` };
+    archiveNode.description = archiveNode.label;
+    const hidden = new Set(expanded ? [] : archived.map(n => n.id));
+    const nodes = session.nodes.filter(n => !hidden.has(n.id)).concat([archiveNode]);
+    const edges = session.edges.filter(e => !hidden.has(e.source) && !hidden.has(e.target)).concat([{ source: "root", target: ARCHIVE_ID, label: "" }]);
+    return { nodes, edges, archived: archived.length, expanded, dismissed };
+  }
+
+  function renderGraph(session) {
+    // 戻りの辺は「非表示」の判定（hasChildren）に混ぜない。判定後に、隠れていない分だけ描画へ戻す
+    const forwardEdges = session.edges.filter(e => !e.back);
+    const backEdges = session.edges.filter(e => e.back);
+    const view = visibleView({ ...session, edges: forwardEdges });
+    const shownIds = new Set(view.nodes.map(n => n.id));
+    view.edges = view.edges.concat(backEdges.filter(e => shownIds.has(e.source) && shownIds.has(e.target)));
+    const { pos, edges, width, height } = layoutSession(view);
+    const svg = svgEl("svg", { width, height, viewBox: `0 0 ${width} ${height}`, class: "dag", role: "img", "aria-label": `${session.name} の有向グラフ` });
+    const defs = svgEl("defs");
+    const marker = svgEl("marker", { id: "arrow", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 8, markerHeight: 8, orient: "auto" });
+    marker.append(svgEl("path", { d: "M0,0 L10,5 L0,10 z", fill: "var(--muted)" }));
+    defs.append(marker);
+    const backMarker = svgEl("marker", { id: "arrow-back", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto" });
+    backMarker.append(svgEl("path", { d: "M0,0 L10,5 L0,10 z", fill: "var(--line)" }));
+    defs.append(backMarker);
+    svg.append(defs);
+    for (const e of edges) {
+      const a = pos.get(e.source), b = pos.get(e.target);
+      if (e.target === ARCHIVE_ID) {
+        const y = a.y + a.h / 2;
+        svg.append(svgEl("path", { class: "chip-link", d: `M${a.x + a.w},${y} L${b.x},${y}` }));
+        continue;
+      }
+      if (e.back) {
+        // 子の上辺中央 → 親の下辺中央。直線上だと前向きの辺と重なるので左右どちらかへ膨らませる
+        const x1 = a.x + a.w / 2, y1 = a.y, x2 = b.x + b.w / 2, y2 = b.y + b.h;
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+        // 左端に寄ったときは左へ膨らませると図の外へ出るので、その場合は右へ逃がす
+        const bulge = BACK_BULGE * (Math.min(x1, x2) - BACK_BULGE < DAG_PAD ? 1 : (mx < width / 2 ? -1 : 1));
+        const g = svgEl("g", { class: "edge edge-back" });
+        g.append(svgEl("path", { d: `M${x1},${y1} C${x1 + bulge},${my} ${x2 + bulge},${my} ${x2},${y2}`, "marker-end": "url(#arrow-back)" }));
+        if (e.label) g.append(svgEl("text", { x: mx + bulge, y: my, "text-anchor": "middle", class: "edge-label", "data-full": e.label, "data-max": CHILD_W - 20 }, e.label));
+        svg.append(g);
+        continue;
+      }
+      // 親の下辺中央 → 子の上辺中央。ラベルは子のすぐ上に置き、隣の辺と重ならないようにする
+      const x1 = a.x + a.w / 2, y1 = a.y + a.h, x2 = b.x + b.w / 2, y2 = b.y, my = (y1 + y2) / 2;
+      const g = svgEl("g", { class: "edge" });
+      g.append(svgEl("path", { d: `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`, "marker-end": "url(#arrow)" }));
+      const targetNode = view.nodes.find(n => n.id === e.target);
+      const targetTitle = targetNode ? (targetNode.description || targetNode.label || "") : "";
+      if (e.label && e.label !== targetTitle) g.append(svgEl("text", { x: x2, y: y2 - 12, "text-anchor": "middle", class: "edge-label", "data-full": e.label, "data-max": b.w + DAG_COL - 12 }, e.label));
+      svg.append(g);
+    }
+    for (const node of view.nodes) {
+      const p = pos.get(node.id);
+      if (node.kind === "archive") {
+        const chipEl = svgEl("g", { class: "chip", transform: `translate(${p.x},${p.y})`, role: "button", tabindex: 0, "aria-label": node.label });
+        chipEl.append(svgEl("rect", { width: CHIP_W, height: CHIP_H, rx: 15 }));
+        chipEl.append(svgEl("text", { x: CHIP_W / 2, y: 19, "text-anchor": "middle" }, `${node.label} ${view.expanded ? "▴" : "▸"}`));
+        chipEl.append(svgEl("title", {}, view.expanded ? "クリックで隠す" : "完了して確認済み・× で隠したもの。クリックで表示"));
+        const toggle = () => { state.expandedArchive.has(session.key) ? state.expandedArchive.delete(session.key) : state.expandedArchive.add(session.key); renderDashboard(); };
+        chipEl.addEventListener("click", toggle);
+        chipEl.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggle(); } });
+        svg.append(chipEl);
+        continue;
+      }
+      const selected = state.selectedSession === session.key && state.selectedNode === node.id;
+      const g = svgEl("g", { class: `node ${STATUS_CLASS[node.status] || "planned"}${selected ? " selected" : ""}`, transform: `translate(${p.x},${p.y})`, tabindex: 0, role: "button" });
+      g.append(svgEl("rect", { class: "box", width: p.w, height: p.h, rx: 10 }));
+      g.append(svgEl("rect", { class: "kind-bar", x: 0, y: 0, width: 4, height: p.h, rx: 2, fill: KIND_COLOR[node.kind] || KIND_COLOR.task }));
+      g.append(svgEl("circle", { class: "status-dot", cx: isDismissable(node) ? p.w - 36 : p.w - 14, cy: 14, r: 5 }));
+      if (isDismissable(node)) {
+        // × で手動で畳む。畳んだものを展開中なら ↺ で戻す
+        const dismissedNow = (view.dismissed || new Set()).has(`${session.key}::${node.id}`);
+        const btn = svgEl("g", { class: "dismiss", transform: `translate(${p.w - 14}, 14)`, role: "button", tabindex: 0, "aria-label": dismissedNow ? "表示に戻す" : "このノードを畳む" });
+        btn.append(svgEl("circle", { r: 9 }), svgEl("text", { x: 0, y: 4, "text-anchor": "middle" }, dismissedNow ? "↺" : "×"));
+        btn.append(svgEl("title", {}, dismissedNow ? "表示に戻す" : "畳む（再表示は「畳んだ委譲」を展開して ↺）"));
+        btn.addEventListener("click", ev => { ev.stopPropagation(); toggleDismissed(session, node.id); });
+        btn.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); ev.stopPropagation(); toggleDismissed(session, node.id); } });
+        g.append(btn);
+      }
+      const title = node.kind === "root" ? `Claude · ${node.model || "?"}` : (node.description || node.label || node.id);
+      const sub = node.kind === "archive" ? (view.expanded ? "クリックで畳む" : "クリックで展開") : node.kind === "root"
+        ? `${node.label} · ${statusLabel(node.status)}`
+        : [node.label !== title ? node.label : "", node.model || node.executor, statusLabel(node.status)].filter(Boolean).join(" · ");
+      // 3 行目は依頼の要点。制約だけの前置き（読み取り専用・編集禁止・手順見出し）は飛ばして最初の依頼文を出す
+      const BOILERPLATE = /読み取り専用|変更しない|編集しない|作成・編集|手順[:：]?$|^\d+\.\s*$/;
+      const lines = (node.task || "").split("\n").map(s => s.trim()).filter(Boolean);
+      const body = lines.filter(l => !BOILERPLATE.test(l));
+      const brief = node.kind === "root" || node.kind === "archive" ? "" : (body.slice(0, 3).join(" ") || lines[0] || "");
+      // 行の位置は箱の高さに合わせる。子は縦に伸ばした分だけ行間を広げる
+      // 子はタイトル 2 行分を確保する。1 行で収まったときは fitLabels が下の行を 1 行分せり上げる
+      const lineY = node.kind === "root" ? [24, 43, 64] : [26, 62, 84];
+      const titleMax = p.w - (isDismissable(node) ? 60 : 36);
+      if (node.kind === "root") {
+        g.append(svgEl("text", { x: 14, y: lineY[0], class: "title", "data-full": title, "data-max": titleMax }, title));
+      } else {
+        const titleEl = svgEl("text", { x: 14, y: lineY[0], class: "title", "data-full": title, "data-max": titleMax, "data-lines": TITLE_LINES });
+        for (let i = 0; i < TITLE_LINES; i++) titleEl.append(svgEl("tspan", { x: 14, dy: i === 0 ? 0 : TITLE_DY }));
+        g.append(titleEl);
+      }
+      g.append(svgEl("text", { x: 14, y: lineY[1], class: "sub", "data-full": sub, "data-max": p.w - 28 }, sub));
+      if (brief) {
+        const briefEl = svgEl("text", { x: 14, y: lineY[2], class: "brief", "data-full": brief, "data-max": p.w - 28, "data-lines": BRIEF_LINES });
+        for (let i = 0; i < BRIEF_LINES; i++) briefEl.append(svgEl("tspan", { x: 14, dy: i === 0 ? 0 : BRIEF_DY }));
+        g.append(briefEl);
+      }
+      g.append(svgEl("title", {}, `${title}\n${sub}${brief ? "\n" + brief : ""}`));
+      const select = node.kind === "archive"
+        ? () => { state.expandedArchive.has(session.key) ? state.expandedArchive.delete(session.key) : state.expandedArchive.add(session.key); renderDashboard(); }
+        : () => { state.selectedSession = session.key; state.selectedNode = node.id; renderDashboard(); renderDetail(session); };
+      g.addEventListener("click", select);
+      g.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select(); } });
+      svg.append(g);
+    }
+    return svg;
+  }
+
+  function wrapLines(text, full, max, maxLines) {
+    // 日本語は語の区切りが無いので、行ごとに収まる最長の前置きを二分探索して切る
+    const tspans = [...text.querySelectorAll("tspan")];
+    let rest = full;
+    tspans.forEach((line, i) => {
+      const last = i === tspans.length - 1;
+      line.textContent = rest;
+      if (!rest || line.getComputedTextLength() <= max) { rest = ""; return; }
+      let lo = 0, hi = rest.length - 1;
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2);
+        line.textContent = rest.slice(0, mid) + (last ? "…" : "");
+        if (line.getComputedTextLength() <= max) lo = mid; else hi = mid - 1;
+      }
+      line.textContent = rest.slice(0, lo) + (last ? "…" : "");
+      rest = last ? "" : rest.slice(lo).trimStart();
+    });
+  }
+
+  function fitLabels(root) {
+    // DOM に載ってから実測する。収まる最大の長さを二分探索して … を付ける
+    for (const text of root.querySelectorAll("text[data-max]")) {
+      const max = Number(text.dataset.max) || 0;
+      const full = text.dataset.full || text.textContent;
+      if (text.dataset.lines) { wrapLines(text, full, max, Number(text.dataset.lines)); continue; }
+      text.textContent = full;
+      if (!max || text.getComputedTextLength() <= max) continue;
+      let lo = 0, hi = full.length - 1;
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2);
+        text.textContent = full.slice(0, mid) + "…";
+        if (text.getComputedTextLength() <= max) lo = mid; else hi = mid - 1;
+      }
+      text.textContent = full.slice(0, lo) + "…";
+    }
+    liftAfterTitle(root);
+  }
+
+  function liftAfterTitle(root) {
+    // タイトルが 1 行で収まったノードは、下の行を 1 行分せり上げて空きを作らない
+    for (const node of root.querySelectorAll(".dag .node")) {
+      const title = node.querySelector("text.title[data-lines]");
+      if (!title) continue;
+      const used = [...title.querySelectorAll("tspan")].filter(line => line.textContent).length;
+      if (used > 1) continue;
+      for (const line of node.querySelectorAll("text.sub, text.brief")) {
+        line.setAttribute("y", Number(line.getAttribute("y")) - TITLE_DY);
+      }
+    }
+  }
+
+  function renderDashboard() {
+    const canvas = document.getElementById("canvas");
+    const sections = [];
+    for (const project of state.projects) {
+      const section = el("section", undefined, "project");
+      const heading = el("div", undefined, "project-heading");
+      heading.append(el("h2", project.name), el("span", project.path, "project-path"));
+      section.append(heading);
+      if (project.error) section.append(el("p", "状態を取得できません: " + project.error, "hint"));
+      const sessions = state.sessions.filter(session => session.project === project.path);
+      // 終了したセッションは畳んで、生きているものだけを常に見せる
+      const endedBox = el("details", undefined, "ended-sessions");
+      const endedCount = sessions.filter(s => s.root.status === "ended").length;
+      endedBox.append(el("summary", `終了したセッション（${endedCount}）`));
+      for (const session of sessions) {
+        const group = el("section", undefined, "session-group" + (session.root.status === "ended" ? " ended" : ""));
+        const h3 = el("h3", session.name);
+        if (session.root.started) h3.append(el("small", session.root.started.slice(5, 16).replace("T", " ") + " 開始"));
+        group.append(h3);
+        if (session.goal) group.append(el("p", session.goal, "goal"));
+        const holder = el("div", undefined, "dag-holder");
+        holder.append(renderGraph(session));
+        group.append(holder);
+        (session.root.status === "ended" ? endedBox : section).append(group);
+      }
+      if (endedCount) section.append(endedBox);
+      if (!sessions.length && !project.error) section.append(el("p", "セッションの記録待ち", "meta"));
+      sections.push(section);
+    }
+    canvas.replaceChildren(...(sections.length ? sections : [el("p", "プロジェクトの記録待ちです。pj -c で会話を開始してください。", "empty")]));
+    fitLabels(canvas);
+    document.getElementById("project-count").textContent = `全 ${state.projects.length} プロジェクト`;
+    const counts = { running: 0, waiting: 0, failed: 0, done: 0 };
+    for (const session of state.sessions) for (const node of session.nodes) {
+      const status = STATUS_CLASS[node.status];
+      if (status in counts) counts[status]++;
+    }
+    document.getElementById("summary").replaceChildren(...Object.entries(counts).map(([key, count]) => el("span", `${({running:"作業中",waiting:"判断・検証待ち",failed:"失敗",done:"完了"})[key]} ${count}`, `on-${key}`)));
+    document.title = "プロジェクトの進捗";
+  }
+
+  function addRow(dl, label, value, mono) {
+    if (value === undefined || value === null || value === "" || (Array.isArray(value) && !value.length)) return;
+    dl.append(el("dt", label));
+    const dd = el("dd");
+    const text = Array.isArray(value) ? value.join(", ") : String(value);
+    if (mono) dd.append(el("code", text)); else dd.textContent = text;
+    dl.append(dd);
+  }
+
+  // 指示の送信欄。Shift+Enter で送信、Enter は改行。下書きはセッションごとに保持する
+  const drafts = new Map();
+  function buildSayForm(session) {
+    const form = el("form", undefined, "say");
+    const box = el("textarea");
+    box.rows = 3; box.placeholder = `${session.name} に指示を送る（Shift+Enter で送信、Enter で改行）`;
+    box.value = drafts.get(session.key) || "";
+    box.addEventListener("input", () => drafts.set(session.key, box.value));
+    const button = el("button", "送信"); button.type = "submit";
+    const note = el("p", "", "say-note");
+    const submit = async () => {
+      const text = box.value.trim();
+      if (!text) return;
+      button.disabled = true; note.textContent = "送信中…";
+      try {
+        const res = await fetch("/api/say", { method: "POST", headers: POST_HEADERS, body: JSON.stringify({ project: session.project, session: session.name, text }) });
+        const message = await readMessage(res);
+        note.textContent = message;
+        if (res.ok && /送りました/.test(message)) { box.value = ""; drafts.set(session.key, ""); }
+      } catch (err) { note.textContent = `送信できません: ${err.message}`; }
+      button.disabled = false;
+    };
+    form.addEventListener("submit", ev => { ev.preventDefault(); submit(); });
+    box.addEventListener("keydown", ev => { if (ev.key === "Enter" && ev.shiftKey && !ev.isComposing) { ev.preventDefault(); submit(); } });
+    form.append(box, button, note);
+    return form;
+  }
+
+  function renderSessionOverview(session) {
+    const aside = document.getElementById("detail");
+    const counts = {};
+    for (const n of session.nodes.filter(n => n.kind === "task")) counts[n.status] = (counts[n.status] || 0) + 1;
+    const dl = el("dl");
+    addRow(dl, "Claude", statusLabel(session.root.status));
+    addRow(dl, "プロジェクト", session.project);
+    addRow(dl, "起動", session.root.started);
+    addRow(dl, "モデル", session.root.model);
+    addRow(dl, "目標", session.goal || "（tasks.yaml なし: 単発の委譲のみ）");
+    addRow(dl, "base", session.meta && session.meta.base_branch, true);
+    for (const [s, c] of Object.entries(counts)) addRow(dl, statusLabel(s), `${c} 件`);
+    const parts = [el("h2", session.name), el("p", "セッション概要", "meta"), dl];
+    if (session.root.status !== "ended" || session.live_pane) parts.push(buildSayForm(session));
+    const turns = (session.turns || []).slice().reverse();
+    if (turns.length) {
+      parts.push(el("h3", "履歴"));
+      for (const t of turns) {
+        // 1 枚 = 1 ターン。閉じた状態: 時刻 + 指示 1 行 + やったこと 3 行。開くと全文
+        const card = el("details", undefined, "turn" + (t.done ? "" : " open-turn"));
+        const head = el("summary");
+        head.append(el("span", (t.ts || "").slice(11, 16), "turn-time"), el("span", truncate((t.prompt || "").replace(/\s+/g, " "), 80), "turn-prompt"));
+        const brief = el("ul", undefined, "turn-brief");
+        if (!t.done) brief.append(el("li", "作業中…"));
+        else if (!(t.summary || []).length) brief.append(el("li", "（要約なし）"));
+        else for (const s of t.summary.slice(0, 3)) brief.append(el("li", s));
+        head.append(brief);
+        card.append(head);
+        const body = el("div", undefined, "turn-body");
+        body.append(el("h4", "指示"), el("pre", t.prompt || ""));
+        if (t.reply) body.append(el("h4", "応答"), el("pre", t.reply));
+        card.append(body);
+        parts.push(card);
+      }
+    }
+    if (session.denied && session.denied.length) {
+      parts.push(el("h3", `ハーネスが拒否した操作（直近 ${session.denied.length} 件）`));
+      const ul = el("ul");
+      for (const d of session.denied) ul.append(el("li", `${d.tool}: ${d.reason}  ${truncate(d.detail || "", 60)}`));
+      parts.push(ul);
+    }
+    parts.push(el("p", "ノードを選ぶと、渡されたタスク・受け入れ結果・レビューが表示されます。", "meta"));
+    aside.replaceChildren(...parts);
+  }
+
+  function renderDetail(session) {
+    const aside = document.getElementById("detail");
+    const node = session && session.nodes.find(n => n.id === state.selectedNode);
+    if (!session) { aside.replaceChildren(el("p", "セッションがありません。", "empty")); return; }
+    if (!node || node.kind === "root") { renderSessionOverview(session); return; }
+
+    const parentEdges = session.edges.filter(e => e.target === node.id);
+    const dl = el("dl");
+    addRow(dl, "状態", statusLabel(node.status));
+    addRow(dl, "実行者", node.executor);
+    addRow(dl, "モデル", node.model);
+    addRow(dl, "試行", node.attempts);
+    addRow(dl, "依存", node.depends_on);
+    addRow(dl, "親", parentEdges.map(e => e.source));
+    addRow(dl, "開始", node.started);
+    addRow(dl, "終了", node.ended);
+    addRow(dl, "branch", node.branch, true);
+    addRow(dl, "worktree", node.worktree, true);
+    addRow(dl, "pane", node.pane, true);
+    addRow(dl, "PR", node.pr_url, true);
+    addRow(dl, "id", node.id, true);
+
+    const parts = [el("h2", node.label), el("p", KIND_LABEL[node.kind] || node.kind, "meta"), dl];
+
+    if (node.reconciled) parts.push(el("p", node.reconciled, "hint"));
+    const actions = actionsFor(node);
+    if (actions.length) {
+      if (node.status === "waiting_human" || node.status === "conflict") parts.push(el("p", "判断が必要です。ここで決めるか、agr approve|retry|reject / herdr の gate tab でも可", "hint"));
+      const bar = el("div", "", "actions");
+      for (const [action, label] of actions) {
+        const button = el("button", label, action);
+        button.type = "button";
+        button.addEventListener("click", () => runAction(session.name, node.id, action, bar));
+        bar.append(button);
+      }
+      parts.push(bar, el("p", "", ""));
+      parts[parts.length - 1].id = "action-result";
+    }
+    if (node.feedback) { parts.push(el("h3", "直近の不合格理由 / 判断待ちの理由")); parts.push(el("pre", node.feedback)); }
+
+    parts.push(el("h3", "渡されたタスク"));
+    parts.push(el("pre", node.task || node.description || "（タスク本文なし。完了時に transcript から補完されます）", "task"));
+
+    if (node.result) {
+      parts.push(el("h3", "子の報告"));
+      parts.push(el("pre", node.result, "task"));
+    }
+
+    if (node.accept && node.accept.length) {
+      parts.push(el("h3", "受け入れ条件"));
+      const results = new Map(((node.verify && node.verify.results) || []).map(r => [r.command, r]));
+      const ul = el("ul");
+      for (const cmd of node.accept) {
+        const r = results.get(cmd);
+        const li = el("li", "", r ? (r.code === 0 ? "pass" : "fail") : "");
+        li.append(el("code", cmd), document.createTextNode(r ? (r.code === 0 ? "  合格" : `  不合格 (exit=${r.code})`) : "  未実行"));
+        if (r && r.code !== 0 && r.output) { const d = el("details"); d.append(el("summary", "出力"), el("pre", r.output)); li.append(d); }
+        ul.append(li);
+      }
+      parts.push(ul);
+    }
+    if (node.scope && node.scope.length) { parts.push(el("h3", "触ってよいファイル (scope)")); const ul = el("ul"); node.scope.forEach(s => ul.append(el("li", s))); parts.push(ul); }
+    if (node.violations && node.violations.length) { parts.push(el("h3", "scope 違反")); const ul = el("ul"); node.violations.forEach(v => ul.append(el("li", v, "fail"))); parts.push(ul); }
+    if (node.review && node.review.verdict) {
+      parts.push(el("h3", `レビュー: ${node.review.verdict === "approve" ? "承認" : "修正要求"}`));
+      if (node.review.text) { const d = el("details"); d.append(el("summary", "レビュー本文"), el("pre", node.review.text)); parts.push(d); }
+    }
+    if (node.output) { parts.push(el("h3", "実行者の報告")); const d = el("details"); d.append(el("summary", "本文"), el("pre", node.output)); parts.push(d); }
+    aside.replaceChildren(...parts);
+  }
+
+  function actionsFor(node) {
+    if (node.kind === "task" && (node.status === "waiting_human" || node.status === "conflict")) return ACTIONS.task_waiting;
+    if (node.kind === "task" && node.status === "failed") return ACTIONS.task_failed;
+    if (node.kind === "codex" && (node.status === "failed" || node.status === "lost")) return ACTIONS.codex_failed;
+    return [];
+  }
+
+  async function runAction(sessionName, id, action, bar) {
+    for (const b of bar.querySelectorAll("button")) b.disabled = true;
+    const result = document.getElementById("action-result");
+    try {
+      const res = await fetch("/api/action", { method: "POST", headers: POST_HEADERS, body: JSON.stringify({ project: currentSession().project, session: sessionName, id, action }) });
+      const message = await readMessage(res);
+      if (result) result.textContent = message;
+      previousDashboard = "";
+    } catch (err) {
+      if (result) result.textContent = `失敗: ${err}`;
+      for (const b of bar.querySelectorAll("button")) b.disabled = false;
+    }
+  }
+
+  function setUpdated(text) { document.getElementById("updated").textContent = text; }
+  // ---- 右パネルの幅: ドラッグと矢印キーで変更。ブラウザに記憶する
+  (function setupSplitter() {
+    const KEY = "agent-graph:aside-width";
+    const splitter = document.getElementById("splitter");
+    const clamp = w => Math.min(Math.max(w, 320), Math.floor(window.innerWidth * 0.7));
+    const apply = w => document.documentElement.style.setProperty("--aside-w", clamp(w) + "px");
+    const saved = Number(localStorage.getItem(KEY));
+    if (saved) apply(saved);
+    let dragging = false;
+    splitter.addEventListener("pointerdown", ev => {
+      dragging = true; splitter.setPointerCapture(ev.pointerId);
+      splitter.classList.add("dragging"); document.body.classList.add("resizing");
+    });
+    splitter.addEventListener("pointermove", ev => {
+      if (!dragging) return;
+      apply(window.innerWidth - ev.clientX - 4);
+    });
+    const stop = () => {
+      if (!dragging) return;
+      dragging = false; splitter.classList.remove("dragging"); document.body.classList.remove("resizing");
+      localStorage.setItem(KEY, String(parseInt(getComputedStyle(document.documentElement).getPropertyValue("--aside-w"), 10)));
+      renderDashboard();
+    };
+    splitter.addEventListener("pointerup", stop);
+    splitter.addEventListener("pointercancel", stop);
+    splitter.addEventListener("keydown", ev => {
+      const cur = document.getElementById("detail").getBoundingClientRect().width;
+      if (ev.key === "ArrowLeft") { apply(cur + 24); ev.preventDefault(); }
+      else if (ev.key === "ArrowRight") { apply(cur - 24); ev.preventDefault(); }
+      else return;
+      localStorage.setItem(KEY, String(parseInt(getComputedStyle(document.documentElement).getPropertyValue("--aside-w"), 10)));
+      renderDashboard();
+    });
+    window.addEventListener("resize", () => { const w = Number(localStorage.getItem(KEY)); if (w) apply(w); });
+  })();
+
+  let previousDashboard = "";
+  let previousDetail = "";
+  async function refresh() {
+    try {
+      const data = await fetchGraph();
+      const signature = JSON.stringify(data);
+      state.sessions = data.sessions;
+      state.projects = data.projects;
+      // 未選択なら、生きているセッション（無ければ先頭）の概要を右パネルに出す
+      if (!state.selectedSession || !state.sessions.some(s => s.key === state.selectedSession)) {
+        const live = state.sessions.find(s => s.root.status !== "ended") || state.sessions[0];
+        state.selectedSession = live ? live.key : null;
+        state.selectedNode = null;
+      }
+      if (signature !== previousDashboard) {
+        renderDashboard();
+        previousDashboard = signature;
+      }
+      const session = currentSession();
+      const detailSignature = JSON.stringify([state.selectedSession, state.selectedNode, session]);
+      const typing = document.activeElement && document.activeElement.closest && document.activeElement.closest("form.say");
+      if (detailSignature !== previousDetail && !typing) {
+        if (session) renderDetail(session);
+        previousDetail = detailSignature;
+      }
+      setUpdated(`更新 ${new Date().toLocaleTimeString("ja-JP")}`);
+    } catch (error) {
+      setUpdated("接続待ち…");
+    } finally {
+      setTimeout(refresh, POLL_MS);
+    }
+  }
+  refresh();
+</script>
+</body>
+</html>

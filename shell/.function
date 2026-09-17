@@ -200,6 +200,11 @@ jk() {
   echo "カーネル '$name' を登録しました。Neovimで :MoltenInit → $name を選択"
 }
 
+# agent-graph: エージェントの配置。tab（既定）: 仕事ごとに tab / split: 根 pane を分割
+export AGENT_GRAPH_PLACEMENT="${AGENT_GRAPH_PLACEMENT:-tab}"
+# sandbox。docker にすると各ジョブが agent-runner コンテナで動く（agent-graph/tool/runner/build.sh でイメージを作る）
+# export AGENT_GRAPH_SANDBOX=docker
+
 # 作業タブ作成（herdr優先・tmuxフォールバック）
 # 使い方: pjs [名前]  ※省略時はディレクトリ名を使用（上下分割・上にフォーカス）
 pjs() {
@@ -209,6 +214,8 @@ pjs() {
     pane_id=$(herdr tab create --cwd "$PWD" --label "$name" --focus 2>/dev/null | jq -r '.result.root_pane.pane_id')
     [[ -n "$pane_id" && "$pane_id" != "null" ]] || return 1
     herdr pane split "$pane_id" --direction down --ratio 0.5 --cwd "$PWD" --no-focus >/dev/null 2>&1
+    # claude を手で起こす用。pane id を渡す
+    herdr pane run "$pane_id" "export HERDR_PANE_ID=$pane_id; clear" >/dev/null 2>&1
   else
     tmux new-window -n "$name"
     tmux split-window -v -c '#{pane_current_path}'
@@ -216,17 +223,41 @@ pjs() {
   fi
 }
 
-# 使い方: pj [名前]  ※省略時はディレクトリ名を使用（左右分割・左にフォーカス）
+# 使い方: pj [claudeオプション...] [名前]  ※省略時はディレクトリ名を使用（左右分割・左でclaude起動・右でagdをバックグラウンド起動しブラウザを開く）
+#   例: pj -c（前回の会話を継続）、pj -r <session_id>、pj -c myproj
+AGENT_GRAPH_PORT=8765
 pj() {
-  local name="${1:-$(basename $(pwd))}"
+  # 先頭の - 付き引数は claude にそのまま渡す
+  local claude_args=()
+  while [[ "$1" == -* ]]; do
+    claude_args+=("$1")
+    # -r / --resume は次の引数（session id）も取る
+    if [[ "$1" == "-r" || "$1" == "--resume" ]] && [[ -n "$2" ]]; then
+      claude_args+=("$2")
+      shift
+    fi
+    shift
+  done
+  local name="${1:-$(basename "$PWD")}"
   if herdr status server 2>/dev/null | grep -q "status: running"; then
-    local pane_id
-    pane_id=$(herdr tab create --cwd "$PWD" --label "$name" --focus 2>/dev/null | jq -r '.result.root_pane.pane_id')
-    [[ -n "$pane_id" && "$pane_id" != "null" ]] || return 1
-    herdr pane split "$pane_id" --direction right --ratio 0.5 --cwd "$PWD" --no-focus >/dev/null 2>&1
+    local root right
+    root=$(herdr tab create --cwd "$PWD" --label "$name" --focus 2>/dev/null | jq -r '.result.root_pane.pane_id')
+    [[ -n "$root" && "$root" != "null" ]] || return 1
+    right=$(herdr pane split "$root" --direction right --ratio 0.5 --cwd "$PWD" --no-focus 2>/dev/null | jq -r '.result.pane.pane_id')
+    # 左 pane で claude を起動。pane id を渡してハーネスが自分の位置を知れるようにする
+    herdr pane run "$root" "export HERDR_PANE_ID=$root; claude ${claude_args[*]}" >/dev/null 2>&1
+    # 右 pane で agd をバックグラウンド起動しブラウザを開く。ポート使用中なら起動を飛ばして開くだけ
+    [[ -n "$right" && "$right" != "null" ]] && herdr pane run "$right" \
+      "lsof -nP -iTCP:$AGENT_GRAPH_PORT -sTCP:LISTEN >/dev/null 2>&1 || agd --port $AGENT_GRAPH_PORT >/dev/null 2>&1 &!; sleep 1; open http://127.0.0.1:$AGENT_GRAPH_PORT/; clear" >/dev/null 2>&1
   else
     tmux new-window -n "$name"
     tmux split-window -h -c '#{pane_current_path}'
     tmux select-pane -L
   fi
+}
+
+# agent-graph 右 pane 用: 状態を 5 秒ごとに表示
+# 使い方: agw [識別子]
+agw() {
+  watch -n 5 -c "agr status ${1:+--session $1}"
 }

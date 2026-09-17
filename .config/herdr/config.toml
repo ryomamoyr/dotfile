@@ -8,3 +8,10 @@ split_horizontal = ["prefix+minus", "prefix+s"]
 [theme]
 name = "rose-pine"
 auto_switch = false
+
+# agents欄: 主表示をworkspace名でなくtab名（cwd由来）にする
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", "pane", "tab"],
+  ["terminal_title_stripped"],
+]

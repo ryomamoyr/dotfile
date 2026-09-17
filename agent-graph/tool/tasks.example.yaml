@@ -1,0 +1,89 @@
+# タスクグラフの雛形。.agents/graph/<セッション識別子>/tasks.yaml にコピーして使う
+# 検証: uv run --project .agents python .agents/bin/run_graph.py validate --session <識別子>
+
+goal: |
+  CSV 読込を Polars 化し、集計と可視化の関数を分離して、人向けの解説 HTML を付ける。
+# base_branch: main   # 省略時は run 実行時のブランチ
+
+tasks:
+  - id: T1
+    title: 読込関数のテストを追加
+    executor: codex
+    scope: ["tests/test_load.py", "tests/conftest.py"]
+    outputs: ["tests/test_load.py"]
+    accept:
+      - "uv run pytest tests/test_load.py -q"
+      - "uvx ruff check tests/test_load.py"
+    prompt: |
+      src/load.py の load_csv() に対するテストを書く。
+      正常系（列名・行数・dtype）と、欠損ファイルで例外が出ることを確認する。
+      フィクスチャは tests/conftest.py に置く。
+
+  - id: T2
+    title: load_csv を Polars 化
+    executor: codex
+    depends_on: [T1]
+    scope: ["src/load.py"]
+    inputs: ["tests/test_load.py"]
+    outputs: ["src/load.py"]
+    accept:
+      - "uv run pytest tests/test_load.py -q"
+      - "uvx ruff check src/load.py"
+    prompt: |
+      src/load.py の load_csv() を Pandas から Polars に置き換える。
+      戻り値は pl.DataFrame。T1 のテストが通ること。
+    retry:
+      max: 2
+      escalate_to: human
+
+  - id: T3
+    title: 集計と可視化を関数に分離
+    executor: codex
+    depends_on: [T2]
+    scope: ["src/analysis.py", "tests/test_analysis.py"]
+    inputs: ["src/load.py"]
+    outputs: ["src/analysis.py"]
+    accept:
+      - "uv run pytest tests -q"
+      - "uvx ruff check src"
+    prompt: |
+      build_summary()（Polars 集計）と plot_distribution(fig, ax)（Seaborn）に分離する。
+      to_pandas() は使わない。軸ラベルは日本語。テストも追加する。
+
+  - id: D1
+    title: 設計判断を agent 向け md に記録
+    executor: doc-light
+    depends_on: [T2]
+    scope: ["docs/agents/**"]
+    outputs: ["docs/agents/data-loading.md"]
+    accept:
+      - "test -s docs/agents/data-loading.md"
+    prompt: |
+      docs/agents/data-loading.md に、Polars 化の設計判断（型の扱い、欠損の扱い）を
+      エージェント向けに簡潔な Markdown で書く。
+
+  - id: D2
+    title: 人向け解説 HTML を作成
+    executor: doc-heavy
+    depends_on: [T3, D1]
+    scope: ["docs/human/**"]
+    inputs: ["src/analysis.py", "docs/agents/data-loading.md"]
+    outputs: ["docs/human/analysis-guide.html"]
+    accept:
+      - "test -s docs/human/analysis-guide.html"
+      - "grep -q '<html' docs/human/analysis-guide.html"
+    prompt: |
+      docs/human/analysis-guide.html に、読込から可視化までの流れを図と短い文で解説する。
+      自己完結の HTML（CSS インライン、外部依存なし）。
+
+  - id: G1
+    title: 統合結果の最終確認
+    executor: human
+    depends_on: [T3, D2]
+    prompt: |
+      統合ブランチの差分とレポートを確認し、PR を作ってよければ承認する。
+
+  - id: PR
+    title: PR を作成
+    executor: pr
+    depends_on: [G1]

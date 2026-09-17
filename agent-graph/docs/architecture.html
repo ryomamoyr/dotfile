@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>agent-graph の構成解説（dotfiles 版）— 要望がどう実現されているか</title>
+<style>
+  :root {
+    --paper: #EEF1F4;
+    --panel: #FFFFFF;
+    --ink: #1B2230;
+    --muted: #5B6875;
+    --line: #C9D1DA;
+    --amber: #D9A02B;
+    --sage: #4F9A6E;
+    --steel: #3F86A8;
+    --lilac: #8E63A8;
+    --red: #C85454;
+    --gray: #8A96A3;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font: 15px/1.8 "IBM Plex Sans", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  }
+  main { max-width: 880px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1 { font-size: 28px; font-weight: 500; line-height: 1.35; margin: 0 0 8px; }
+  h2 { font-size: 21px; font-weight: 500; margin: 56px 0 12px; padding-top: 16px; border-top: 1px solid var(--line); }
+  h3 { font-size: 16px; font-weight: 500; margin: 28px 0 8px; }
+  p { margin: 0 0 12px; max-width: 40em; }
+  .lead { color: var(--muted); font-size: 16px; margin-bottom: 28px; }
+  nav ol { margin: 0 0 8px; padding-left: 22px; columns: 2; column-gap: 32px; }
+  nav li { margin: 2px 0; }
+  a { color: var(--steel); }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; font-size: 14px; background: var(--panel); }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 500; }
+  code { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 13px; background: #E3E8ED; padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--ink); color: #E8E4D8; padding: 14px 16px; border-radius: 8px; overflow: auto; font-size: 13px; line-height: 1.6; }
+  pre code { background: none; color: inherit; padding: 0; }
+  figure { margin: 20px 0 28px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  ul { margin: 0 0 12px; padding-left: 22px; max-width: 42em; }
+  li { margin: 3px 0; }
+  .note { border-left: 3px solid var(--amber); padding: 6px 14px; background: var(--panel); margin: 16px 0; max-width: 42em; }
+  .note p:last-child { margin-bottom: 0; }
+  .key { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  svg text { font-family: "IBM Plex Sans", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif; fill: var(--ink); }
+  svg .box { fill: #FFFFFF; stroke: var(--gray); stroke-width: 1.4; rx: 8; }
+  svg .zone { fill: #F3F6F8; stroke: var(--line); stroke-width: 1; rx: 12; }
+  svg .zone-label { fill: var(--muted); font-size: 12px; }
+  svg .t { font-size: 13px; }
+  svg .s { font-size: 11px; fill: var(--muted); }
+  svg .arrow { fill: none; stroke: var(--gray); stroke-width: 1.4; marker-end: url(#ah); }
+  svg .arrow.ret { stroke: var(--red); stroke-dasharray: 4 3; marker-end: url(#ahr); }
+  svg .arrow.data { stroke: var(--steel); stroke-dasharray: 2 3; marker-end: url(#ahb); }
+  svg .lbl { font-size: 11px; fill: var(--muted); }
+  @media (max-width: 640px) { nav ol { columns: 1; } h1 { font-size: 23px; } }
+  @media print { body { font-size: 12px; } figure { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>agent-graph の構成解説（dotfiles 版）</h1>
+  <p class="lead">あなたの要望が、どの仕組みで、どのファイルで実現されているかを図で辿ります。この版は dotfiles で管理し、どのリポジトリで <code>claude</code> を起こしても同じハーネスが効きます。読む単位は 1 節 3 分です。</p>
+
+  <nav>
+    <ol>
+      <li><a href="#req">要望と実現の対応</a></li>
+      <li><a href="#layers">2 層の置き場所</a></li>
+      <li><a href="#arch">herdr の中の配置</a></li>
+      <li><a href="#flow">1 つのタスクが通る道</a></li>
+      <li><a href="#harness">ハーネス層</a></li>
+      <li><a href="#graph">グラフ層</a></li>
+      <li><a href="#viz">可視化</a></li>
+      <li><a href="#sandbox">sandbox</a></li>
+      <li><a href="#autonomy">自律ループと人の関与点</a></li>
+      <li><a href="#howto">使い方</a></li>
+      <li><a href="#limits">制約と未確認事項</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="req">1. 要望と実現の対応</h2>
+  <p>最初に伝えてもらった要望を左に、それを満たす仕組みを右に並べます。</p>
+  <table>
+    <thead><tr><th>要望</th><th>どう実現したか</th><th>どこにあるか</th></tr></thead>
+    <tbody>
+      <tr><td>会話は Claude Code の fable が担当</td><td>プロジェクト設定でモデルを fable に固定。fable は根エージェントとして計画と報告だけを行い、実装は書かない。</td><td><code>.claude/settings.json</code>, <code>CLAUDE.md</code></td></tr>
+      <tr><td>コーディングは Codex の gpt-6-astra</td><td>タスクの実行者を <code>codex</code> にすると、herdr の別 pane で <code>codex exec -m gpt-6-astra</code> が動く。単発用の <code>/codex</code> も同じ経路。</td><td><code>run_graph.py</code>, <code>spawn_codex.py</code>（<code>agr</code> / <code>agc</code>）</td></tr>
+      <tr><td>文書は文量に応じて軽いモデル</td><td>150 行以下は <code>doc-light</code>（haiku）、それ以上は <code>doc-heavy</code>（sonnet）。判断基準は根エージェントの方針に書いてある。</td><td><code>.claude/agents/doc-*.md</code></td></tr>
+      <tr><td>人向けは HTML、エージェント向けは md</td><td>文書エージェントの規則として固定。人向けは <code>docs/human/</code> に自己完結 HTML、エージェント向けは <code>docs/agents/</code> に Markdown。</td><td><code>.claude/agents/doc-*.md</code></td></tr>
+      <tr><td>起動ごとに project_name-No で採番</td><td>起動時の hook がカウンタを進め、識別子を Claude に通知し、herdr の pane 名にも付ける。resume は番号を引き継ぐ。</td><td><code>agent_hook.py</code></td></tr>
+      <tr><td>fable を根とした有向グラフで見たい</td><td>タスク DAG・サブエージェント・Codex を 1 枚の有向グラフに描くダッシュボード。2 秒ごとに自動更新。</td><td><code>graph_server.py</code>, <code>graph.html</code></td></tr>
+      <tr><td>親が子に何を投げたか分かるように</td><td>辺のラベルにタスク題名か引き渡した成果物を表示。ノードを選ぶと、渡した指示の全文と受け入れ結果が出る。</td><td><code>graph.html</code></td></tr>
+      <tr><td>ハーネスをしっかり</td><td>危険操作の拒否、lint、受け入れコマンド、scope 検査、別モデルレビュー、worktree 隔離、予算。すべて決定的に判定する。</td><td><code>harness.py</code>, <code>agent_hook.py</code></td></tr>
+      <tr><td>どのプロジェクトでも起動したらこの環境になる</td><td>hooks・agents・skills・方針・スクリプトをユーザー層（<code>~/.claude</code>、<code>~/.codex</code>、<code>~/.local/share/agent-graph</code>）に置き、dotfiles から symlink。リポジトリには何も置かない。起動時の hook が <code>&lt;repo&gt;/.agents/</code> を作り <code>.git/info/exclude</code> で隠す。</td><td><code>install.sh</code>, <code>agent_hook.py</code></td></tr>
+      <tr><td>sandbox で動かしたい</td><td>各ジョブを <code>agent-runner</code> コンテナで実行するモード。リポジトリと認証情報だけをホストと同じパスでマウントし、<code>~/.ssh</code> は持ち込まない。Codex は元々 <code>--full-auto</code> の sandbox 内。</td><td><code>herdr_runner.sandbox_command</code>, <code>tool/runner/</code></td></tr>
+      <tr><td>tab ＝ プロジェクト、左 claude、右 手作業、を崩さない</td><td>エージェントは仕事ごとに別 tab を作る（<code>tab create --cwd &lt;worktree&gt;</code>）。人の tab は割らない。done の tab は自動で閉じ、failed / 判断待ちは残す。</td><td><code>herdr_runner.HerdrRunner</code>, <code>zsh/agent-graph.zsh</code></td></tr>
+      <tr><td>グラフエンジニアリングで自律開発</td><td>タスクを状態付きノードとして <code>tasks.yaml</code> に書き、スケジューラが依存順に実行・検証・統合・PR まで回す。人は承認ゲートだけ。</td><td><code>graph_model.py</code>, <code>run_graph.py</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="layers">2. 2 層の置き場所</h2>
+  <p>「毎回同じ環境になる」ための核心です。変わらないものはユーザー層に、リポジトリごとに変わるものはリポジトリ層に置きます。</p>
+  <figure>
+    <svg viewBox="0 0 900 420" role="img" aria-label="2 層の置き場所">
+      <rect class="zone" x="16" y="16" width="420" height="388"/>
+      <text class="zone-label" x="30" y="38">ユーザー層（dotfiles で管理、symlink で配る）</text>
+      <rect class="box" x="32" y="52" width="388" height="60" style="stroke:#1B2230"/>
+      <text class="t" x="46" y="76">~/00_project/dotfiles/agent-graph/</text>
+      <text class="s" x="46" y="96">実体はここ。install.sh が下の各所へ symlink を張る</text>
+      <g class="t">
+        <rect class="box" x="32" y="130" width="388" height="48"/><text x="46" y="150">~/.claude/settings.json</text><text class="s" x="46" y="168">model fable、hooks、deny、予算（既存設定と統合済み）</text>
+        <rect class="box" x="32" y="186" width="388" height="48"/><text x="46" y="206">~/.claude/{hooks,agents,skills}/, ~/.claude/CLAUDE.md</text><text class="s" x="46" y="224">hook 入口、doc-light / doc-heavy / reviewer、/plan /codex、方針</text>
+        <rect class="box" x="32" y="242" width="388" height="48"/><text x="46" y="262">~/.codex/AGENTS.md, ~/.codex/config.toml</text><text class="s" x="46" y="280">コーディング規約（全リポジトリ共通）、gpt-6-astra 既定</text>
+        <rect class="box" x="32" y="298" width="388" height="48"/><text x="46" y="318">~/.local/share/agent-graph/  ~/.local/bin/{agr,agc,agd}</text><text class="s" x="46" y="336">スクリプト本体と uv 環境、コマンド</text>
+        <rect class="box" x="32" y="354" width="388" height="40"/><text x="46" y="374">.zshrc ← zsh/agent-graph.zsh（pj など）</text>
+      </g>
+      <rect class="zone" x="464" y="16" width="420" height="388"/>
+      <text class="zone-label" x="478" y="38">リポジトリ層（起動時に自動生成、git 管理外）</text>
+      <g class="t">
+        <rect class="box" x="480" y="52" width="388" height="60" style="stroke:#D9A02B"/><text x="494" y="76">&lt;repo&gt;/.agents/</text><text class="s" x="494" y="96">SessionStart hook が作り、.git/info/exclude に追記する</text>
+        <rect class="box" x="480" y="130" width="388" height="48"/><text x="494" y="150">.agents/graph/&lt;repo&gt;-&lt;No&gt;/tasks.yaml, report.md</text><text class="s" x="494" y="168">タスクグラフと結果レポート</text>
+        <rect class="box" x="480" y="186" width="388" height="48"/><text x="494" y="206">.agents/state/  events.jsonl, graph/*.json, counter</text><text class="s" x="494" y="224">イベント履歴、実行状態、採番</text>
+        <rect class="box" x="480" y="242" width="388" height="48"/><text x="494" y="262">.agents/worktrees/&lt;S&gt;/{T1,T2,_integration}</text><text class="s" x="494" y="280">タスクごとの隔離作業場と統合ブランチ</text>
+        <rect class="box" x="480" y="298" width="388" height="48"/><text x="494" y="318">.agents/out/, .agents/tasks/</text><text class="s" x="494" y="336">指示書、実行者の報告、ジョブスクリプト</text>
+        <rect class="box" x="480" y="354" width="388" height="40" style="stroke-dasharray:4 3"/><text x="494" y="374">任意: &lt;repo&gt;/CLAUDE.md, &lt;repo&gt;/AGENTS.md（固有の事情だけ）</text>
+      </g>
+      <path class="arrow" d="M420,76 C450,76 450,80 480,80"/>
+    </svg>
+    <figcaption>図 1. 左は一度作れば全リポジトリに効く。右はリポジトリごとに勝手に生え、コミットには入らない。</figcaption>
+  </figure>
+  <p>設定の優先順位として、リポジトリ側の <code>.claude/settings.json</code> はユーザー層に上書きできますが、<code>deny</code> は緩められません。安全側に固定されます。</p>
+
+  <h2 id="arch">3. herdr の中の配置</h2>
+  <p>今の使い方（tab ＝ プロジェクト、左 claude、右 手作業）はそのままです。エージェントは人の tab を割らず、仕事ごとに自分の tab を持ちます。</p>
+  <figure>
+    <svg viewBox="0 0 900 560" role="img" aria-label="herdr の中の配置">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8A96A3"/></marker>
+        <marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3F86A8"/></marker>
+      </defs>
+      <rect class="zone" x="16" y="16" width="560" height="528"/>
+      <text class="zone-label" x="30" y="38">ghostty の中の herdr（sidebar に tab ごとの working / blocked / done）</text>
+
+      <rect class="box" x="36" y="56" width="516" height="118" style="stroke:#1B2230; stroke-width:1.8"/>
+      <text class="t" x="50" y="80">tab: sumire（pj が作る、人の場所）</text>
+      <rect class="box" x="52" y="92" width="236" height="68"/>
+      <text class="t" x="64" y="114">左: claude（fable）= 根</text>
+      <text class="s" x="64" y="132">HERDR_PANE_ID を持って起動</text>
+      <text class="s" x="64" y="150">hooks が採番・記録・拒否</text>
+      <rect class="box" x="300" y="92" width="236" height="68"/>
+      <text class="t" x="312" y="114">右: あなたのシェル</text>
+      <text class="s" x="312" y="132">eza / git / agr status</text>
+
+      <rect class="box" x="36" y="192" width="516" height="48" style="stroke:#D9A02B"/>
+      <text class="t" x="50" y="212">tab: sumire-003/scheduler（agr launch が作る）</text>
+      <text class="s" x="50" y="230">ready なタスクを配り、検証・レビュー・統合・PR を進める</text>
+
+      <rect class="box" x="36" y="256" width="250" height="52" style="stroke:#3F86A8"/>
+      <text class="t" x="50" y="276">tab: sumire-003/T1</text><text class="s" x="50" y="294">codex exec、cwd = worktree/T1</text>
+      <rect class="box" x="302" y="256" width="250" height="52" style="stroke:#3F86A8"/>
+      <text class="t" x="316" y="276">tab: sumire-003/T2</text><text class="s" x="316" y="294">並列分だけ増える。done で閉じる</text>
+      <rect class="box" x="36" y="322" width="250" height="52" style="stroke:#8E63A8"/>
+      <text class="t" x="50" y="342">tab: sumire-003/D1</text><text class="s" x="50" y="360">claude -p --agent doc-light</text>
+      <rect class="box" x="302" y="322" width="250" height="52" style="stroke:#8E63A8"/>
+      <text class="t" x="316" y="342">tab: sumire-003/T1 review</text><text class="s" x="316" y="360">別モデルが差分を検証（VERDICT）</text>
+      <rect class="box" x="36" y="388" width="516" height="52" style="stroke:#8E63A8; stroke-dasharray:4 3"/>
+      <text class="t" x="50" y="408">tab: sumire-003/G1 gate（blocked として残る）</text>
+      <text class="s" x="50" y="426">開いて a 承認 / r 再試行 / x 却下。閉じずに残るのは failed と判断待ちだけ</text>
+
+      <rect class="zone" x="36" y="456" width="516" height="76"/>
+      <text class="zone-label" x="50" y="478">git（同じリポジトリ）</text>
+      <text class="s" x="50" y="500">worktree/T1, worktree/T2 → 合格分だけ _integration へ merge → 承認後 push → PR</text>
+      <text class="s" x="50" y="518">sandbox を有効にすると、各 tab のコマンドは agent-runner コンテナの中で走る</text>
+
+      <g style="fill:none;stroke:#8A96A3;stroke-width:1.4;marker-end:url(#ah)">
+        <path d="M170,160 L170,192"/>
+        <path d="M100,240 L100,256"/><path d="M366,240 L366,256"/>
+      </g>
+      <text class="lbl" x="178" y="184">agr launch</text>
+
+      <rect class="box" x="620" y="56" width="260" height="120" style="stroke:#1B2230"/>
+      <text class="t" x="634" y="82">ブラウザ: ダッシュボード（agd）</text>
+      <text class="s" x="634" y="102">2 秒ごとに更新</text>
+      <text class="s" x="634" y="122">tasks.yaml + 実行状態 + events.jsonl を</text>
+      <text class="s" x="634" y="140">1 枚の有向グラフに描く</text>
+      <text class="s" x="634" y="162">辺ラベル = 渡したもの。クリックで全文</text>
+
+      <rect class="box" x="620" y="216" width="260" height="96" style="stroke:#8A96A3"/>
+      <text class="t" x="634" y="242">&lt;repo&gt;/.agents/state/</text>
+      <text class="s" x="634" y="262">events.jsonl（全イベントの追記ログ）</text>
+      <text class="s" x="634" y="280">graph/&lt;S&gt;.json（タスクの実行状態）</text>
+      <text class="s" x="634" y="298">sessions.json / counter（採番）</text>
+
+      <rect class="box" x="620" y="376" width="260" height="60" style="stroke:#4F9A6E"/>
+      <text class="t" x="634" y="400">GitHub: Pull Request</text>
+      <text class="s" x="634" y="420">pr ノードが統合ブランチから作成</text>
+
+      <path class="arrow data" d="M576,264 L620,264"/>
+      <text class="lbl" x="580" y="254">書く</text>
+      <path class="arrow data" d="M750,216 L750,176"/>
+      <text class="lbl" x="756" y="200">読む</text>
+      <path class="arrow" d="M552,500 C590,500 590,406 620,406"/>
+    </svg>
+    <figcaption>図 2. 「誰が今何をしているか」は herdr の sidebar、「何を渡して何が返ったか」はブラウザのグラフ。役割が分かれています。</figcaption>
+  </figure>
+
+  <h2 id="flow">4. 1 つのタスクが通る道</h2>
+  <p>タスクは次の順で進みます。どの段階で落ちても、戻り先が決まっています。</p>
+  <figure>
+    <svg viewBox="0 0 900 330" role="img" aria-label="タスクの処理パイプライン">
+      <defs>
+        <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8A96A3"/></marker>
+        <marker id="ahr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C85454"/></marker>
+      </defs>
+      <g class="t">
+        <rect class="box" x="16" y="110" width="96" height="60"/><text x="28" y="134">1 計画</text><text class="s" x="28" y="154">tasks.yaml</text>
+        <rect class="box" x="132" y="110" width="96" height="60"/><text x="144" y="134">2 ready</text><text class="s" x="144" y="154">依存が全部 done</text>
+        <rect class="box" x="248" y="110" width="96" height="60"/><text x="260" y="134">3 隔離</text><text class="s" x="260" y="154">worktree 作成</text>
+        <rect class="box" x="364" y="110" width="96" height="60" style="stroke:#3F86A8"/><text x="376" y="134">4 実行</text><text class="s" x="376" y="154">Codex / Claude</text>
+        <rect class="box" x="480" y="110" width="96" height="60" style="stroke:#D9A02B"/><text x="492" y="134">5 検証</text><text class="s" x="492" y="154">accept と scope</text>
+        <rect class="box" x="596" y="110" width="96" height="60" style="stroke:#8E63A8"/><text x="608" y="134">6 レビュー</text><text class="s" x="608" y="154">別モデル</text>
+        <rect class="box" x="712" y="110" width="80" height="60" style="stroke:#4F9A6E"/><text x="722" y="134">7 統合</text><text class="s" x="722" y="154">merge</text>
+        <rect class="box" x="808" y="110" width="76" height="60" style="stroke:#4F9A6E"/><text x="818" y="134">8 PR</text><text class="s" x="818" y="154">人の承認後</text>
+      </g>
+      <g style="fill:none;stroke:#8A96A3;stroke-width:1.4;marker-end:url(#ah2)">
+        <path d="M112,140 L132,140"/><path d="M228,140 L248,140"/><path d="M344,140 L364,140"/>
+        <path d="M460,140 L480,140"/><path d="M576,140 L596,140"/><path d="M692,140 L712,140"/><path d="M792,140 L808,140"/>
+      </g>
+      <!-- returns -->
+      <g style="fill:none;stroke:#C85454;stroke-width:1.4;stroke-dasharray:4 3;marker-end:url(#ahr2)">
+        <path d="M528,110 C528,60 420,60 412,108"/>
+        <path d="M644,110 C644,40 430,40 412,106"/>
+      </g>
+      <text class="lbl" x="440" y="52">不合格 → 理由を添えて再試行（上限あり）</text>
+      <g style="fill:none;stroke:#C85454;stroke-width:1.4;stroke-dasharray:4 3;marker-end:url(#ahr2)">
+        <path d="M528,170 C528,230 300,230 296,270"/>
+        <path d="M752,170 C752,260 310,260 296,272"/>
+      </g>
+      <rect class="box" x="216" y="272" width="160" height="44" style="stroke:#8E63A8"/>
+      <text class="t" x="228" y="291">人の判断待ち</text><text class="s" x="228" y="308">承認 / 再試行 / 却下</text>
+      <text class="lbl" x="400" y="222">再試行上限・昇格しても不合格</text>
+      <text class="lbl" x="560" y="248">統合で競合</text>
+      <text class="lbl" x="16" y="60">承認 = 統合へ進む。却下 = 下流は止まる。再試行 = 3 からやり直す。</text>
+    </svg>
+    <figcaption>図 3. 「終わった」と自己申告しても通りません。5 と 6 を通った差分だけが 7 に入ります。</figcaption>
+  </figure>
+
+  <h3>各段階で起きること</h3>
+  <table>
+    <thead><tr><th>段階</th><th>起きること</th><th>失敗したら</th></tr></thead>
+    <tbody>
+      <tr><td>1 計画</td><td>fable が <code>/plan</code> の手順で <code>tasks.yaml</code> を書く。<code>validate</code> が accept 無し・循環・未定義 executor を弾く。</td><td>書き直すまで実行できない</td></tr>
+      <tr><td>2 ready</td><td>依存タスクがすべて done になったものだけが投入される。並列上限は <code>--max-parallel</code>。</td><td>上流が失敗すると下流は待ち続ける。status に出る</td></tr>
+      <tr><td>3 隔離</td><td>統合ブランチから <code>agent/&lt;S&gt;/&lt;id&gt;</code> を切り、worktree を作る。再試行は同じ worktree を使う。</td><td>—</td></tr>
+      <tr><td>4 実行</td><td>指示書（目的・scope・入力・成果物・受け入れ条件・前回の不合格理由）を渡して実行者を起こす。</td><td>異常終了は不合格として 5 へ</td></tr>
+      <tr><td>5 検証</td><td>accept コマンドを worktree で実行。分岐点からの変更ファイルが scope 内か検査。</td><td>理由付きで再試行。上限で昇格か人へ</td></tr>
+      <tr><td>6 レビュー</td><td>Codex の差分は Claude reviewer が読む。accept を再実行し <code>VERDICT</code> を返す。</td><td>指摘を添えて再試行</td></tr>
+      <tr><td>7 統合</td><td>worktree を commit し、統合ブランチに <code>--no-ff</code> で merge。</td><td>競合は人の判断待ち</td></tr>
+      <tr><td>8 PR</td><td>human ゲート承認後、統合ブランチを push して <code>gh pr create</code>。レポートが本文になる。</td><td>gh が無ければ failed（手動 PR）</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="harness">5. ハーネス層</h2>
+  <p>ハーネスは「振った先が壊れない」ための層です。プロンプトのお願いではなく、コードで判定します。</p>
+  <table>
+    <thead><tr><th>リスク</th><th>仕組み</th><th>いつ動くか</th><th>実装</th></tr></thead>
+    <tbody>
+      <tr><td>勝手に push・履歴破壊</td><td><code>git push</code>、<code>reset --hard</code>、<code>clean -f</code>、<code>branch -D</code> を拒否。統合は pr ノードだけ。</td><td>Bash 実行前（PreToolUse）</td><td><code>harness.DENY_BASH</code></td></tr>
+      <tr><td>破壊的コマンド</td><td>ルート・ホーム・親の再帰削除、<code>sudo</code>、<code>curl | sh</code>、<code>chmod 777</code> を拒否。</td><td>Bash 実行前</td><td>同上</td></tr>
+      <tr><td>秘密情報の漏えい</td><td><code>.env</code>、<code>.ssh</code>、<code>.aws/credentials</code> の読み出しと、保護パスの編集を拒否。</td><td>Bash / Edit / Write の前</td><td><code>harness.PROTECTED_GLOBS</code></td></tr>
+      <tr><td>規約違反のコード</td><td><code>.py</code> を編集すると ruff が走る。落ちたら結果を返してその場で直させる。</td><td>編集直後（PostToolUse）</td><td><code>harness.lint_file</code></td></tr>
+      <tr><td>検証されていない「完了」</td><td>accept コマンドが全部通るまで done にしない。単発委譲も <code>[T1]</code> タグがあれば hook が同じ検査をする。</td><td>実行者の終了時</td><td><code>harness.run_accept</code></td></tr>
+      <tr><td>頼んでいない場所の変更</td><td>分岐点からの変更ファイルが scope の glob に収まるか検査。外れたら不合格。</td><td>検証時</td><td><code>harness.find_scope_violations</code></td></tr>
+      <tr><td>同じモデルの盲点</td><td>Codex の差分は Claude reviewer が読む。実装者と検証者を分ける。</td><td>検証合格後</td><td><code>run_graph.run_review</code></td></tr>
+      <tr><td>並列作業の衝突</td><td>タスクごとに worktree。合格分だけ統合ブランチへ。競合は人へ。</td><td>実行前・統合時</td><td><code>run_graph.ensure_worktree</code></td></tr>
+      <tr><td>静かに回り続ける</td><td>再試行上限、タイムアウト、並列上限、時間予算、サブエージェントの深さと同時数の上限。</td><td>常時</td><td><code>tasks.yaml</code>, <code>settings.json</code></td></tr>
+      <tr><td>スクリプト経由でルールをすり抜ける</td><td>ジョブを agent-runner コンテナで実行。マウントした場所以外は存在しない。</td><td>実行時（任意）</td><td><code>herdr_runner.sandbox_command</code></td></tr>
+      <tr><td>何が起きたか分からない</td><td>採番・委譲・検証結果・拒否をすべて <code>events.jsonl</code> に残す。ダッシュボードが読む。</td><td>常時</td><td><code>common.append_event</code></td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>Codex は Claude Code の hooks の外で動きます。その代わり、<code>--full-auto</code> の書き込み範囲は worktree に限られ、出た差分は accept・scope・レビューの 3 つを通らないと統合されません。既にお使いの <code>guard-dangerous-commands.sh</code> などの hooks はそのまま併存します。両方が拒否しても害はありません。</p>
+  </div>
+
+  <h2 id="graph">6. グラフ層</h2>
+  <p>ノードはエージェントではなくタスクです。エージェントはタスクを実行する労働力に格下げしました。こうすると中断・再開・差し戻しがファイル操作になります。</p>
+
+  <h3>tasks.yaml のフィールド</h3>
+  <table>
+    <thead><tr><th>フィールド</th><th>意味</th><th>必須</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>ノードの識別子。英数字と <code>-</code>、<code>_</code>。</td><td>必須</td></tr>
+      <tr><td><code>title</code></td><td>短い題名。root からの辺ラベルになる。</td><td>必須</td></tr>
+      <tr><td><code>executor</code></td><td><code>codex</code> / <code>doc-light</code> / <code>doc-heavy</code> / <code>human</code> / <code>pr</code>。</td><td>必須</td></tr>
+      <tr><td><code>depends_on</code></td><td>先に done になっていなければならないタスク。辺になる。</td><td>任意</td></tr>
+      <tr><td><code>scope</code></td><td>触ってよいファイルの glob。codex では必須。</td><td>codex は必須</td></tr>
+      <tr><td><code>inputs</code> / <code>outputs</code></td><td>受け取る成果物と作る成果物のパス。上流の outputs は自動で下流の入力になり、辺ラベルにも出る。</td><td>任意</td></tr>
+      <tr><td><code>accept</code></td><td>受け入れコマンド。全部 exit 0 で合格。</td><td>codex / doc は必須</td></tr>
+      <tr><td><code>prompt</code></td><td>実行者に渡す目的。scope・入力・受け入れ条件はスケジューラが足す。</td><td>codex / doc は必須</td></tr>
+      <tr><td><code>review</code></td><td>別モデルレビューの有無。codex は既定で true。</td><td>任意</td></tr>
+      <tr><td><code>retry.max</code> / <code>retry.escalate_to</code></td><td>再試行回数と、上限後の昇格先（別 executor か <code>human</code>）。</td><td>任意（既定 1 / human）</td></tr>
+      <tr><td><code>timeout_sec</code></td><td>1 試行の上限時間。</td><td>任意（既定 1800）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>タスクの状態遷移</h3>
+  <figure>
+    <svg viewBox="0 0 900 250" role="img" aria-label="タスクの状態遷移図">
+      <defs>
+        <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8A96A3"/></marker>
+        <marker id="ahr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C85454"/></marker>
+      </defs>
+      <g class="t">
+        <rect class="box" x="16" y="60" width="110" height="44" style="stroke:#8A96A3"/><text x="30" y="87">planned</text>
+        <rect class="box" x="166" y="60" width="110" height="44" style="stroke:#D9A02B"/><text x="180" y="87">running</text>
+        <rect class="box" x="316" y="60" width="110" height="44" style="stroke:#D9A02B"/><text x="330" y="87">verifying</text>
+        <rect class="box" x="466" y="60" width="110" height="44" style="stroke:#D9A02B"/><text x="480" y="87">reviewing</text>
+        <rect class="box" x="616" y="60" width="110" height="44" style="stroke:#D9A02B"/><text x="630" y="87">merging</text>
+        <rect class="box" x="766" y="60" width="110" height="44" style="stroke:#4F9A6E"/><text x="780" y="87">done</text>
+        <rect class="box" x="316" y="170" width="140" height="44" style="stroke:#8E63A8"/><text x="330" y="197">waiting_human</text>
+        <rect class="box" x="496" y="170" width="110" height="44" style="stroke:#8E63A8"/><text x="510" y="197">conflict</text>
+        <rect class="box" x="666" y="170" width="100" height="44" style="stroke:#C85454"/><text x="680" y="197">rejected</text>
+      </g>
+      <g style="fill:none;stroke:#8A96A3;stroke-width:1.4;marker-end:url(#ah3)">
+        <path d="M126,82 L166,82"/><path d="M276,82 L316,82"/><path d="M426,82 L466,82"/><path d="M576,82 L616,82"/><path d="M726,82 L766,82"/>
+        <path d="M456,192 C560,192 560,110 640,104"/>
+        <path d="M386,170 C386,140 300,140 260,104"/>
+      </g>
+      <g style="fill:none;stroke:#C85454;stroke-width:1.4;stroke-dasharray:4 3;marker-end:url(#ahr3)">
+        <path d="M371,104 C371,140 120,140 80,104"/>
+        <path d="M521,104 C521,150 120,150 76,106"/>
+        <path d="M371,104 L386,170"/>
+        <path d="M671,104 L551,170"/>
+        <path d="M456,196 L666,196"/>
+      </g>
+      <text class="lbl" x="150" y="128">不合格 → planned に戻す（理由を保存）</text>
+      <text class="lbl" x="392" y="150">再試行上限</text>
+      <text class="lbl" x="600" y="150">merge 競合</text>
+      <text class="lbl" x="470" y="236">承認 → merging   再試行 → planned   却下 → rejected</text>
+    </svg>
+    <figcaption>図 4. 黄色は自動で進む状態、紫は人を待つ状態。planned に戻るときは必ず「なぜ落ちたか」が次の指示書に入ります。</figcaption>
+  </figure>
+
+  <h3>再試行と昇格の規則</h3>
+  <ul>
+    <li>不合格 1 回目は、同じ実行者に理由を添えて再試行する。</li>
+    <li><code>retry.max</code> を超えたら <code>escalate_to</code> に昇格する。たとえば doc-light から doc-heavy へ。</li>
+    <li>昇格先でも不合格なら人の判断待ちになる。</li>
+    <li><code>escalate_to: human</code> なら、上限を超えた時点で人の判断待ちになる。</li>
+  </ul>
+
+  <h2 id="viz">7. 可視化</h2>
+  <p>ダッシュボードは <code>tasks.yaml</code>、実行状態、イベントログの 3 つを読み、1 枚の有向グラフに描きます。</p>
+  <table>
+    <thead><tr><th>見えるもの</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td>根ノード</td><td>Claude 起動 1 回 = <code>project_name-No</code>。fable。左上の選択で切り替える。</td></tr>
+      <tr><td>タスクノード</td><td>tasks.yaml の 1 タスク。題名、実行者とモデル、試行回数、状態。枝の色は状態。</td></tr>
+      <tr><td>サブエージェント / Codex 単発</td><td>Agent ツールや <code>/codex</code> で投げたもの。紫は Claude、青は Codex。</td></tr>
+      <tr><td>辺のラベル</td><td>根から出る辺はタスク題名。タスク間の辺は引き渡した成果物のパス。サブエージェントへの辺は description。</td></tr>
+      <tr><td>状態の点</td><td><span class="key" style="background:#8A96A3"></span>未着手 <span class="key" style="background:#D9A02B"></span>作業中 <span class="key" style="background:#8E63A8"></span>判断待ち <span class="key" style="background:#4F9A6E"></span>完了 <span class="key" style="background:#C85454"></span>失敗</td></tr>
+      <tr><td>右パネル（ノード選択時）</td><td>渡した指示の全文、受け入れコマンドごとの合否と出力、scope と違反、レビューの判定と本文、実行者の報告、branch / worktree / pane。</td></tr>
+      <tr><td>右パネル（未選択時）</td><td>目標、状態別の件数、ハーネスが拒否した操作の一覧。</td></tr>
+    </tbody>
+  </table>
+  <p>更新は 2 秒ごとです。実行に関与しないので、ダッシュボードを閉じても何も止まりません。</p>
+
+  <h2 id="sandbox">8. sandbox</h2>
+  <p>ハーネスは「ルール」、sandbox は「壁」です。ルールは Bash ツール経由の操作を止めますが、スクリプトの中から呼ばれた操作は見えません。壁は OS が強制します。</p>
+  <table>
+    <thead><tr><th>実行者</th><th>既定</th><th><code>AGENT_GRAPH_SANDBOX=docker</code> のとき</th></tr></thead>
+    <tbody>
+      <tr><td>Codex</td><td><code>--full-auto</code> の sandbox。書き込みは worktree 内、ネットワークは既定で切れる</td><td>さらに agent-runner コンテナの中</td></tr>
+      <tr><td>Claude headless（doc-light / doc-heavy / reviewer）</td><td>hooks の拒否のみ。ホストのファイルは読める</td><td>agent-runner コンテナの中。マウントした場所しか見えない</td></tr>
+      <tr><td>根の claude（あなたと会話する fable）</td><td>hooks の拒否のみ</td><td>変わらない（人が見ている前提）</td></tr>
+    </tbody>
+  </table>
+  <h3>コンテナに持ち込むもの</h3>
+  <ul>
+    <li>リポジトリ、<code>~/.local/share/agent-graph</code>、<code>~/.claude</code>、<code>~/.codex</code>、<code>~/.config/gh</code>。すべてホストと同じ絶対パスにマウントする。worktree の <code>.git</code> 参照や認証情報の場所がそのまま使えるため</li>
+    <li>uv のキャッシュは名前付きボリューム。毎回 Polars を落とさない</li>
+    <li>ホストの uid:gid で動く。root 所有のファイルが残らない</li>
+    <li><code>~/.ssh</code>、<code>~/.aws</code> は持ち込まない。push は pr ノードがホスト側で行う</li>
+  </ul>
+  <div class="note">
+    <p>ネットワークの許可制（pypi / npm / GitHub / 各社 API だけ）はまだ入れていません。ファイルの隔離だけで事故の大半は防げるので、運用が落ち着いてから足すのを勧めます。</p>
+  </div>
+
+  <h2 id="autonomy">9. 自律ループと人の関与点</h2>
+  <p>自律とは「人が見ていなくても正しく止まる」ことです。この構成で人が必要になるのは 3 か所だけです。</p>
+  <table>
+    <thead><tr><th>いつ</th><th>誰が</th><th>何をする</th></tr></thead>
+    <tbody>
+      <tr><td>始めるとき</td><td>あなた</td><td>要望か Issue を fable に渡す。fable が tasks.yaml を書き、あなたが目を通す。</td></tr>
+      <tr><td>判断待ちが出たとき</td><td>あなた</td><td>gate pane か <code>approve / retry / reject</code>。理由はパネルと status に出る。</td></tr>
+      <tr><td>PR の前</td><td>あなた</td><td>human ゲートで統合結果を確認して承認。</td></tr>
+    </tbody>
+  </table>
+  <p>それ以外の計画・実行・検証・レビュー・統合・PR 作成は自動です。スケジューラが落ちても状態はファイルに残り、同じコマンドで続きから再開します。</p>
+  <div class="note">
+    <p>マージ前の人のゲートは、評価データが溜まって「外してよい」と分かるまで残すことを勧めます。<code>events.jsonl</code> に合否・試行回数・所要時間が残るので、どの振り分けが成功率が高いかを後から測れます。</p>
+  </div>
+
+  <h2 id="howto">10. 使い方</h2>
+  <h3>導入（一度だけ）</h3>
+  <pre><code># dotfiles に置く
+mv agent-graph ~/00_project/dotfiles/agent-graph
+~/00_project/dotfiles/agent-graph/install.sh          # symlink を張る。何度実行しても同じ
+
+# 手で行う 3 つ
+diff ~/.claude/settings.json ~/00_project/dotfiles/agent-graph/claude/settings.merged.json   # 確認して置き換え
+echo 'source ~/00_project/dotfiles/agent-graph/zsh/agent-graph.zsh' &gt;&gt; ~/.zshrc                 # pj が更新される
+cat ~/00_project/dotfiles/agent-graph/codex/config.snippet.toml &gt;&gt; ~/.codex/config.toml      # gpt-6-astra 既定
+
+# sandbox を使うなら
+~/00_project/dotfiles/agent-graph/tool/runner/build.sh
+export AGENT_GRAPH_SANDBOX=docker   # .zshrc に書けば常時</code></pre>
+
+  <h3>日々の流れ</h3>
+  <pre><code>cd ~/00_project/sumire
+pj                       # tab を作り、左で claude が起動する。識別子 sumire-001 が通知される
+agd                      # 右 pane で。ブラウザで http://127.0.0.1:8765/
+
+# fable に要望を伝える → /plan → agr init → tasks.yaml → 起動
+agr init     --session sumire-001
+agr validate --session sumire-001
+agr launch   --session sumire-001
+agr status   --session sumire-001
+agr approve G1 --session sumire-001     # retry / reject も同様。gate tab で a/r/x でも可</code></pre>
+  <p>単発の小さな作業は <code>/codex</code>（<code>agc spawn --accept ...</code>）、短い文書は Agent ツールで doc-light に投げます。リポジトリ側に置くファイルはありません。</p>
+
+  <h2 id="limits">11. 制約と未確認事項</h2>
+  <ul>
+    <li>herdr の JSON 形（<code>result.pane.pane_id</code>、<code>result.root_pane.pane_id</code>）はあなたの起動スクリプトから確認できたので、定数の調整は不要になりました。残る未確認は <code>herdr tab create --no-focus</code> の有無です。無ければ作成後に元の tab へ戻す処理を足します</li>
+    <li><code>AGENT_GRAPH_PLACEMENT=split</code> にすると以前の「根 pane を分割」方式に戻ります。その場合は <code>pj</code> が渡す <code>HERDR_PANE_ID</code> が分割元になります</li>
+    <li>docker sandbox モードは実機未検証です。イメージのビルドと、<code>--user</code> で動かしたときの Claude / Codex の設定書き込みを最初に確認してください</li>
+    <li>Claude サブエージェントへの委譲文は、開始時点では PreToolUse と SubagentStart を同種・先着順で対応付けます。同種の同時投入で一時的に入れ違うことがあり、完了時に transcript から補正されます</li>
+    <li>ruff は <code>uvx</code> 経由のため初回はネットワークが必要です。リポジトリの <code>.gitignore</code> に <code>__pycache__/</code> と <code>.venv/</code> が無いと、生成物が commit に混ざります（scope 検査は生成物を除外します）</li>
+    <li>Codex は <code>codex login</code> 済みで 0.153.0 以降、PR 作成は <code>gh</code> と <code>origin</code> が必要です。無ければ pr ノードは failed になり、レポートだけ残ります</li>
+    <li>git 管理外のディレクトリでも hooks と拒否は効きますが、worktree を使うスケジューラは動きません</li>
+    <li>実機の herdr / Codex / Claude headless では未検証です。偽の herdr / codex / claude / gh で、何も置いていないリポジトリに <code>.agents/</code> が生えるところから、再試行・レビュー差し戻し・承認ゲート・PR までを通しています</li>
+  </ul>
+</main>
+
+</body>
+</html>

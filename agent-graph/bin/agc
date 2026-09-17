@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# agc: 単発の Codex 委譲（spawn_codex.py）
+export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
+TOOL_DIR="${AGENT_GRAPH_TOOL_DIR:-$HOME/.local/share/agent-graph}"
+exec uv run --project "$TOOL_DIR" python "$TOOL_DIR/bin/spawn_codex.py" "$@"
