@@ -1,6 +1,7 @@
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
 [features]
+hooks = true
 collaboration_modes = true
 
 [projects."/Users/dts-da002n/00_project/dotfiles"]
@@ -30,14 +31,44 @@ trust_level = "trusted"
 [projects."/Users/dts-da002n/00_project/dia-check"]
 trust_level = "trusted"
 
+[projects."/Users/dts-da002n/00_project/escon/ticket"]
+trust_level = "trusted"
+
+[projects."/Users/dts-da002n/00_project/i-opt-hakata"]
+trust_level = "trusted"
+
+[projects."/Users/dts-da002n/00_project/chromatic-dia"]
+trust_level = "trusted"
+
+[notice]
+hide_rate_limit_model_nudge = true
+
 [notice.model_migrations]
 "gpt-5.2-codex" = "gpt-5.3-codex"
 "gpt-5.3-codex" = "gpt-5.4"
 
 [marketplaces.openai-bundled]
-last_updated = "2026-04-27T23:54:32Z"
+last_updated = "2026-05-29T07:47:13Z"
 source_type = "local"
 source = "/Users/dts-da002n/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-05-29T08:13:01Z"
+source_type = "local"
+source = "/Users/dts-da002n/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
 [tui.model_availability_nux]
-"gpt-5.5" = 2
+"gpt-5.5" = 4
+gpt-6-astra = 3
+
+[plugins."browser-use@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true

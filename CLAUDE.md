@@ -16,13 +16,15 @@ macOS用の環境セットアップを自動化するdotfilesコレクション�
 ├── shell/                      # シェル関連設定
 │   ├── .zshrc, .alias, .abbr, .function, .bashrc, .tmux.conf
 ├── .config/                    # アプリケーション設定
-│   ├── ghostty/, nvim/, karabiner/, zed/
+│   ├── ghostty/, nvim/, karabiner/, zed/, borders/
 ├── .snippets/                  # Cursor用コードスニペット
 ├── .claude/                    # Claude Code設定
-│   ├── CLAUDE.md, settings.json, rules/*.md
-└── .codex/                     # OpenAI Codex設定
-    ├── AGENTS.md
-    └── config.toml
+│   ├── CLAUDE.md, settings.json, rules/*.md, skills/*, hooks/*
+├── .codex/                     # OpenAI Codex設定
+│   ├── AGENTS.md, config.toml
+│   └── hooks.json.template     # setup.shが~/.codex/hooks.jsonへ生成する雛形
+└── docs/
+    └── agents/                 # AI agent向け参照文書
 ```
 
 ## セットアップコマンド
@@ -66,8 +68,13 @@ setup.sh実行時に以下のリンクが作成されます：
 | `.claude/rules/*.md` | `~/.claude/rules/` |
 | `.codex/AGENTS.md` | `~/.codex/AGENTS.md` |
 | `.codex/config.toml` | `~/.codex/config.toml` |
+| `.codex/hooks.json.template` | `~/.codex/hooks.json`（絶対パス展開して生成、symlinkではない） |
+| `.config/borders/bordersrc` | `~/.config/borders/bordersrc` |
 | `Brewfile` | `~/Brewfile` |
 | `.gitignore_global` | `~/.gitignore_global` |
+| `agent-graph/claude/agents/` | `~/.claude/agents/` |
+| `agent-graph/tool/` | `~/.local/share/agent-graph/` |
+| `agent-graph/bin/{agr,agc,agd}` | `~/.local/bin/{agr,agc,agd}` |
 
 ## 注意事項
 

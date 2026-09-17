@@ -1,2 +1,13 @@
 .DS_Store
 .env
+agent-graph/tool/.venv/
+__pycache__/
+
+# Claude Code の worktree 隔離が作業用に生成する
+.claude/worktrees/
+
+# Claude Code が同期する skill のキャッシュ
+.claude/skills/synced/
+
+# refference実装との突き合わせ用に置いている参照専用クローン（自身の.gitを持つため追跡しない）
+/refference/

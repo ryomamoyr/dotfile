@@ -1,0 +1,74 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "'__DOTFILES__/.claude/hooks/auto-format.sh'",
+            "type": "command"
+          }
+        ],
+        "matcher": "Write|Edit"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "'__DOTFILES__/.claude/hooks/guard-sensitive-files.sh'",
+            "type": "command"
+          }
+        ],
+        "matcher": "Write|Edit"
+      },
+      {
+        "hooks": [
+          {
+            "command": "'__DOTFILES__/.claude/hooks/guard-dangerous-commands.sh'",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      },
+      {
+        "hooks": [
+          {
+            "command": "'__DOTFILES__/.claude/hooks/agent-graph-hook.sh'",
+            "type": "command"
+          }
+        ],
+        "matcher": "Agent|Bash|Shell|shell|Edit|Write|MultiEdit|NotebookEdit|apply_patch"
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "'__DOTFILES__/.claude/hooks/session-start.sh'",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      },
+      {
+        "hooks": [
+          {
+            "command": "bash '__HOME__/.codex/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "echo '{\"cwd\": \"'\"$(pwd)\"'\", \"notification_type\": \"stop\"}' | '__DOTFILES__/.claude/hooks/tmux-notify.sh'",
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  }
+}

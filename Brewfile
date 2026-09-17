@@ -10,10 +10,13 @@ brew "bat"       # catコマンドのモダンな代替
 brew "fd"        # findコマンドのモダンな代替
 brew "fzf"       # ファイル検索
 brew "zoxide"    # ディレクトリの移動
+brew "ghq"       # Gitリポジトリ管理
 brew "tmux"      # ターミナルマルチプレクサ
 brew "herdr"     # AIエージェント対応ターミナルマルチプレクサ
 tap "olets/tap"
 tap "k1LoW/tap"
+brew "roots"     # Gitリポジトリルート探索
+brew "git-wt"    # git worktreeラッパー
 brew "zsh-abbr"  # zsh用abbreviation
 brew "mo"        # Markdown viewer
 brew "timg"      # Kittyグラフィックスプロトコル対応画像表示
@@ -23,6 +26,7 @@ brew "luajit"      # Lua JITコンパイラ（image.nvim用）
 brew "ghostscript"  # ImageMagickのPDF/フォント処理に必要
 brew "jq"             # JSONパーサー（Claude Code hooks等で使用）
 brew "terminal-notifier" # macOS通知センターへのCLI通知
+brew "gh"             # GitHub CLI（agent-graph の pr ノードが gh pr create に使用）
 
 cask "cursor"
 cask "zed"

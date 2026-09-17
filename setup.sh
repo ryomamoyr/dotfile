@@ -67,6 +67,7 @@ fi
 
 mkdir -p "$HOME/.config/ghostty"
 mkdir -p "$HOME/.config/karabiner"
+mkdir -p "$HOME/.config/borders"
 mkdir -p "$HOME/.claude/rules"
 mkdir -p "$HOME/.codex"
 # シンボリックリンクを作成
@@ -77,6 +78,7 @@ ln -sf "$(pwd)/shell/.bashrc" "$HOME/.bashrc"
 ln -sf "$(pwd)/shell/.tmux.conf" "$HOME/.tmux.conf"
 ln -sf "$(pwd)/.config/nvim" "$HOME/.config/nvim"
 ln -sf "$(pwd)/.config/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
+ln -sf "$(pwd)/.config/borders/bordersrc" "$HOME/.config/borders/bordersrc"
 ln -sf "$(pwd)/.config/ghostty/config" "$HOME/.config/ghostty/config"
 mkdir -p "$HOME/.config/herdr"
 ln -sf "$(pwd)/.config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
@@ -109,6 +111,19 @@ rm -rf "$HOME/.claude/hooks"
 ln -sf "$(pwd)/.claude/hooks" "$HOME/.claude/hooks"
 ln -sf "$(pwd)/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 ln -sf "$(pwd)/.codex/config.toml" "$HOME/.codex/config.toml"
+# hooks.json は絶対パスを含むため symlink ではなく雛形から生成する（別マシンでも動くように）
+if [ -e "$HOME/.codex/hooks.json" ] && [ ! -L "$HOME/.codex/hooks.json" ]; then
+    mv "$HOME/.codex/hooks.json" "$HOME/.codex/hooks.json.bak.$(date +%Y%m%d%H%M%S)"
+fi
+sed -e "s|__DOTFILES__|$(pwd)|g" -e "s|__HOME__|$HOME|g" \
+    "$(pwd)/.codex/hooks.json.template" > "$HOME/.codex/hooks.json"
+# agent-graph（Claude Code + Codex + herdr のハーネス・タスクグラフ・可視化）
+mkdir -p "$HOME/.local/bin" "$HOME/.local/share"
+ln -sfn "$(pwd)/agent-graph/claude/agents" "$HOME/.claude/agents"
+ln -sfn "$(pwd)/agent-graph/tool" "$HOME/.local/share/agent-graph"
+ln -sf "$(pwd)/agent-graph/bin/agr" "$HOME/.local/bin/agr"
+ln -sf "$(pwd)/agent-graph/bin/agc" "$HOME/.local/bin/agc"
+ln -sf "$(pwd)/agent-graph/bin/agd" "$HOME/.local/bin/agd"
 ln -sf "$(pwd)/.gitignore_global" "$HOME/.gitignore_global"
 git config --global core.excludesfile "$HOME/.gitignore_global"
 
@@ -118,6 +133,7 @@ defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
 chmod +x "$HOME/.config/ghostty/start_tmux.sh"
 chmod +x "$HOME/.config/ghostty/start_herdr.sh"
+chmod +x "$HOME/.config/borders/bordersrc"
 
 echo -e "${GREEN}Installation is complete and symbolic links have been created.${NO_COLOR}"
 echo -e "${YELLOW}Please restart your terminal to apply the changes.${NO_COLOR}"
