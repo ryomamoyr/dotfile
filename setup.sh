@@ -117,13 +117,6 @@ if [ -e "$HOME/.codex/hooks.json" ] && [ ! -L "$HOME/.codex/hooks.json" ]; then
 fi
 sed -e "s|__DOTFILES__|$(pwd)|g" -e "s|__HOME__|$HOME|g" \
     "$(pwd)/.codex/hooks.json.template" > "$HOME/.codex/hooks.json"
-# agent-graph（Claude Code + Codex + herdr のハーネス・タスクグラフ・可視化）
-mkdir -p "$HOME/.local/bin" "$HOME/.local/share"
-ln -sfn "$(pwd)/agent-graph/claude/agents" "$HOME/.claude/agents"
-ln -sfn "$(pwd)/agent-graph/tool" "$HOME/.local/share/agent-graph"
-ln -sf "$(pwd)/agent-graph/bin/agr" "$HOME/.local/bin/agr"
-ln -sf "$(pwd)/agent-graph/bin/agc" "$HOME/.local/bin/agc"
-ln -sf "$(pwd)/agent-graph/bin/agd" "$HOME/.local/bin/agd"
 ln -sf "$(pwd)/.gitignore_global" "$HOME/.gitignore_global"
 git config --global core.excludesfile "$HOME/.gitignore_global"
 

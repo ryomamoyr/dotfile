@@ -39,9 +39,6 @@
 │   ├── AGENTS.md               # 個人共通ルール
 │   ├── config.toml
 │   └── hooks.json.template     # setup.shが~/.codex/hooks.jsonへ生成する雛形
-├── agent-graph/                # Claude Code/Codex/herdrを繋ぐタスクグラフ・可視化ツール一式
-└── docs/
-    └── agents/                 # AI agent向け参照文書（agent-graph.md 等）
 ```
 
 ## セットアップ
@@ -57,8 +54,7 @@ brew bundle --file=~/Brewfile
 1. Xcode Command Line Tools / Homebrew / Nodebrew / uv / Zinit をインストール
 2. 各設定ファイルのシンボリックリンクを作成（下表）
 3. `.codex/hooks.json.template` を絶対パス展開して `~/.codex/hooks.json` を生成
-4. agent-graph（`agr` / `agc` / `agd`）へのリンクを作成
-5. `git config --global core.excludesfile` を `.gitignore_global` に設定
+4. `git config --global core.excludesfile` を `.gitignore_global` に設定
 
 ## シンボリックリンク一覧
 
@@ -96,41 +92,6 @@ brew bundle --file=~/Brewfile
 | `.codex/AGENTS.md` | `~/.codex/AGENTS.md` |
 | `.codex/config.toml` | `~/.codex/config.toml` |
 | `.codex/hooks.json.template` | `~/.codex/hooks.json`（絶対パス展開して生成、symlinkではない） |
-| `agent-graph/claude/agents/` | `~/.claude/agents/` |
-| `agent-graph/tool/` | `~/.local/share/agent-graph/` |
-| `agent-graph/bin/{agr,agc,agd}` | `~/.local/bin/{agr,agc,agd}` |
-
-## agent-graph
-
-Claude Code / Codex CLI / herdr を横断するタスクグラフ実行基盤。`agent-graph/` に実体を置き、
-`setup.sh` が `~/.local/bin`（`agr`/`agc`/`agd`）と `~/.claude/agents`、`~/.local/share/agent-graph` へ
-リンクする。
-
-- `agr init / validate / launch / status / approve|retry|reject` — 要望を `tasks.yaml` に分解し、
-  スケジューラで自律実行・承認待ちを管理する
-- `agc spawn --accept "<検証コマンド>"` — 単発のコーディング作業を Codex（gpt-6-astra）に委譲する
-- `agd` — 実行状況を可視化するダッシュボード（`http://127.0.0.1:8765/`）
-- 起動時の hook が利用側リポジトリに `.agents/`（state/graph/worktrees 等）を生成し、
-  `.git/info/exclude` に追記して除外する（リポジトリの `.gitignore` は触らない）
-
-詳細・導入手順・既知の制約は `agent-graph/README.md` を参照。AI agent向けの利用規約は
-`docs/agents/agent-graph.md` にまとめている。
-
-### harnessガード（stage/guard）
-
-`agent-graph/tool/bin/harness.py`（危険操作の拒否・保護パス判定を行う本体）は、リポジトリ内に置く
-だけだとエージェント自身が書き換えて拒否ロジックを無効化できてしまう。この改ざんを防ぐため、
-`agent-graph/stage/guard/` に harness.py の複製とroot所有配置スクリプト（`install-guard.sh`）を用意している。
-
-```bash
-sudo agent-graph/stage/guard/install-guard.sh
-cp agent-graph/stage/guard/agent-graph-hook.sh agent-graph/claude/hooks/agent-graph-hook.sh
-chmod +x agent-graph/claude/hooks/agent-graph-hook.sh
-```
-
-`/usr/local/lib/agent-graph/harness.py` にroot所有・0644で配置され、hook入口が起動のたびに
-祖先ディレクトリの所有権を確認してから判定を実行する。sudoを伴うためエージェントには実行させず、
-必ず人が導入する。設計・脅威モデル・限界は `agent-graph/stage/guard/DESIGN.md` を参照。
 
 ## Neovim プラグイン
 
@@ -149,9 +110,8 @@ LazyVim ベースで以下を追加：
 
 | コマンド | 動作 |
 |---------|------|
-| `pj [claudeオプション...] [名前]` | herdr が起動中なら herdr の tab を作り、左 pane で `claude` を起動・右 pane で `agd` をバックグラウンド起動してダッシュボードを開く。herdr 未起動なら tmux にフォールバックし、左右分割して左にフォーカスする |
+| `pj [claudeオプション...] [名前]` | herdr が起動中なら herdr の tab を作り、左右分割・左 pane で `claude` を起動。herdr 未起動なら tmux にフォールバックし、左右分割して左にフォーカスする |
 | `pjs [名前]` | herdr が起動中なら herdr の tab を作り、上下分割（上にフォーカス）。herdr 未起動なら tmux にフォールバックし、上下分割して上にフォーカスする |
-| `agw [識別子]` | agent-graph の状態（`agr status`）を5秒ごとに表示 |
 | `jk [名前]` | Jupyter カーネル登録（uv プロジェクト用） |
 | `tm [セッション名]` | tmux セッションに attach/switch。名前省略時は fzf で選択 |
 | `ftpane` | tmux の pane を fzf で選択して切替 |
@@ -169,7 +129,6 @@ LazyVim ベースで以下を追加：
 | スキル | 用途 |
 |--------|------|
 | analysis-reporting | 分析結果のレポート作成（Notebookセル実行結果からMarkdown化） |
-| codex（agent-graph由来） | 単発のコーディング作業をCodex (gpt-6-astra) に委譲する手順 |
 | creating-rules | Claude Code用Ruleの新規作成 |
 | generating-commit-messages | git diffからコミットメッセージを生成 |
 | grill-me | 実装前にユーザーの計画を深掘りするQ&A |
@@ -178,10 +137,7 @@ LazyVim ベースで以下を追加：
 | import-to-claude-code | `claude import` で移せなかった設定の仕上げ |
 | improving-skills-and-rules | Skills/Rulesの改善提案・更新 |
 | jr-da-slides | 日本語PowerPointスライドをpython-pptxで生成 |
-| plan（agent-graph由来） | 要望/Issueをタスクグラフ化し自律実行を始める手順 |
 | skill-creator | 新規スキルの作成・改善・評価 |
-
-`codex` と `plan` は `agent-graph/claude/skills/` へのシンボリックリンク。
 
 ## Rules（`.claude/rules/`）
 

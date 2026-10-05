@@ -26,7 +26,7 @@ brew "luajit"      # Lua JITコンパイラ（image.nvim用）
 brew "ghostscript"  # ImageMagickのPDF/フォント処理に必要
 brew "jq"             # JSONパーサー（Claude Code hooks等で使用）
 brew "terminal-notifier" # macOS通知センターへのCLI通知
-brew "gh"             # GitHub CLI（agent-graph の pr ノードが gh pr create に使用）
+brew "gh"             # GitHub CLI
 
 cask "cursor"
 cask "zed"

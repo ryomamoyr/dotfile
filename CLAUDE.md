@@ -20,11 +20,9 @@ macOS用の環境セットアップを自動化するdotfilesコレクション�
 ├── .snippets/                  # Cursor用コードスニペット
 ├── .claude/                    # Claude Code設定
 │   ├── CLAUDE.md, settings.json, rules/*.md, skills/*, hooks/*
-├── .codex/                     # OpenAI Codex設定
-│   ├── AGENTS.md, config.toml
-│   └── hooks.json.template     # setup.shが~/.codex/hooks.jsonへ生成する雛形
-└── docs/
-    └── agents/                 # AI agent向け参照文書
+└── .codex/                     # OpenAI Codex設定
+    ├── AGENTS.md, config.toml
+    └── hooks.json.template     # setup.shが~/.codex/hooks.jsonへ生成する雛形
 ```
 
 ## セットアップコマンド
@@ -72,9 +70,6 @@ setup.sh実行時に以下のリンクが作成されます：
 | `.config/borders/bordersrc` | `~/.config/borders/bordersrc` |
 | `Brewfile` | `~/Brewfile` |
 | `.gitignore_global` | `~/.gitignore_global` |
-| `agent-graph/claude/agents/` | `~/.claude/agents/` |
-| `agent-graph/tool/` | `~/.local/share/agent-graph/` |
-| `agent-graph/bin/{agr,agc,agd}` | `~/.local/bin/{agr,agc,agd}` |
 
 ## 注意事項
 

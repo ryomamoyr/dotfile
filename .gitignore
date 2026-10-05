@@ -1,6 +1,5 @@
 .DS_Store
 .env
-agent-graph/tool/.venv/
 __pycache__/
 
 # Claude Code の worktree 隔離が作業用に生成する
