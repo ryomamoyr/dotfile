@@ -218,27 +218,15 @@ pjs() {
   fi
 }
 
-# 使い方: pj [claudeオプション...] [名前]  ※省略時はディレクトリ名を使用（左右分割・左でclaude起動）
-#   例: pj -c（前回の会話を継続）、pj -r <session_id>、pj -c myproj
+# 使い方: pj [名前]  ※省略時はディレクトリ名を使用（左右分割・左にフォーカス。claudeは起動しない）
 pj() {
-  # 先頭の - 付き引数は claude にそのまま渡す
-  local claude_args=()
-  while [[ "$1" == -* ]]; do
-    claude_args+=("$1")
-    # -r / --resume は次の引数（session id）も取る
-    if [[ "$1" == "-r" || "$1" == "--resume" ]] && [[ -n "$2" ]]; then
-      claude_args+=("$2")
-      shift
-    fi
-    shift
-  done
   local name="${1:-$(basename "$PWD")}"
   if herdr status server 2>/dev/null | grep -q "status: running"; then
-    local root right
+    local root
     root=$(herdr tab create --cwd "$PWD" --label "$name" --focus 2>/dev/null | jq -r '.result.root_pane.pane_id')
     [[ -n "$root" && "$root" != "null" ]] || return 1
-    right=$(herdr pane split "$root" --direction right --ratio 0.5 --cwd "$PWD" --no-focus 2>/dev/null | jq -r '.result.pane.pane_id')
-    herdr pane run "$root" "export HERDR_PANE_ID=$root; claude ${claude_args[*]}" >/dev/null 2>&1
+    herdr pane split "$root" --direction right --ratio 0.5 --cwd "$PWD" --no-focus >/dev/null 2>&1
+    herdr pane run "$root" "export HERDR_PANE_ID=$root; clear" >/dev/null 2>&1
   else
     tmux new-window -n "$name"
     tmux split-window -h -c '#{pane_current_path}'

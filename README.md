@@ -110,7 +110,7 @@ LazyVim ベースで以下を追加：
 
 | コマンド | 動作 |
 |---------|------|
-| `pj [claudeオプション...] [名前]` | herdr が起動中なら herdr の tab を作り、左右分割・左 pane で `claude` を起動。herdr 未起動なら tmux にフォールバックし、左右分割して左にフォーカスする |
+| `pj [名前]` | herdr が起動中なら herdr の tab を作り、左右分割（claude は起動しない）。herdr 未起動なら tmux にフォールバックし、左右分割して左にフォーカスする |
 | `pjs [名前]` | herdr が起動中なら herdr の tab を作り、上下分割（上にフォーカス）。herdr 未起動なら tmux にフォールバックし、上下分割して上にフォーカスする |
 | `jk [名前]` | Jupyter カーネル登録（uv プロジェクト用） |
 | `tm [セッション名]` | tmux セッションに attach/switch。名前省略時は fzf で選択 |
