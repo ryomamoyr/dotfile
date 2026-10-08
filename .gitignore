@@ -7,3 +7,6 @@ __pycache__/
 
 # Claude Code が同期する skill のキャッシュ
 .claude/skills/synced/
+
+# Orca がAIツール設定を書き換える際に生成するバックアップ
+*.bak
