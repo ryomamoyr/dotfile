@@ -15,6 +15,7 @@ brew "tmux"      # ターミナルマルチプレクサ
 brew "herdr"     # AIエージェント対応ターミナルマルチプレクサ
 tap "olets/tap"
 tap "k1LoW/tap"
+tap "stablyai/orca"
 brew "roots"     # Gitリポジトリルート探索
 brew "git-wt"    # git worktreeラッパー
 brew "zsh-abbr"  # zsh用abbreviation
@@ -43,3 +44,4 @@ cask "notion"
 cask "microsoft-teams"
 cask "zoom"
 cask "obsidian"
+cask "stablyai/orca/orca"
