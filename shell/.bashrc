@@ -35,3 +35,7 @@ export PATH="$PATH:/Users/dts-da002n/.lmstudio/bin"
 # End of LM Studio CLI section
 
 . "$HOME/.cargo/env"
+
+
+# Added by Antigravity CLI installer
+export PATH="$HOME/.local/bin:$PATH"
